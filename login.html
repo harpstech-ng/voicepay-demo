@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VoicePay | Harps Tech</title>
+
+<meta property="og:title" content="VoicePay - Voice Banking Platform">
+<meta property="og:description" content="Banking for 40M Nigerians. Speak in English, Yoruba, Hausa, Igbo, Pidgin. No typing. No stress.">
+<meta property="og:image" content="https://harpstech-ng.github.io/IMG_6416.jpeg">
+<meta property="og:url" content="https://harpstech-ng.github.io/voicepay-demo/login.html">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00D084">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="IMG_6416.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --green:#00D084;
+  --bg:#030303;
+  --card:rgba(255,255,255,0.04);
+  --border:rgba(255,255,255,0.06);
+  --glow:0 0 80px rgba(0,208,132,0.18);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  background:radial-gradient(1600px 1000px at 50% -25%, rgba(0,208,132,0.14), transparent 65%), linear-gradient(180deg, #030303 0%, #080808 100%);
+  color:white;
+  font-family:'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  padding:20px;
+  overflow:hidden;
+}
+.glow-orb{
+  position:absolute;
+  width:600px;
+  height:600px;
+  background:radial-gradient(circle, rgba(0,208,132,0.22) 0%, transparent 70%);
+  filter:blur(100px);
+  animation:float 22s ease-in-out infinite;
+  z-index:0;
+}
+@keyframes float{
+ 0%,100%{transform:translate(-35%, -35%) scale(1)}
+ 50%{transform:translate(35%, 35%) scale(1.25)}
+}
+.card{
+  background:var(--card);
+  backdrop-filter:blur(50px) saturate(200%);
+  border:1px solid var(--border);
+  padding:44px 36px;
+  border-radius:36px;
+  width:100%;
+  max-width:460px;
+  box-shadow:var(--glow), 0 40px 100px rgba(0,0,0,0.7);
+  position:relative;
+  z-index:2;
+  animation:cardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes cardIn{
+  from{opacity:0;transform:translateY(40px) scale(0.93)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.brand{text-align:center;margin-bottom:32px}
+.logo{width:110px;height:110px;margin:0 auto 18px;display:block;border-radius:28px;box-shadow:0 15px 50px rgba(0,208,132,0.35);animation:pulseGlow 3.5s ease-in-out infinite}
+@keyframes pulseGlow{
+ 0%,100%{box-shadow:0 15px 50px rgba(0,208,132,0.35)}
+ 50%{box-shadow:0 20px 70px rgba(0,208,132,0.55)}
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 20px;
+  border-radius:999px;
+  background:linear-gradient(135deg, rgba(0,208,132,0.18), rgba(0,208,132,0.06));
+  border:1px solid rgba(0,208,132,0.35);
+  color:var(--green);
+  font-size:14px;
+  font-weight:800;
+  letter-spacing:1px;
+  margin-bottom:16px;
+  text-transform:uppercase;
+}
+h2{
+  font-size:36px;
+  font-weight:800;
+  margin-bottom:10px;
+  background:linear-gradient(135deg, #ffffff 0%, #c0c0c0 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  letter-spacing:-1px;
+}
+.sub{
+  color:#c0c0c0;
+  font-size:16px;
+  margin-bottom:10px;
+  font-weight:500;
+}
+.lang-tags{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-bottom:28px;
+}
+.lang-tag{
+  padding:6px 12px;
+  background:rgba(0,208,132,0.12);
+  border:1px solid rgba(0,208,132,0.25);
+  border-radius:8px;
+  font-size:12px;
+  color:var(--green);
+  font-weight:700;
+  letter-spacing:0.3px;
+}
+input{
+  width:100%;
+  padding:18px 20px;
+  border-radius:16px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,0.03);
+  color:white;
+  font-size:17px;
+  font-family:'Space Grotesk', sans-serif;
+  font-weight:500;
+  outline:none;
+  transition:all 0.35s;
+}
+input:focus{
+  border-color:var(--green);
+  background:rgba(0,208,132,0.06);
+  box-shadow:0 0 0 4px rgba(0,208,132,0.12);
+  transform:translateY(-2px);
+}
+.input-group{position:relative;margin-bottom:18px}
+.eye-btn{
+  position:absolute;
+  right:16px;
+  top:50%;
+  transform:translateY(-50%);
+  background:none;
+  border:none;
+  color:#666;
+  font-size:22px;
+  cursor:pointer;
+  padding:8px;
+  transition:0.25s;
+}
+.eye-btn:hover{color:var(--green);transform:translateY(-50%) scale(1.1)}
+.btn{
+  width:100%;
+  padding:18px;
+  border:none;
+  border-radius:16px;
+  background:linear-gradient(135deg, var(--green), #00A866);
+  color:#000;
+  font-weight:800;
+  font-size:18px;
+  margin-top:10px;
+  cursor:pointer;
+  transition:all 0.25s;
+  box-shadow:0 10px 30px rgba(0,208,132,0.35);
+  letter-spacing:0.5px;
+}
+.btn:active{transform:scale(0.96)}
+.btn:hover{box-shadow:0 15px 40px rgba(0,208,132,0.45);transform:translateY(-3px)}
+.btn:disabled{opacity:0.4;cursor:not-allowed;transform:scale(1)}
+.btn-secondary{
+  background:rgba(255,255,255,0.05);
+  color:white;
+  border:1px solid var(--border);
+  box-shadow:none;
+}
+.btn-secondary:hover{background:rgba(255,255,255,0.08);transform:translateY(-2px)}
+.link{
+  color:var(--green);
+  font-size:15px;
+  margin-top:18px;
+  display:inline-block;
+  text-decoration:none;
+  font-weight:700;
+  transition:0.2s;
+}
+.link:hover{opacity:0.8}
+.toggle{
+  margin-top:28px;
+  font-size:15px;
+  color:#777;
+  text-align:center;
+  font-weight:500;
+}
+.toggle span{
+  color:var(--green);
+  cursor:pointer;
+  font-weight:800;
+}
+.footer{
+  margin-top:32px;
+  text-align:center;
+  font-size:13px;
+  color:#444;
+  letter-spacing:1px;
+  font-weight:600;
+}
+.error,.success{
+  padding:16px;
+  border-radius:14px;
+  margin-bottom:18px;
+  font-size:15px;
+  font-weight:600;
+  display:none;
+  animation:slideDown 0.35s;
+}
+@keyframes slideDown{
+  from{opacity:0;transform:translateY(-12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.error{background:rgba(255,59,48,0.16);border:1px solid rgba(255,59,48,0.45);color:#ff7b7b}
+.success{background:rgba(0,208,132,0.16);border:1px solid rgba(0,208,132,0.45);color:var(--green)}
+.student-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 16px;
+  background:rgba(255,149,0,0.14);
+  border:1px solid rgba(255,149,0,0.35);
+  color:#ffa500;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:16px;
+  letter-spacing:0.3px;
+}
+.voice-box{
+  background:linear-gradient(135deg, rgba(0,208,132,0.08), rgba(0,208,132,0.03));
+  border:2px dashed rgba(0,208,132,0.35);
+  border-radius:24px;
+  padding:32px 24px;
+  text-align:center;
+  margin-bottom:20px;
+}
+.voice-btn{
+  width:110px;
+  height:110px;
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, var(--green), #00A866);
+  border:none;
+  font-size:46px;
+  cursor:pointer;
+  margin:0 auto 16px;
+  display:block;
+  box-shadow:0 0 60px rgba(0,208,132,0.55);
+  transition:all 0.25s;
+}
+.voice-btn:active{transform:scale(0.88)}
+.voice-btn.recording{
+  background:radial-gradient(circle at 30% 30%, #ff3b30, #d62828);
+  animation:recording 1.3s infinite;
+}
+@keyframes recording{
+ 0%,100%{box-shadow:0 0 60px rgba(255,59,48,0.65)}
+ 50%{box-shadow:0 0 120px rgba(255,59,48,1)}
+}
+.voice-status{
+  font-size:15px;
+  color:#c0c0c0;
+  margin-bottom:12px;
+  font-weight:600;
+  letter-spacing:0.3px;
+}
+.voice-dots{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  margin-top:14px;
+}
+.voice-dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:var(--border);
+  transition:all 0.35s;
+}
+.voice-dot.active{
+  background:var(--green);
+  width:32px;
+  border-radius:6px;
+  box-shadow:0 0 25px rgba(0,208,132,0.7);
+}
+.step-indicator{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  margin-bottom:22px;
+}
+.step-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--border);
+  transition:all 0.35s;
+}
+.step-dot.active{
+  background:var(--green);
+  width:28px;
+  border-radius:5px;
+  box-shadow:0 0 20px rgba(0,208,132,0.6);
+}
+.checkbox-wrap{
+  margin-top:20px;
+  padding:20px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:16px;
+}
+.checkbox-label{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  cursor:pointer;
+  font-size:15px;
+  font-weight:600;
+}
+.checkbox-label input[type="checkbox"]{
+  width:22px;
+  height:22px;
+  accent-color:var(--green);
+}
+.about-btn{
+  position:fixed;
+  bottom:28px;
+  left:28px;
+  background:rgba(255,255,255,0.98);
+  border:none;
+  padding:14px 22px;
+  border-radius:16px;
+  font-size:15px;
+  font-weight:800;
+  color:#000;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.18);
+  z-index:100;
+  transition:all 0.25s;
+}
+.about-btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 15px 40px rgba(0,0,0,0.25)}
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.88);
+  backdrop-filter:blur(25px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+  padding:20px;
+  animation:fadeIn 0.35s;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-overlay.show{display:flex}
+.modal-content{
+  background:linear-gradient(135deg, #0a0a0a, #151515);
+  border-radius:28px;
+  max-width:540px;
+  width:100%;
+  border:1px solid var(--border);
+  animation:modalPop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes modalPop{
+  from{opacity:0;transform:scale(0.88) translateY(25px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+.modal-header{
+  padding:32px 32px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.modal-header h3{margin:0;font-size:24px;font-weight:800;letter-spacing:-0.5px}
+.close-btn{
+  background:none;
+  border:none;
+  font-size:36px;
+  cursor:pointer;
+  color:#555;
+  line-height:1;
+  transition:0.25s;
+}
+.close-btn:hover{color:var(--green);transform:rotate(90deg)}
+.modal-body{padding:32px}
+.modal-body p{margin-bottom:16px;line-height:1.8;color:#d0d0d0;font-size:15px}
+.highlight-box{
+  padding:20px;
+  background:linear-gradient(135deg, rgba(0,208,132,0.12), rgba(0,208,132,0.06));
+  border-left:5px solid var(--green);
+  border-radius:12px;
+  margin:20px 0;
+  font-weight:600;
+  font-size:15px;
+}
+.lang-grid{
+  display:grid;
+  grid-template-columns:repeat(5, 1fr);
+  gap:10px;
+  margin:18px 0;
+}
+.lang-item{
+  text-align:center;
+  padding:12px 6px;
+  background:rgba(0,208,132,0.1);
+  border-radius:10px;
+  font-size:13px;
+  font-weight:800;
+  color:var(--green);
+  letter-spacing:0.5px;
+}
+</style>
+</head>
+<body>
+<div class="glow-orb"></div>
+
+<div class="card">
+  <div class="brand">
+    <img src="IMG_6416.jpeg" class="logo" alt="VoicePay">
+    <span class="badge">VoicePay Platform</span>
+    <h2 id="title">VoicePay</h2>
+    <p class="sub" id="subtitle">Banking that understands your voice</p>
+    <div class="lang-tags">
+      <span class="lang-tag">English</span>
+      <span class="lang-tag">Yoruba</span>
+      <span class="lang-tag">Hausa</span>
+      <span class="lang-tag">Igbo</span>
+      <span class="lang-tag">Pidgin</span>
+    </div>
+  </div>
+
+  <div class="error" id="error"></div>
+  <div class="success" id="success"></div>
+
+  <div class="step-indicator" id="stepIndicator" style="display:none">
+    <div class="step-dot active" id="sdot1"></div>
+    <div class="step-dot" id="sdot2"></div>
+    <div class="step-dot" id="sdot3"></div>
+    <div class="step-dot" id="sdot4"></div>
+  </div>
+
+  <div id="stepAuth">
+    <input type="email" id="email" placeholder="Email address" autocomplete="email" spellcheck="false">
+    <div class="input-group" id="passGroup">
+      <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+      <button type="button" class="eye-btn" onclick="togglePass()" id="eyeBtn">👁️</button>
+    </div>
+    <button class="btn" id="mainBtn" onclick="handleAuth()">Login</button>
+    <a href="#" class="link" onclick="forgotPass()">Forgot password?</a>
+  </div>
+
+  <div id="stepAge" style="display:none">
+    <div class="student-badge" id="studentBadge" style="display:none">🎓 Student Account - ₦10K daily limit</div>
+    <input type="text" id="fullName" placeholder="Full name" maxlength="50" autocomplete="name">
+    <div class="checkbox-wrap">
+      <label class="checkbox-label">
+        <input type="checkbox" id="ageCheck" checked onchange="toggleAge()">
+        <span>I am 18 years or older</span>
+      </label>
+    </div>
+    <button class="btn" onclick="confirmAge()" id="ageBtn">Continue</button>
+    <button class="btn btn-secondary" onclick="backToAuth()" style="margin-top:12px">Back</button>
+  </div>
+
+  <div id="stepVoice" style="display:none">
+    <div class="voice-box">
+      <button class="voice-btn" id="voiceBtn" onclick="recordVoice()">🎤</button>
+      <div class="voice-status" id="voiceStatus">Tap microphone to record phrase 1 of 4</div>
+      <div class="voice-dots">
+        <div class="voice-dot" id="vdot1"></div>
+        <div class="voice-dot" id="vdot2"></div>
+        <div class="voice-dot" id="vdot3"></div>
+        <div class="voice-dot" id="vdot4"></div>
+      </div>
+    </div>
+    <div style="text-align:center;font-style:italic;color:var(--green);font-size:15px;margin-bottom:18px;font-weight:700;letter-spacing:0.3px" id="voicePhrase">Say: "My voice is my password"</div>
+    <button class="btn" onclick="completeSignup()" id="finishBtn" disabled>Complete Setup</button>
+  </div>
+
+  <div class="toggle" id="toggleWrap">
+    <span id="toggleText">New to VoicePay? </span>
+    <span onclick="toggleMode()">Create account</span>
+  </div>
+
+  <div class="footer">© 2026 HARPS TECH. ALL RIGHTS RESERVED.</div>
+</div>
+
+<button class="about-btn" onclick="showAbout()">
+  <svg fill="currentColor" viewBox="0 0 20 20" width="20"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"/></svg>
+  About
+</button>
+
+<div class="modal-overlay" id="aboutModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>VoicePay Platform</h3>
+      <button class="close-btn" onclick="closeAbout()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Banking for everyone, in every Nigerian language.</strong></p>
+
+      <div class="highlight-box">
+        40M Nigerians are excluded from mobile banking. VoicePay fixes that. Speak to send money, buy airtime, pay bills. No reading required. No typing needed. Works on any phone.
+      </div>
+
+      <p><strong>Supported Languages:</strong></p>
+      <div class="lang-grid">
+        <div class="lang-item">ENGLISH</div>
+        <div class="lang-item">YORUBA</div>
+        <div class="lang-item">HAUSA</div>
+        <div class="lang-item">IGBO</div>
+        <div class="lang-item">PIDGIN</div>
+      </div>
+
+      <p style="font-size:14px;color:#666;margin-top:24px;letter-spacing:0.5px">VOICEPAY PLATFORM BY HARPS TECH. SECURE. FAST. ACCESSIBLE.</p>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// HARPS TECH FIREBASE CONFIG
+const firebaseConfig = {
+  apiKey: "AIzaSyCe6Gx4tJZ2AIhUWviYFgWhOxnbPoFSd3A",
+  authDomain: "voicepay-harps-tech.firebaseapp.com",
+  projectId: "voicepay-harps-tech",
+  storageBucket: "voicepay-harps-tech.firebasestorage.app",
+  messagingSenderId: "955301626221",
+  appId: "1:955301626221:web:745d7a643b7c0bbbeb9a64",
+  measurementId: "G-TXDEJZV3ZK"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const BACKEND_URL = 'https://harps-tech-api.onrender.com';
+
+let isLogin = true;
+let showPassword = false;
+let signupStep = 1;
+let voiceRecordings = [];
+let currentPhrase = 0;
+let userAge = 0;
+let isStudent = false;
+let tempUserData = {};
+let availableVoices = [];
+let hasSpokenWelcome = false;
+
+const phrases = [
+  "My voice is my password",
+  "VoicePay secure",
+  "Send money with my voice",
+  "Transfer urgent money"
+];
+
+const langMap = {
+  'en': { lang: 'en-NG', name: 'English' },
+  'yo': { lang: 'yo-NG', name: 'Yoruba' },
+  'ha': { lang: 'ha-NG', name: 'Hausa' },
+  'ig': { lang: 'ig-NG', name: 'Igbo' },
+  'pcm': { lang: 'en-NG', name: 'Pidgin' }
+};
+
+onAuthStateChanged(auth, (user) => {
+  if (user) window.location.href = './index.html';
+});
+
+function loadVoices() {
+  availableVoices = speechSynthesis.getVoices();
+}
+speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
+
+// ULTRA CLEAR SPEECH FOR ALL 5 LANGUAGES
+function speakHarps(text, langCode = 'en') {
+  return new Promise((resolve) => {
+    speechSynthesis.cancel();
+    setTimeout(() => {
+      const config = langMap[langCode] || langMap['en'];
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = config.lang;
+
+      let voice = availableVoices.find(v => v.lang === config.lang) ||
+                  availableVoices.find(v => v.name.toLowerCase().includes('zira')) ||
+                  availableVoices.find(v => v.name.toLowerCase().includes('female') && v.lang.startsWith('en')) ||
+                  availableVoices.find(v => v.lang.startsWith('en'));
+
+      if (voice) utterance.voice = voice;
+
+      // Perfect clarity settings
+      utterance.pitch = 1.05;
+      utterance.rate = 0.88;
+      utterance.volume = 1;
+
+      utterance.onend = resolve;
+      utterance.onerror = resolve;
+      speechSynthesis.speak(utterance);
+    }, 80);
+  });
+}
+
+window.toggleMode = () => {
+  isLogin =!isLogin;
+  signupStep = 1;
+  document.getElementById('title').innerText = isLogin? 'VoicePay' : 'Create Account';
+  document.getElementById('subtitle').innerText = isLogin? 'Banking that understands your voice' : 'Join VoicePay in seconds';
+  document.getElementById('mainBtn').innerText = isLogin? 'Login' : 'Continue';
+  document.getElementById('toggleText').innerText = isLogin? "New to VoicePay? " : "Already have account? ";
+  document.getElementById('stepIndicator').style.display = isLogin? 'none' : 'flex';
+  showStep('stepAuth');
+
+  if (!isLogin &&!hasSpokenWelcome) {
+    setTimeout(() => {
+      speakHarps('Welcome to VoicePay. Create your secure voice account in 4 steps.');
+      hasSpokenWelcome = true;
+    }, 250);
+  }
+};
+
+window.togglePass = () => {
+  showPassword =!showPassword;
+  const p = document.getElementById('password');
+  const btn = document.getElementById('eyeBtn');
+  p.type = showPassword? 'text' : 'password';
+  btn.textContent = showPassword? '🙈' : '👁️';
+};
+
+window.forgotPass = () => {
+  document.getElementById('passGroup').style.display = 'none';
+  document.getElementById('mainBtn').innerText = 'Send Reset Link';
+  document.getElementById('mainBtn').onclick = resetPass;
+  document.getElementById('subtitle').innerText = 'Enter email to reset password';
+  speakHarps('Enter your email address to reset password');
+};
+
+function showStep(stepId) {
+  ['stepAuth','stepAge','stepVoice'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById(stepId).style.display = 'block';
+
+  if (!isLogin) {
+    ['sdot1','sdot2','sdot3','sdot4'].forEach((id,i) => {
+      const dot = document.getElementById(id);
+      if (dot) dot.classList.toggle('active', i < signupStep);
+    });
+  }
+}
+
+window.backToAuth = () => {
+  signupStep = 1;
+  showStep('stepAuth');
+  document.getElementById('stepIndicator').style.display = 'none';
+};
+
+window.handleAuth = async () => {
+  const btn = document.getElementById('mainBtn');
+  const email = document.getElementById('email').value.trim();
+  const pass = document.getElementById('password').value;
+  if(!email ||!pass){ showError('Please fill all fields'); speakHarps('Please fill all fields'); return }
+
+  btn.disabled = true;
+  btn.innerText = 'Authenticating...';
+  clearMsg();
+
+  try{
+    if(isLogin){
+      const user = await signInWithEmailAndPassword(auth, email, pass);
+      localStorage.setItem('uid', user.user.uid);
+      await speakHarps('Login successful. Welcome back.');
+      setTimeout(() => window.location.href='./index.html', 700);
+    }else{
+      tempUserData = {email, pass};
+      signupStep = 2;
+      showStep('stepAge');
+      document.getElementById('stepIndicator').style.display = 'flex';
+      await speakHarps('Please enter your full name and confirm your age.');
+    }
+  }catch(e){
+    showError(getErrorMsg(e.code));
+    speakHarps('Login failed. ' + getErrorMsg(e.code));
+    btn.disabled = false;
+    btn.innerText = isLogin? 'Login' : 'Continue';
+  }
+};
+
+window.confirmAge = async () => {
+  const fullName = document.getElementById('fullName').value.trim();
+  const isOver18 = document.getElementById('ageCheck').checked;
+
+  if (!fullName) {
+    showError('Enter your full name');
+    speakHarps('Please enter your full name');
+    return;
+  }
+
+  tempUserData.fullName = fullName;
+  tempUserData.isStudent =!isOver18;
+  userAge = isOver18? 25 : 16;
+  isStudent =!isOver18;
+
+  if (isStudent) {
+    document.getElementById('studentBadge').style.display = 'inline-flex';
+    showSuccess('Student account - ₦10,000 daily limit activated');
+    await speakHarps('Student account created. Ten thousand naira daily limit for safety.');
+  } else {
+    showSuccess('Age verified. Voice enrollment next.');
+    await speakHarps('Age verified. Now record your voice in 4 phrases.');
+  }
+
+  setTimeout(() => {
+    signupStep = 3;
+    showStep('stepVoice');
+  }, 900);
+};
+
+window.toggleAge = () => {
+  const isOver18 = document.getElementById('ageCheck').checked;
+  document.getElementById('studentBadge').style.display =!isOver18? 'inline-flex' : 'none';
+};
+
+window.recordVoice = async () => {
+  const btn = document.getElementById('voiceBtn');
+  const status = document.getElementById('voiceStatus');
+
+  if (btn.classList.contains('recording')) return;
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+    const mediaRecorder = new MediaRecorder(stream);
+    const chunks = [];
+
+    mediaRecorder.ondataavailable = e => chunks.push(e.data);
+    mediaRecorder.onstop = async () => {
+      const blob = new Blob(chunks, { type: 'audio/webm' });
+      voiceRecordings.push(blob);
+
+      document.getElementById(`vdot${currentPhrase + 1}`).classList.add('active');
+      currentPhrase++;
+
+      if (currentPhrase < 4) {
+        status.textContent = `Tap microphone for phrase ${currentPhrase + 1} of 4`;
+        const phraseText = currentPhrase === 3? `Duress phrase: "${phrases[currentPhrase]}"` : `"${phrases[currentPhrase]}"`;
+        document.getElementById('voicePhrase').textContent = `Say: ${phraseText}`;
+        await speakHarps(currentPhrase === 3? `Now record duress phrase. Say: ${phrases[currentPhrase]}` : `Excellent. Now say: ${phrases[currentPhrase]}`);
+      } else {
+        status.textContent = 'Voice ID captured successfully ✅';
+        document.getElementById('finishBtn').disabled = false;
+        btn.style.display = 'none';
+        await speakHarps('Voice captured successfully including duress phrase. Tap complete setup to finish.');
+      }
+
+      stream.getTracks().forEach(track => track.stop());
+    };
+
+    mediaRecorder.start();
+    btn.classList.add('recording');
+    status.textContent = 'Recording... Speak clearly and naturally';
+    await speakHarps(`Recording. Say clearly: ${phrases[currentPhrase]}`);
+
+    setTimeout(() => {
+      mediaRecorder.stop();
+      btn.classList.remove('recording');
+    }, 3200);
+
+  } catch (err) {
+    showError('Microphone access denied. Enable permission in browser settings.');
+    speakHarps('Microphone access denied. Please enable microphone permission in your browser settings.');
+  }
+};
+
+window.completeSignup = async () => {
+  const btn = document.getElementById('finishBtn');
+  btn.disabled = true;
+  btn.innerText = 'Creating account...';
+
+  try {
+    const userCred = await createUserWithEmailAndPassword(auth, tempUserData.email, tempUserData.pass);
+    const uid = userCred.user.uid;
+
+    await setDoc(doc(db, 'users', uid), {
+      email: tempUserData.email,
+      fullName: tempUserData.fullName,
+      displayName: tempUserData.fullName,
+      isStudent: isStudent,
+      dailyLimit: isStudent? 1000000 : 50000000,
+      voiceEnrolled: true,
+      duressPhrase: phrases[3],
+      createdAt: serverTimestamp(),
+      platform: 'VoicePay Harps Tech',
+      version: '3.0'
+    });
+
+    const formData = new FormData();
+    voiceRecordings.forEach((blob, i) => {
+      formData.append(`voice`, blob);
+    });
+    formData.append('userId', uid);
+    formData.append('email', tempUserData.email);
+    formData.append('fullName', tempUserData.fullName);
+    formData.append('isStudent', isStudent);
+    formData.append('duressPhrase', phrases[3]);
+
+    await fetch(BACKEND_URL + '/complete-signup', {
+      method: 'POST',
+      body: formData
+    });
+
+    localStorage.setItem('uid', uid);
+    localStorage.setItem('isStudent', isStudent);
+    showSuccess('Account created successfully! Welcome to VoicePay');
+    await speakHarps('Account created successfully. Welcome to VoicePay platform.');
+    setTimeout(() => window.location.href = './index.html', 1400);
+
+  } catch (err) {
+    showError('Failed to create account. Please try again.');
+    speakHarps('Account creation failed. Please try again.');
+    btn.disabled = false;
+    btn.innerText = 'Complete Setup';
+    console.error(err);
+  }
+};
+
+window.resetPass = async () => {
+  const btn = document.getElementById('mainBtn');
+  const email = document.getElementById('email').value.trim();
+  if(!email){ showError('Enter your email first'); speakHarps('Enter your email first'); return }
+
+  btn.disabled = true;
+  btn.innerText = 'Sending reset link...';
+
+  try{
+    await sendPasswordResetEmail(auth, email);
+    showSuccess('Reset link sent! Check your email inbox and spam folder');
+    await speakHarps('Password reset link sent to your email address.');
+    setTimeout(()=>location.reload(), 3000);
+  }catch(e){
+    showError(getErrorMsg(e.code));
+    speakHarps('Failed to send reset link');
+    btn.disabled = false;
+    btn.innerText = 'Send Reset Link';
+  }
+};
+
+function getErrorMsg(code){
+  switch(code){
+    case 'auth/user-not-found': return 'No account found with this email';
+    case 'auth/wrong-password': return 'Incorrect password';
+    case 'auth/email-already-in-use': return 'Email already registered';
+    case 'auth/weak-password': return 'Password too weak. Use 6+ characters';
+    case 'auth/invalid-email': return 'Invalid email format';
+    case 'auth/too-many-requests': return 'Too many attempts. Try again later';
+    case 'auth/network-request-failed': return 'Network error. Check internet';
+    default: return 'Authentication error. Please try again';
+  }
+}
+
+function showError(msg){
+  const el = document.getElementById('error');
+  el.textContent = msg;
+  el.style.display = 'block';
+  document.getElementById('success').style.display = 'none';
+}
+
+function showSuccess(msg){
+  const el = document.getElementById('success');
+  el.textContent = msg;
+  el.style.display = 'block';
+  document.getElementById('error').style.display = 'none';
+}
+
+function clearMsg(){
+  document.getElementById('error').style.display = 'none';
+  document.getElementById('success').style.display = 'none';
+}
+
+// ABOUT MODAL - CLEAN HARPS TECH
+window.showAbout = () => {
+  document.getElementById('aboutModal').classList.add('show');
+  speakHarps('VoicePay platform by Harps Tech. Banking for everyone in every Nigerian language.');
+};
+
+window.closeAbout = () => {
+  document.getElementById('aboutModal').classList.remove('show');
+  speechSynthesis.cancel();
+};
+
+// Close modal on ESC key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.getElementById('aboutModal').classList.remove('show');
+    speechSynthesis.cancel();
+  }
+});
+
+// Close modal on background click
+document.getElementById('aboutModal').addEventListener('click', (e) => {
+  if (e.target.id === 'aboutModal') {
+    document.getElementById('aboutModal').classList.remove('show');
+    speechSynthesis.cancel();
+  }
+});
+</script>
+
+<script>
+// PWA Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW failed:', err));
+  });
+}
+
+// Prevent zoom on double tap iOS
+let lastTouchEnd = 0;
+document.addEventListener('touchend', (e) => {
+  const now = Date.now();
+  if (now - lastTouchEnd <= 300) {
+    e.preventDefault();
+  }
+  lastTouchEnd = now;
+}, false);
+</script>
+</body>
+</html>
