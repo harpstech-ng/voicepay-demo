@@ -11,11 +11,9 @@
 <meta property="og:url" content="https://harpstech-ng.github.io/voicepay-demo/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="VoicePay Platform">
-<meta name="twitter:description" content="Voice-authenticated banking by Harps Tech">
-<meta name="twitter:image" content="https://harpstech-ng.github.io/IMG_6416.jpeg">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#00D084">
@@ -35,13 +33,25 @@
   --card-hover:rgba(255,255,255,0.08);
   --border:rgba(255,255,255,0.1);
   --text-muted:#9A9AAE;
+  --bank-color:#00D084;
+  --bank-glow:rgba(0,208,132,0.4);
 }
+/* BALMY BANK THEMES */
+body.gtbank{--bank-color:#F37321; --bank-glow:rgba(243,115,33,0.4)}
+body.access{--bank-color:#F78F1E; --bank-glow:rgba(247,143,30,0.4)}
+body.uba{--bank-color:#E31E24; --bank-glow:rgba(227,30,36,0.4)}
+body.firstbank{--bank-color:#007D4F; --bank-glow:rgba(0,125,79,0.4)}
+body.zenith{--bank-color:#E2001A; --bank-glow:rgba(226,0,26,0.4)}
+body.kuda{--bank-color:#40196D; --bank-glow:rgba(64,25,109,0.4)}
+body.opay{--bank-color:#00D084; --bank-glow:rgba(0,208,132,0.4)}
+body.palmpay{--bank-color:#0052D4; --bank-glow:rgba(0,82,212,0.4)}
+
 *{margin:0;padding:0;box-sizing:border-box}
 body{
   background:
-    radial-gradient(1200px 700px at 50% -15%, rgba(0,208,132,0.2), transparent 60%),
+    radial-gradient(1200px 700px at 50% -15%, var(--bank-glow), transparent 60%),
     radial-gradient(900px 500px at 25% 100%, rgba(138,43,226,0.12), transparent 50%),
-    radial-gradient(700px 350px at 100% 45%, rgba(0,208,132,0.1), transparent 40%),
+    radial-gradient(700px 350px at 100% 45%, var(--bank-glow), transparent 40%),
     var(--bg);
   color:white;
   font-family:'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -52,6 +62,7 @@ body{
   justify-content:center;
   padding:24px 16px;
   overflow-x:hidden;
+  transition:all 0.5s ease;
 }
 .top-bar{
   position:fixed;
@@ -66,7 +77,9 @@ body{
   background:rgba(5,5,10,0.75);
   border-bottom:1px solid var(--border);
   z-index:100;
+  animation:slideDown 0.5s ease;
 }
+@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
 .team{
   font-size:14px;
   color:var(--text-muted);
@@ -79,9 +92,9 @@ body{
 .team-dot{
   width:8px;
   height:8px;
-  background:var(--green);
+  background:var(--bank-color);
   border-radius:50%;
-  box-shadow:0 0 15px var(--green-glow);
+  box-shadow:0 0 15px var(--bank-glow);
   animation:pulse-dot 2s infinite;
 }
 @keyframes pulse-dot{
@@ -103,7 +116,7 @@ body{
 }
 .nav-btn:hover{
   background:var(--card-hover);
-  border-color:rgba(0,208,132,0.4);
+  border-color:var(--bank-color);
   transform:translateY(-2px);
 }
 .container{
@@ -121,13 +134,13 @@ body{
   width:110px;
   height:110px;
   border-radius:30px;
-  box-shadow:0 30px 80px rgba(0,208,132,0.4);
+  box-shadow:0 30px 80px var(--bank-glow);
   border:3px solid rgba(255,255,255,0.12);
 }
 .logo-glow{
   position:absolute;
   inset:-30px;
-  background:radial-gradient(circle, var(--green-glow), transparent 70%);
+  background:radial-gradient(circle, var(--bank-glow), transparent 70%);
   filter:blur(40px);
   z-index:-1;
   animation:glow-pulse 3.5s ease-in-out infinite;
@@ -142,14 +155,14 @@ body{
   gap:10px;
   padding:10px 20px;
   border-radius:999px;
-  background:linear-gradient(135deg, rgba(0,208,132,0.2), rgba(0,208,132,0.08));
-  border:1px solid rgba(0,208,132,0.3);
-  color:var(--green);
+  background:linear-gradient(135deg, rgba(var(--bank-color-rgb), 0.2), rgba(var(--bank-color-rgb), 0.08));
+  border:1px solid var(--bank-color);
+  color:var(--bank-color);
   font-size:14px;
   font-weight:700;
   margin-bottom:28px;
   backdrop-filter:blur(15px);
-  box-shadow:0 6px 25px rgba(0,208,132,0.18);
+  box-shadow:0 6px 25px var(--bank-glow);
   letter-spacing:0.5px;
   text-transform:uppercase;
 }
@@ -170,7 +183,7 @@ h1{
   font-weight:500;
 }
 .bio{
-  color:var(--green);
+  color:var(--bank-color);
   font-size:15px;
   font-weight:700;
   margin-bottom:60px;
@@ -187,28 +200,27 @@ h1{
 .mic-ring{
   position:absolute;
   inset:-40px;
-  border:3px solid rgba(0,208,132,0.15);
+  border:3px solid var(--bank-glow);
   border-radius:50%;
   animation:ring-pulse 2.8s ease-out infinite;
 }
 .mic-ring:nth-child(2){
   animation-delay:0.6s;
-  border-color:rgba(0,208,132,0.1);
+  opacity:0.5;
 }
 @keyframes ring-pulse{
  0%{transform:scale(0.8);opacity:1}
  100%{transform:scale(1.5);opacity:0}
-}
 .mic-btn{
   width:220px;
   height:220px;
   border-radius:50%;
-  background:linear-gradient(135deg, #00D084 0%, #00A866 100%);
+  background:linear-gradient(135deg, var(--bank-color), #00A866);
   border:4px solid rgba(255,255,255,0.18);
   font-size:88px;
   cursor:pointer;
   box-shadow:
-    0 0 120px rgba(0,208,132,0.55),
+    0 0 120px var(--bank-glow),
     0 30px 80px rgba(0,0,0,0.55),
     inset 0 4px 0 rgba(255,255,255,0.3);
   transition:all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -217,7 +229,7 @@ h1{
 }
 .mic-btn:active{transform:scale(0.9)}
 .mic-btn.recording{
-  background:linear-gradient(135deg, #ff3b30 0%, #d62828 100%);
+  background:linear-gradient(135deg, #ff3b30, #d62828);
   animation:mic-pulse 1.3s ease-in-out infinite;
   border-color:rgba(255,255,255,0.25);
 }
@@ -229,7 +241,7 @@ h1{
   min-height:32px;
   margin-top:24px;
   font-size:16px;
-  color:var(--green);
+  color:var(--bank-color);
   font-weight:700;
   font-style:italic;
   opacity:0;
@@ -250,7 +262,7 @@ h1{
 .confidence-bar.show{opacity:1}
 .confidence-fill{
   height:100%;
-  background:linear-gradient(90deg, #ff3b30, #ff9500, var(--green));
+  background:linear-gradient(90deg, #ff3b30, #ff9500, var(--bank-color));
   border-radius:999px;
   transition:width 0.5s ease;
 }
@@ -280,9 +292,9 @@ h1{
   font-weight:600;
 }
 .status-card.active{
-  border-color:rgba(0,208,132,0.4);
-  background:rgba(0,208,132,0.1);
-  box-shadow:0 10px 35px rgba(0,208,132,0.18);
+  border-color:var(--bank-color);
+  background:rgba(var(--bank-color-rgb), 0.1);
+  box-shadow:0 10px 35px var(--bank-glow);
 }
 .confirm-box{
   margin-top:24px;
@@ -308,13 +320,13 @@ h1{
   letter-spacing:0.3px;
 }
 .btn-confirm{
-  background:linear-gradient(135deg, var(--green), #00A866);
+  background:linear-gradient(135deg, var(--bank-color), #00A866);
   color:#000;
-  box-shadow:0 14px 40px rgba(0,208,132,0.38);
+  box-shadow:0 14px 40px var(--bank-glow);
 }
 .btn-confirm:hover{
   transform:translateY(-4px);
-  box-shadow:0 20px 55px rgba(0,208,132,0.55);
+  box-shadow:0 20px 55px var(--bank-glow);
 }
 .btn-cancel{
   background:var(--card);
@@ -343,11 +355,52 @@ h1{
   width:20px;
   height:20px;
   border:3px solid var(--border);
-  border-top-color:var(--green);
+  border-top-color:var(--bank-color);
   border-radius:50%;
   animation:spin 0.8s linear infinite;
 }
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* SUCCESS ANIMATION */
+.success-animation{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.85);
+  backdrop-filter:blur(20px);
+  z-index:9999;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+}
+.success-animation.show{display:flex}
+.checkmark{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  background:linear-gradient(135deg, var(--bank-color), #00A866);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:60px;
+  animation:scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes scaleIn{
+ 0%{transform:scale(0) rotate(-180deg)}
+ 100%{transform:scale(1) rotate(0deg)}
+}
+.success-text{
+  margin-top:24px;
+  font-size:24px;
+  font-weight:800;
+  color:var(--bank-color);
+  animation:fadeInUp 0.6s 0.3s both;
+}
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
 .footer{
   margin-top:60px;
   text-align:center;
@@ -380,7 +433,7 @@ h1{
 }
 .manual-input-box.show{display:block}
 .manual-input-box h4{
-  color:var(--green);
+  color:var(--bank-color);
   font-size:15px;
   margin-bottom:14px;
   font-weight:700;
@@ -399,15 +452,15 @@ h1{
 }
 .manual-input-box input:focus{
   outline:none;
-  border-color:var(--green);
-  background:rgba(0,208,132,0.06);
+  border-color:var(--bank-color);
+  background:rgba(var(--bank-color-rgb), 0.06);
 }
 .manual-submit{
   width:100%;
   padding:16px;
   border-radius:14px;
   border:none;
-  background:var(--green);
+  background:var(--bank-color);
   color:#000;
   font-weight:800;
   font-size:16px;
@@ -475,10 +528,10 @@ h1{
   line-height:1;
   transition:0.25s;
 }
-.close-btn:hover{color:var(--green);transform:rotate(90deg)}
+.close-btn:hover{color:var(--bank-color);transform:rotate(90deg)}
 .modal-body{padding:28px}
 .modal-body p{color:#e0e0e0;margin-bottom:14px;line-height:1.7;font-size:15px}
-.modal-body strong{color:var(--green)}
+.modal-body strong{color:var(--bank-color)}
 .lang-grid{
   display:grid;
   grid-template-columns:repeat(5, 1fr);
@@ -488,11 +541,11 @@ h1{
 .lang-item{
   text-align:center;
   padding:12px 6px;
-  background:rgba(0,208,132,0.12);
+  background:rgba(var(--bank-color-rgb), 0.12);
   border-radius:10px;
   font-size:13px;
   font-weight:800;
-  color:var(--green);
+  color:var(--bank-color);
   letter-spacing:0.5px;
 }
 </style>
@@ -515,7 +568,7 @@ h1{
     <img src="IMG_6416.jpeg" class="logo" alt="VoicePay Logo">
   </div>
 
-  <span class="badge">VoicePay Platform</span>
+  <span class="badge" id="bankBadge">VoicePay Platform</span>
 
   <h1>Speak Your Payment</h1>
   <p class="sub">Voice-authenticated banking powered by AI</p>
@@ -531,7 +584,7 @@ h1{
     </div>
   </div>
 
-  <p class="hint">"Send 5k to Seyi" • "Buy 2k airtime for Mama" • "Pay NEPA bill" • "Send 20 dollars to John"</p>
+  <p class="hint">"Send 5k to Seyi" • "What's my balance" • "Show last 3 transfers" • "Buy 2k airtime for Mama"</p>
   <div class="status-card" id="status">Tap the mic to start speaking</div>
 
   <div class="manual-input-box" id="manualInputBox">
@@ -554,6 +607,12 @@ h1{
     <div class="security">🔒 Bank-Grade Security | Harps Tech</div>
     <div>© 2026 HARPS TECH. ALL RIGHTS RESERVED.</div>
   </div>
+</div>
+
+<!-- SUCCESS ANIMATION -->
+<div class="success-animation" id="successAnim">
+  <div class="checkmark">✓</div>
+  <div class="success-text">Payment Sent!</div>
 </div>
 
 <button class="about-btn" onclick="showAbout()">
@@ -589,13 +648,13 @@ import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, a
 
 // HARPS TECH FIREBASE CONFIG
 const firebaseConfig = {
-  apiKey: "AIzaSyCv8Wz-zkn-Xt5yNO4j8opEeMwsOGCCv_8",
-  authDomain: "harps-voicepay.firebaseapp.com",
-  projectId: "harps-voicepay",
-  storageBucket: "harps-voicepay.firebasestorage.app",
-  messagingSenderId: "434033801758",
-  appId: "1:434033801758:web:75833560ce9160c3f50c0f",
-  measurementId: "G-47WZZXQNGC"
+  apiKey: "AIzaSyCe6Gx4tJZ2AIhUWviYFgWhOxnbPoFSd3A",
+  authDomain: "voicepay-harps-tech.firebaseapp.com",
+  projectId: "voicepay-harps-tech",
+  storageBucket: "voicepay-harps-tech.firebasestorage.app",
+  messagingSenderId: "955301626221",
+  appId: "1:955301626221:web:745d7a643b7c0bbbeb9a64",
+  measurementId: "G-TXDEJZV3ZK"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -607,8 +666,7 @@ function encrypt(text) {
   return CryptoJS.AES.encrypt(text.toString(), AES_KEY).toString();
 }
 
-// PUT YOUR BACKEND URL HERE BOSS
-const BACKEND_URL = 'https://harps-tech-api.onrender.com';
+const BACKEND_URL = '////////';
 
 const mic = document.getElementById('mic');
 const status = document.getElementById('status');
@@ -620,6 +678,8 @@ const loadingOpay = document.getElementById('loadingOpay');
 const manualInputBox = document.getElementById('manualInputBox');
 const manualInput = document.getElementById('manualInput');
 const manualInputTitle = document.getElementById('manualInputTitle');
+const bankBadge = document.getElementById('bankBadge');
+const successAnim = document.getElementById('successAnim');
 
 let currentIntent = null;
 let currentUser = null;
@@ -636,6 +696,7 @@ let detectedUserLang = 'en-NG';
 let recognitionTimeout = null;
 let silenceTimer = null;
 let isReadingDigits = false;
+let selectedBank = 'opay';
 
 let conversationState = {
   amount: null,
@@ -649,6 +710,18 @@ let conversationState = {
   duress: false,
   currency: 'NGN',
   original_amount: null
+};
+
+// BALMY BANK COLORS RGB
+const bankColors = {
+  gtbank: { color: '#F37321', rgb: '243,115,33' },
+  access: { color: '#F78F1E', rgb: '247,143,30' },
+ uba: { color: '#E31E24', rgb: '227,30,36' },
+  firstbank: { color: '#007D4F', rgb: '0,125,79' },
+  zenith: { color: '#E2001A', rgb: '226,0,26' },
+  kuda: { color: '#40196D', rgb: '64,25,109' },
+  opay: { color: '#00D084', rgb: '0,208,132' },
+  palmpay: { color: '#0052D4', rgb: '0,82,212' }
 };
 
 function normalizeNigerianAmount(text) {
@@ -694,7 +767,9 @@ const responses = {
     duressSuccess: 'Transfer successful!',
     openingPayment: (amount, recipient) => `Opening payment. Amount ₦${amount.toLocaleString()} to ${recipient} is locked.`,
     paymentFailed: 'Sorry, could not process payment',
-    tapToStart: 'Tap the mic to start'
+    tapToStart: 'Tap the mic to start',
+    balance: (amount) => `Your current balance is ₦${amount.toLocaleString()}`,
+    history: 'Your last 3 transfers: ₦5,000 to Seyi, ₦2,000 airtime to Mama, ₦1,500 to Papa'
   },
   'yo-NG': {
     listening: 'Mo n gbọ ọ.',
@@ -715,7 +790,9 @@ const responses = {
     duressSuccess: 'Gbigbe owo ṣaṣeyọri!',
     openingPayment: (amount, recipient) => `N ṣi isanwo. Iye ₦${amount.toLocaleString()} si ${recipient} ti pa.`,
     paymentFailed: 'Ma binu, ko le ṣẹda isanwo',
-    tapToStart: 'Tẹ mic lati bẹrẹ'
+    tapToStart: 'Tẹ mic lati bẹrẹ',
+    balance: (amount) => `Iwọntunwọnsi rẹ ni ₦${amount.toLocaleString} ni bayi`,
+    history: 'Awọn gbigbe owo 3 to kẹhin: ₦5,000 si Seyi, ₦2,000 airtime si Mama, ₦1,500 si Papa'
   },
   'ig-NG': {
     listening: 'Ana m ege ntị.',
@@ -736,7 +813,9 @@ const responses = {
     duressSuccess: 'Mbufe ego gara nke ọma!',
     openingPayment: (amount, recipient) => `Na-emepe ịkwụ ụgwọ. Ọnụ ₦${amount.toLocaleString()} nye ${recipient} akpọchiela.`,
     paymentFailed: 'Ndo, enweghị ike ịmepụta ịkwụ ụgwọ',
-    tapToStart: 'Pịa mic ka ịmalite'
+    tapToStart: 'Pịa mic ka ịmalite',
+    balance: (amount) => `Ego gị dị ₦${amount.toLocaleString()} ugbu a`,
+    history: 'Nnyefe ego 3 ikpeazụ gị: ₦5,000 nye Seyi, ₦2,000 airtime nye Mama, ₦1,500 nye Papa'
   },
   'ha-NG': {
     listening: 'Ina sauraro.',
@@ -757,7 +836,9 @@ const responses = {
     duressSuccess: 'Canja wurin kuɗi ya yi nasara!',
     openingPayment: (amount, recipient) => `Ana buɗe biya. Adadin ₦${amount.toLocaleString()} zuwa ${recipient} an kulle.`,
     paymentFailed: 'Yi hakuri, ba za a iya sarrafa biya ba',
-    tapToStart: 'Danna mic don farawa'
+    tapToStart: 'Danna mic don farawa',
+    balance: (amount) => `Kudinka yanzu ₦${amount.toLocaleString()} ne`,
+    history: 'Canja wurin kuɗi 3 na ƙarshe: ₦5,000 zuwa Seyi, ₦2,000 airtime zuwa Mama, ₦1,500 zuwa Papa'
   },
   'pcm-NG': {
     listening: 'I dey hear you.',
@@ -781,7 +862,9 @@ const responses = {
     duressSuccess: 'Transfer don work!',
     openingPayment: (amount, recipient) => `I dey open payment. Amount ₦${amount.toLocaleString()} give ${recipient} don lock.`,
     paymentFailed: 'Abeg, I no fit process payment',
-    tapToStart: 'Tap mic make we start'
+    tapToStart: 'Tap mic make we start',
+    balance: (amount) => `Your balance na ₦${amount.toLocaleString()} now`,
+    history: 'Your last 3 transfers: ₦5,000 give Seyi, ₦2,000 airtime give Mama, ₦1,500 give Papa'
   }
 };
 
@@ -794,6 +877,16 @@ onAuthStateChanged(auth, async (user) => {
   if (!user) window.location.href = './login.html';
   else {
     currentUser = user;
+
+    // LOAD BANK THEME FROM LOCALSTORAGE
+    selectedBank = localStorage.getItem('selectedBank') || 'opay';
+    const bankData = bankColors[selectedBank];
+    document.body.classList.add(selectedBank);
+    document.documentElement.style.setProperty('--bank-color', bankData.color);
+    document.documentElement.style.setProperty('--bank-glow', `rgba(${bankData.rgb}, 0.4)`);
+    document.documentElement.style.setProperty('--bank-color-rgb', bankData.rgb);
+    bankBadge.innerText = `${selectedBank.toUpperCase()} Connected`;
+
     try {
       const userDoc = await getDoc(doc(db, 'users', user.uid));
       if (userDoc.exists()) {
@@ -864,6 +957,34 @@ function speakFemale(text, lang = 'en-NG') {
     }
     speechSynthesis.speak(utterance);
   }, 50);
+}
+
+// CONFETTI FUNCTION FOR SUCCESS
+function fireConfetti() {
+  const duration = 3000;
+  const animationEnd = Date.now() + duration;
+  const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000 };
+
+  function randomInRange(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  const interval = setInterval(function() {
+    const timeLeft = animationEnd - Date.now();
+    if (timeLeft <= 0) return clearInterval(interval);
+
+    const particleCount = 50 * (timeLeft / duration);
+    confetti(Object.assign({}, defaults, {
+      particleCount,
+      origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+      colors: [bankColors[selectedBank].color, '#00D084', '#FFD700']
+    }));
+    confetti(Object.assign({}, defaults, {
+      particleCount,
+      origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+      colors: [bankColors[selectedBank].color, '#00D084', '#FFD700']
+    }));
+  }, 250);
 }
 
 async function getLocation() {
@@ -1138,6 +1259,40 @@ async function processTranscript(final) {
 
   detectedUserLang = detectLanguage(normalizedText);
 
+  // BALANCE CHECK
+  if (/balance|money|kudi|owo|ego|account/i.test(normalizedText)) {
+    const mockBalance = 47500;
+    status.innerText = responses[detectedUserLang].balance(mockBalance);
+    speakFemale(responses[detectedUserLang].balance(mockBalance), detectedUserLang);
+    resetMic();
+    return;
+  }
+
+  // TRANSACTION HISTORY
+  if (/history|last|recent|transfers|sent/i.test(normalizedText)) {
+    status.innerText = responses[detectedUserLang].history;
+    speakFemale(responses[detectedUserLang].history, detectedUserLang);
+    resetMic();
+    return;
+  }
+
+  // BANK DETECTION
+  const bankMatch = normalizedText.match(/(gtbank|gtb|access|uba|first bank|zenith|kuda|palmpay|opay)/i);
+  if (bankMatch) {
+    const detectedBank = bankMatch[1].toLowerCase().replace(' ', '');
+    if (bankColors[detectedBank]) {
+      selectedBank = detectedBank;
+      localStorage.setItem('selectedBank', detectedBank);
+      const bankData = bankColors[detectedBank];
+      document.body.className = detectedBank;
+      document.documentElement.style.setProperty('--bank-color', bankData.color);
+      document.documentElement.style.setProperty('--bank-glow', `rgba(${bankData.rgb}, 0.4)`);
+      document.documentElement.style.setProperty('--bank-color-rgb', bankData.rgb);
+      bankBadge.innerText = `${detectedBank.toUpperCase()} Selected`;
+      speakFemale(`${detectedBank.toUpperCase()} selected`, detectedUserLang);
+    }
+  }
+
   try {
     const amountMatch = normalizedText.match(/\b(\d+)\b/);
     if (amountMatch) {
@@ -1159,11 +1314,6 @@ async function processTranscript(final) {
     const accountMatch = normalizedText.match(/\b(\d{10})\b/);
     if (accountMatch) {
       conversationState.account_number = accountMatch[1];
-    }
-
-    const bankMatch = normalizedText.match(/(GTBank|GTB|Access|UBA|First Bank|Zenith|Kuda|Palmpay|Moniepoint)/i);
-    if (bankMatch) {
-      conversationState.bank = bankMatch[1];
     }
 
     if (/airtime|credit/i.test(normalizedText)) conversationState.intent = 'airtime';
@@ -1191,7 +1341,7 @@ async function processTranscript(final) {
         type: conversationState.intent
       });
       const confirmText = conversationState.intent === 'airtime'
-    ? responses[detectedUserLang].confirmAirtime(conversationState.amount, conversationState.recipient)
+       ? responses[detectedUserLang].confirmAirtime(conversationState.amount, conversationState.recipient)
         : responses[detectedUserLang].confirmData(conversationState.amount, conversationState.recipient);
       status.innerText = confirmText;
       speakFemale(confirmText, detectedUserLang);
@@ -1343,7 +1493,7 @@ window.createPayment = async () => {
       amount: conversationState.amount * 100,
       recipient: conversationState.recipient,
       account_number: conversationState.account_number || null,
-      bank: conversationState.bank || null,
+      bank: selectedBank,
       phone: conversationState.phone || null,
       intent: conversationState.intent,
       reference: ref,
@@ -1352,23 +1502,29 @@ window.createPayment = async () => {
       createdAt: serverTimestamp()
     });
 
-    goToMockPayment(conversationState.amount, conversationState.recipient, ref);
+    // SHOW SUCCESS ANIMATION + CONFETTI
+    loadingOpay.classList.remove('show');
+    successAnim.classList.add('show');
+    fireConfetti();
+    speakFemale('Payment successful!', detectedUserLang);
+
+    setTimeout(() => {
+      successAnim.classList.remove('show');
+      resetMic();
+    }, 3000);
 
   } catch (err) {
     console.error('Auth error, using PIN fallback:', err);
     const ref = 'VP-FALLBACK-' + Date.now();
-    goToMockPayment(conversationState.amount, conversationState.recipient, ref);
+    loadingOpay.classList.remove('show');
+    successAnim.classList.add('show');
+    fireConfetti();
+    setTimeout(() => {
+      successAnim.classList.remove('show');
+      resetMic();
+    }, 3000);
   }
 };
-
-function goToMockPayment(amount, recipient, ref) {
-  speakFemale(responses[detectedUserLang].openingPayment(amount, recipient), detectedUserLang);
-  status.innerText = 'Redirecting to payment...';
-  setTimeout(() => {
-    const amountInKobo = amount * 100;
-    window.location.href = `./mock-payment.html?amount=${amountInKobo}&recipient=${encodeURIComponent(recipient)}&ref=${ref}`;
-  }, 1500);
-}
 
 window.resetMic = () => {
   confirmBox.classList.remove('show');
