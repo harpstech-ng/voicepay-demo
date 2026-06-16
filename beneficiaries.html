@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Beneficiaries | VoicePay</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bank-color:#00D084;--bank-glow:rgba(0,208,132,0.4);--bank-color-rgb:0,208,132;--bg:#0A0A0F;--card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.08);--text-muted:#8A8A9E}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(1200px 700px at 50% -15%,var(--bank-glow),transparent 60%),var(--bg);color:white;font-family:'Space Grotesk',sans-serif;padding:24px 16px;min-height:100vh}
+.top-bar{display:flex;align-items:center;gap:16px;margin-bottom:32px}
+.back-btn{background:var(--card);border:1px solid var(--border);width:44px;height:44px;border-radius:12px;font-size:20px;cursor:pointer;color:white}
+h2{font-size:28px;font-weight:800;background:linear-gradient(135deg,#fff 30%,var(--text-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.beneficiary-item{background:var(--card);border:1px solid var(--border);padding:16px;border-radius:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px;transition:all 0.2s;cursor:pointer}
+.beneficiary-item:hover{border-color:var(--bank-color);transform:translateX(4px)}
+.avatar{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--bank-color),#00A866);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;overflow:hidden;flex-shrink:0}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.beneficiary-info{flex:1}
+.beneficiary-name{font-weight:700;font-size:16px;margin-bottom:4px}
+.beneficiary-details{font-size:12px;color:var(--text-muted)}
+.delete-btn{background:rgba(255,59,48,0.2);border:none;color:#ff3b30;width:36px;height:36px;border-radius:10px;cursor:pointer;font-size:18px;flex-shrink:0}
+.add-btn{width:100%;padding:17px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--bank-color),#00A866);color:#000;font-weight:800;font-size:16px;cursor:pointer;margin-top:20px;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 10px 30px var(--bank-glow)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal.show{display:flex}
+.modal-card{background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:24px;width:100%;max-width:400px}
+.modal h3{color:var(--bank-color);margin-bottom:20px;font-size:20px}
+.input-group{margin-bottom:16px}
+.input-group label{font-size:12px;color:var(--text-muted);margin-bottom:6px;display:block;font-weight:600;text-transform:uppercase}
+.input-group input,.input-group select{width:100%;padding:14px 16px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:white;font-size:15px;font-family:'Space Grotesk',sans-serif}
+.input-group input:focus,.input-group select:focus{outline:none;border-color:var(--bank-color)}
+.upload-area{border:2px dashed var(--border);border-radius:50%;width:80px;height:80px;margin:0 auto 16px;cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:all 0.2s}
+.upload-area:hover{border-color:var(--bank-color)}
+.upload-area img{width:100%;height:100%;object-fit:cover}
+.btn{width:100%;padding:17px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--bank-color),#00A866);color:#000;font-weight:800;font-size:16px;cursor:pointer;margin-top:12px}
+.btn:disabled{opacity:0.5}
+.btn.secondary{background:var(--card);color:white;border:1px solid var(--border)}
+.loading{text-align:center;color:var(--text-muted);padding:40px}
+.empty{text-align:center;color:var(--text-muted);padding:60px 20px}
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--bank-color);color:#000;padding:14px 24px;border-radius:12px;font-weight:700;opacity:0;transition:opacity 0.3s;z-index:2000}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <h2>Beneficiaries</h2>
+</div>
+
+<div id="loadingDiv" class="loading">Loading beneficiaries...</div>
+<div id="beneficiariesList"></div>
+
+<button class="add-btn" onclick="openModal()">
+  <span>+</span>
+  <span>Add Beneficiary</span>
+</button>
+
+<!-- Add Beneficiary Modal -->
+<div class="modal" id="benefModal">
+  <div class="modal-card">
+    <h3>Add Beneficiary</h3>
+
+    <div class="upload-area" onclick="uploadPhoto()">
+      <div id="photoPreview">📷</div>
+      <input type="file" id="photoFile" accept="image/*" style="display:none">
+    </div>
+    <p style="text-align:center;font-size:12px;color:var(--text-muted);margin-bottom:16px">Profile Photo Optional</p>
+
+    <div class="input-group">
+      <label>Full Name</label>
+      <input type="text" id="benName" placeholder="John Doe">
+    </div>
+    <div class="input-group">
+      <label>Account Number</label>
+      <input type="text" id="accountNumber" placeholder="0123456789" maxlength="10">
+    </div>
+    <div class="input-group">
+      <label>Bank</label>
+      <select id="bankName">
+        <option value="">Select Bank</option>
+        <option value="GTBank">GTBank</option>
+        <option value="Access Bank">Access Bank</option>
+        <option value="UBA">UBA</option>
+        <option value="First Bank">First Bank</option>
+        <option value="Zenith Bank">Zenith Bank</option>
+        <option value="Kuda">Kuda</option>
+        <option value="Opay">Opay</option>
+        <option value="PalmPay">PalmPay</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label>Nickname <span style="color:var(--text-muted);font-size:11px">(Optional)</span></label>
+      <input type="text" id="nickname" placeholder="My Brother, Boss, etc">
+    </div>
+
+    <button class="btn" id="saveBtn" onclick="saveBeneficiary()">Save Beneficiary</button>
+    <button class="btn secondary" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">Beneficiary saved!</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs, addDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {apiKey:"AIzaSyCe6Gx4tJZ2AIhUWviYFgWhOxnbPoFSd3A",authDomain:"voicepay-harps-tech.firebaseapp.com",projectId:"voicepay-harps-tech",storageBucket:"voicepay-harps-tech.firebasestorage.app",messagingSenderId:"955301626221",appId:"1:955301626221:web:745d7a643b7c0bbbeb9a64"};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// YOUR CLOUDINARY DETAILS
+const CLOUDINARY_CLOUD_NAME = 'dwc2sthsd';
+const CLOUDINARY_UPLOAD_PRESET = 'voicepay_unsigned';
+
+let currentUser = null;
+let photoFile = null;
+
+function speakFemale(text){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-NG';u.pitch=1.4;u.rate=0.9;const voices=speechSynthesis.getVoices();const f=voices.find(v=>v.name.includes('Female')||v.name.includes('Karen'));if(f)u.voice=f;speechSynthesis.speak(u)}
+
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.innerText = msg;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),3000);
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if(!user){window.location.href='./login.html';return}
+  currentUser = user;
+  await loadBeneficiaries();
+});
+
+async function loadBeneficiaries(){
+  const list = document.getElementById('beneficiariesList');
+  try{
+    const q = query(collection(db, 'beneficiaries'), where('userId', '==', currentUser.uid));
+    const snap = await getDocs(q);
+
+    if(snap.empty){
+      list.innerHTML = '<div class="empty">No beneficiaries yet<br>Add one below to send money faster</div>';
+      document.getElementById('loadingDiv').style.display = 'none';
+      return;
+    }
+
+    list.innerHTML = '';
+    snap.forEach(docSnap => {
+      const ben = docSnap.data();
+      const initials = ben.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+      const avatar = ben.photoUrl?
+        `<img src="${ben.photoUrl}">` :
+        initials;
+
+      list.innerHTML += `
+        <div class="beneficiary-item" onclick="selectBeneficiary('${docSnap.id}')">
+          <div class="avatar">${avatar}</div>
+          <div class="beneficiary-info">
+            <div class="beneficiary-name">${ben.nickname || ben.name}</div>
+            <div class="beneficiary-details">${ben.bankName} • ${ben.accountNumber}</div>
+          </div>
+          <button class="delete-btn" onclick="event.stopPropagation(); deleteBeneficiary('${docSnap.id}')">×</button>
+        </div>
+      `;
+    });
+    document.getElementById('loadingDiv').style.display = 'none';
+  }catch(e){
+    console.error(e);
+    list.innerHTML = '<div class="empty">Error loading beneficiaries</div>';
+  }
+}
+
+window.openModal = function(){
+  document.getElementById('benefModal').classList.add('show');
+  speakFemale('Add beneficiary form opened');
+}
+
+window.closeModal = function(){
+  document.getElementById('benefModal').classList.remove('show');
+  document.getElementById('benName').value = '';
+  document.getElementById('accountNumber').value = '';
+  document.getElementById('bankName').value = '';
+  document.getElementById('nickname').value = '';
+  document.getElementById('photoPreview').innerHTML = '📷';
+  photoFile = null;
+}
+
+window.uploadPhoto = function(){document.getElementById('photoFile').click()}
+
+document.getElementById('photoFile').addEventListener('change', function(e){
+  photoFile = e.target.files[0];
+  if(photoFile){
+    const reader = new FileReader();
+    reader.onload = e => document.getElementById('photoPreview').innerHTML = `<img src="${e.target.result}">`;
+    reader.readAsDataURL(photoFile);
+  }
+});
+
+// Format account number
+document.getElementById('accountNumber').addEventListener('input', function(e){
+  e.target.value = e.target.value.replace(/\D/g, '');
+});
+
+async function uploadToCloudinary(file){
+  if(!file) return null;
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  formData.append('folder', `voicepay/beneficiaries/${currentUser.uid}`);
+  formData.append('resource_type', 'image');
+
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+    method: 'POST',
+    body: formData
+  });
+  const data = await res.json();
+  return data.secure_url;
+}
+
+window.saveBeneficiary = async function(){
+  const saveBtn = document.getElementById('saveBtn');
+  const name = document.getElementById('benName').value.trim();
+  const accountNumber = document.getElementById('accountNumber').value;
+  const bankName = document.getElementById('bankName').value;
+  const nickname = document.getElementById('nickname').value.trim();
+
+  if(!name){
+    showToast('Enter full name');
+    speakFemale('Enter full name');
+    return;
+  }
+  if(accountNumber.length!== 10){
+    showToast('Account number must be 10 digits');
+    speakFemale('Account number must be 10 digits');
+    return;
+  }
+  if(!bankName){
+    showToast('Select bank');
+    return;
+  }
+
+  saveBtn.disabled = true;
+  saveBtn.innerText = 'Uploading photo...';
+
+  try{
+    // Upload photo to Cloudinary
+    const photoUrl = await uploadToCloudinary(photoFile);
+
+    saveBtn.innerText = 'Saving...';
+
+    // Save to Firestore
+    await addDoc(collection(db, 'beneficiaries'), {
+      userId: currentUser.uid,
+      name: name,
+      accountNumber: accountNumber,
+      bankName: bankName,
+      nickname: nickname,
+      photoUrl: photoUrl,
+      createdAt: serverTimestamp()
+    });
+
+    showToast('Beneficiary saved!');
+    speakFemale('Beneficiary saved successfully');
+    closeModal();
+    await loadBeneficiaries();
+    saveBtn.disabled = false;
+    saveBtn.innerText = 'Save Beneficiary';
+
+  }catch(e){
+    console.error('Error saving:', e);
+    showToast('Error saving beneficiary');
+    speakFemale('Error saving beneficiary');
+    saveBtn.disabled = false;
+    saveBtn.innerText = 'Save Beneficiary';
+  }
+}
+
+window.deleteBeneficiary = async function(benId){
+  if(!confirm('Delete this beneficiary?')) return;
+  try{
+    await deleteDoc(doc(db, 'beneficiaries', benId));
+    showToast('Beneficiary deleted');
+    speakFemale('Beneficiary deleted');
+    await loadBeneficiaries();
+  }catch(e){
+    showToast('Error deleting');
+  }
+}
+
+window.selectBeneficiary = function(benId){
+  // This will be used later for quick transfer
+  speakFemale('Beneficiary selected');
+  alert('Beneficiary selected! This will prefill transfer form.');
+}
+</script>
+</body>
+</html>
