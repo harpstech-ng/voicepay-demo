@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Settings | VoicePay</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+(function(){
+  const theme = localStorage.getItem('voicepay_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+  const lang = localStorage.getItem('voicepay_lang') || 'en';
+  document.documentElement.setAttribute('data-lang', lang);
+  const voiceSpeed = localStorage.getItem('voicepay_speed') || '0.9';
+  window.VOICE_SPEED = parseFloat(voiceSpeed);
+})();
+</script>
+<style>
+:root{--bank-color:#00D084;--bank-glow:rgba(0,208,132,0.4);--bank-color-rgb:0,208,132;--bg:#0A0A0F;--card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.08);--text-muted:#8A8A9E}
+[data-theme="light"]{--bg:#F8FAFC;--card:rgba(0,0,0,0.04);--border:rgba(0,0,0,0.12);--text-muted:#64748B;--bank-glow:rgba(0,208,132,0.2);color:#0F172A}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(1200px 700px at 50% -15%,var(--bank-glow),transparent 60%),var(--bg);color:white;font-family:'Space Grotesk',sans-serif;padding:24px 16px;min-height:100vh}
+.top-bar{display:flex;align-items:center;gap:16px;margin-bottom:32px}
+.back-btn{background:var(--card);border:1px solid var(--border);width:44px;height:44px;border-radius:12px;font-size:20px;cursor:pointer;color:white}
+h2{font-size:28px;font-weight:800}
+.section{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:16px}
+.section-title{font-size:14px;color:var(--bank-color);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+.setting-row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.setting-label{font-weight:600;font-size:15px}
+.setting-desc{font-size:12px;color:var(--text-muted);margin-top:4px}
+.toggle{background:var(--border);width:52px;height:28px;border-radius:20px;position:relative;cursor:pointer;transition:all 0.3s}
+.toggle.active{background:var(--bank-color)}
+.toggle::after{content:'';position:absolute;width:22px;height:22px;background:white;border-radius:50%;top:3px;left:3px;transition:all 0.3s}
+.toggle.active::after{left:27px}
+.slider-container{width:100%;margin-top:12px}
+.slider{width:100%;height:6px;border-radius:3px;background:var(--border);outline:none;-webkit-appearance:none}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--bank-color);cursor:pointer;border:3px solid var(--bg)}
+.lang-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}
+.lang-btn{padding:16px;background:var(--card);border:2px solid var(--border);border-radius:14px;text-align:center;cursor:pointer;font-weight:600;font-size:14px;transition:all 0.2s}
+.lang-btn.active{border-color:var(--bank-color);background:rgba(var(--bank-color-rgb),0.15);color:var(--bank-color)}
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--bank-color);color:#000;padding:14px 24px;border-radius:12px;font-weight:700;opacity:0;transition:opacity 0.3s;z-index:2000}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <h2>Settings</h2>
+</div>
+
+<!-- Theme -->
+<div class="section">
+  <div class="section-title">Appearance</div>
+  <div class="setting-row">
+    <div>
+      <div class="setting-label">Dark Mode</div>
+      <div class="setting-desc">Toggle light/dark theme</div>
+    </div>
+    <div class="toggle" id="themeToggle" onclick="toggleTheme()"></div>
+  </div>
+</div>
+
+<!-- Voice Speed -->
+<div class="section">
+  <div class="section-title">Voice Settings</div>
+  <div class="setting-row" style="flex-direction:column;align-items:flex-start">
+    <div>
+      <div class="setting-label">Voice Speed</div>
+      <div class="setting-desc">Current: <span id="speedValue">0.9x</span></div>
+    </div>
+    <div class="slider-container">
+      <input type="range" min="0.5" max="1.5" step="0.1" value="0.9" class="slider" id="speedSlider" oninput="updateSpeed(this.value)">
+    </div>
+    <button onclick="testVoice()" style="margin-top:12px;padding:10px 20px;background:var(--bank-color);border:none;border-radius:10px;color:#000;font-weight:700;cursor:pointer">Test Voice</button>
+  </div>
+</div>
+
+<!-- Language - 5 Languages -->
+<div class="section">
+  <div class="section-title">Language</div>
+  <div class="lang-grid">
+    <div class="lang-btn" data-lang="en" onclick="setLang('en')">🇬🇧 English</div>
+    <div class="lang-btn" data-lang="yo" onclick="setLang('yo')">🇳🇬 Yoruba</div>
+    <div class="lang-btn" data-lang="ha" onclick="setLang('ha')">🇳🇬 Hausa</div>
+    <div class="lang-btn" data-lang="ig" onclick="setLang('ig')">🇳🇬 Igbo</div>
+    <div class="lang-btn" data-lang="pcm" onclick="setLang('pcm')">🇳🇬 Pidgin</div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Settings saved!</div>
+
+<script>
+let currentSpeed = parseFloat(localStorage.getItem('voicepay_speed')) || 0.9;
+let currentLang = localStorage.getItem('voicepay_lang') || 'en';
+
+// Load saved theme
+if(localStorage.getItem('voicepay_theme') === 'light'){
+  document.getElementById('themeToggle').classList.add('active');
+}
+
+// Load saved speed
+document.getElementById('speedSlider').value = currentSpeed;
+document.getElementById('speedValue').innerText = currentSpeed + 'x';
+
+// Load saved language
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  if(btn.dataset.lang === currentLang) btn.classList.add('active');
+});
+
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.innerText = msg;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),2000);
+}
+
+function toggleTheme(){
+  const toggle = document.getElementById('themeToggle');
+  toggle.classList.toggle('active');
+
+  const theme = toggle.classList.contains('active')? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('voicepay_theme', theme);
+
+  showToast(theme === 'light'? 'Light mode enabled' : 'Dark mode enabled');
+  speakFemale(theme === 'light'? 'Light mode activated' : 'Dark mode activated');
+}
+
+function updateSpeed(val){
+  currentSpeed = parseFloat(val);
+  document.getElementById('speedValue').innerText = currentSpeed + 'x';
+  localStorage.setItem('voicepay_speed', currentSpeed);
+  window.VOICE_SPEED = currentSpeed;
+}
+
+function testVoice(){
+  speakFemale(getTranslation('voice_test'));
+  showToast('Voice test played');
+}
+
+function setLang(lang){
+  currentLang = lang;
+  localStorage.setItem('voicepay_lang', lang);
+  document.documentElement.setAttribute('data-lang', lang);
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.remove('active');
+    if(btn.dataset.lang === lang) btn.classList.add('active');
+  });
+
+  showToast(getTranslation('lang_saved'));
+  speakFemale(getTranslation('voice_lang_changed'));
+}
+
+// TRANSLATIONS FOR 5 LANGUAGES
+const translations = {
+  en: {
+    voice_test: 'Voice speed test successful',
+    lang_saved: 'Language saved',
+    voice_lang_changed: 'Language changed to English'
+  },
+  yo: {
+    voice_test: 'Idanwo iyara ohun ni o ṣaṣeyọri',
+    lang_saved: 'Ede ti fipamọ',
+    voice_lang_changed: 'Ede ti yipada si Yoruba'
+  },
+  ha: {
+    voice_test: 'Gwajin saurin murya ya yi nasara',
+    lang_saved: 'An ajiye harshe',
+    voice_lang_changed: 'Harshe ya canza zuwa Hausa'
+  },
+  ig: {
+    voice_test: 'Nnwale ọsọ olu gara nke ọma',
+    lang_saved: 'Edebere asụsụ',
+    voice_lang_changed: 'Asụsụ agbanweela ka Igbo'
+  },
+  pcm: {
+    voice_test: 'Voice speed test work well',
+    lang_saved: 'We don save language',
+    voice_lang_changed: 'Language don change to Pidgin'
+  }
+};
+
+function getTranslation(key){
+  return translations[currentLang][key] || translations.en[key];
+}
+
+// UPDATE ALL speakFemale FUNCTIONS TO USE GLOBAL SPEED
+window.speakFemale = function(text){
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = getVoiceLang();
+  u.pitch = 1.4;
+  u.rate = window.VOICE_SPEED; // USES GLOBAL SPEED
+  const voices = speechSynthesis.getVoices();
+  const f = voices.find(v => v.name.includes('Female') || v.name.includes('Karen'));
+  if(f) u.voice = f;
+  speechSynthesis.speak(u);
+}
+
+function getVoiceLang(){
+  const langMap = {en:'en-NG', yo:'yo-NG', ha:'ha-NG', ig:'ig-NG', pcm:'en-NG'};
+  return langMap[currentLang];
+}
+</script>
+</body>
+</html>
