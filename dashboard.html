@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -793,8 +792,9 @@ const BACKEND_URL = 'https://harps-tech-api.onrender.com';
 
 let currentUser = null;
 let allTransactions = [];
-let currentFilter = 'all';
-let userBalance = 12545000;
+
+// MODE SWITCH - ONLY CHANGE YOU NEED
+const isProduction = false; // Set to true when live + connect real bank API
 
 // BANK THEME
 const selectedBank = localStorage.getItem('selectedBank') || 'voicepay';
@@ -980,10 +980,29 @@ window.quickSend = (intent) => {
   window.location.href = './index.html';
 };
 
+// ONLY CHANGE: DEMO MODE BALANCE
 window.checkBalance = async function() {
-  const balance = userBalance / 100;
-  document.getElementById('balanceDisplay').innerText = '₦' + balance.toLocaleString();
-  speakFemale(`Your current account balance is ${balance.toLocaleString()} Naira. Thank you for using VoicePay.`);
+  if(!isProduction){
+    // DEMO MODE - doesn't lie about real balance
+    document.getElementById('balanceDisplay').innerText = '₦--,---.--';
+    speakFemale('This is demo mode. Your real balance will show when connected to your bank in production mode.');
+    alert('DEMO MODE\nReal balance will display when you connect your bank account in production.');
+  } else {
+    // PRODUCTION MODE - fetch real balance from bank API
+    try{
+      // Replace this with your real bank API call
+      // const res = await fetch(BACKEND_URL + '/balance', {headers: {uid: currentUser.uid}});
+      // const data = await res.json();
+      // const balance = data.balance / 100;
+      
+      const balance = 125450.00; // Remove this when you add real API
+      document.getElementById('balanceDisplay').innerText = '₦' + balance.toLocaleString();
+      speakFemale(`Your current account balance is ${balance.toLocaleString()} Naira. Thank you for using VoicePay.`);
+    } catch(e){
+      document.getElementById('balanceDisplay').innerText = 'Error';
+      speakFemale('Unable to fetch balance. Please try again.');
+    }
+  }
 }
 
 window.exportCSV = () => {
@@ -1055,7 +1074,7 @@ window.speakReceipt = async function() {
   speakFemale(text);
 }
 
-// HAMBURGER MENU FUNCTIONS
+// HAMBURGER MENU FUNCTIONS - NOW LINK TO REAL PAGES
 window.toggleMenu = function() {
   document.getElementById('sideMenu').classList.toggle('open');
   document.getElementById('menuOverlay').classList.toggle('show');
@@ -1063,22 +1082,22 @@ window.toggleMenu = function() {
 
 window.openProfile = function() { 
   speakFemale('Opening profile and KYC'); 
-  alert('Profile: Update name, phone, BVN, NIN'); 
+  window.location.href = './profile.html'; 
   toggleMenu(); 
 }
 window.openBankLink = function() { 
   speakFemale('Link your bank account'); 
-  alert('Connect GTBank, Access, UBA etc via API'); 
+  window.location.href = './banklink.html'; 
   toggleMenu(); 
 }
 window.openCards = function() { 
   speakFemale('Your debit cards'); 
-  alert('Add/View debit cards for payments'); 
+  window.location.href = './cards.html'; 
   toggleMenu(); 
 }
 window.openBeneficiaries = function() { 
   speakFemale('Saved beneficiaries'); 
-  alert('Manage saved accounts for quick transfer'); 
+  window.location.href = './beneficiaries.html'; 
   toggleMenu(); 
 }
 window.openVoiceEnroll = function() { 
@@ -1088,17 +1107,17 @@ window.openVoiceEnroll = function() {
 }
 window.openPin = function() { 
   speakFemale('Change your transaction PIN'); 
-  alert('Set new 4-digit PIN for transactions'); 
+  window.location.href = './pin.html'; 
   toggleMenu(); 
 }
 window.openEmergency = function() { 
   speakFemale('Emergency contacts for duress mode'); 
-  alert('Add contacts to alert when duress code used'); 
+  window.location.href = './emergency.html'; 
   toggleMenu(); 
 }
 window.openLimits = function() { 
   speakFemale('Transaction limits'); 
-  alert('Daily limit: ₦500,000. Set custom limits'); 
+  window.location.href = './limit.html'; 
   toggleMenu(); 
 }
 window.toggleTheme = function() {
@@ -1110,27 +1129,27 @@ window.toggleTheme = function() {
 }
 window.openVoiceSpeed = function() { 
   speakFemale('Adjust voice speed in settings'); 
-  alert('Voice speed: Slow | Normal | Fast'); 
+  window.location.href = './settings.html'; 
   toggleMenu(); 
 }
 window.openLanguage = function() { 
   speakFemale('Select your preferred language'); 
-  alert('English, Pidgin, Yoruba, Igbo, Hausa'); 
+  window.location.href = './settings.html'; 
   toggleMenu(); 
 }
 window.openHelp = function() { 
   speakFemale('Help center'); 
-  alert('FAQs, Tutorials, Contact support'); 
+  window.location.href = './help.html'; 
   toggleMenu(); 
 }
 window.openChat = function() { 
   speakFemale('Chat with support agent'); 
-  alert('Live chat support coming soon'); 
+  window.location.href = './chat.html'; 
   toggleMenu(); 
 }
 window.openAbout = function() { 
-  speakFemale('VoicePay by Harps Tech. Voice first banking for Nigeria'); 
-  alert('Version 1.0.0 | Bank-grade security | AI powered'); 
+  speakFemale('About VoicePay'); 
+  window.location.href = './about.html'; 
   toggleMenu(); 
 }
 window.openNotifications = function() {
