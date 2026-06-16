@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Help Center | VoicePay</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+(function(){
+  const theme = localStorage.getItem('voicepay_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
+<style>
+:root{--bank-color:#00D084;--bg:#0A0A0F;--card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.08);--text-muted:#8A8A9E}
+[data-theme="light"]{--bg:#F8FAFC;--card:rgba(0,0,0,0.04);--border:rgba(0,0,0,0.12);--text-muted:#64748B;color:#0F172A}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:white;font-family:'Space Grotesk',sans-serif;padding:24px 16px;min-height:100vh}
+.top-bar{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.back-btn{background:var(--card);border:1px solid var(--border);width:44px;height:44px;border-radius:12px;font-size:20px;cursor:pointer;color:white}
+h2{font-size:28px;font-weight:800}
+.search-box{width:100%;padding:16px;border-radius:14px;border:1px solid var(--border);background:var(--card);color:white;font-size:15px;margin-bottom:24px}
+.faq-item{background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:12px;overflow:hidden}
+.faq-question{padding:18px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600}
+.faq-answer{padding:0 16px;max-height:0;overflow:hidden;transition:all 0.3s;color:var(--text-muted);font-size:14px;line-height:1.6}
+.faq-item.active.faq-answer{padding:0 16px 18px;max-height:200px}
+.contact-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:24px}
+.contact-card{background:var(--card);border:1px solid var(--border);padding:20px;border-radius:16px;text-align:center;cursor:pointer}
+.contact-icon{font-size:32px;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <h2>Help Center</h2>
+</div>
+
+<input type="text" class="search-box" placeholder="Search help articles..." onkeyup="searchFAQ(this.value)">
+
+<div id="faqList">
+  <div class="faq-item">
+    <div class="faq-question" onclick="toggleFAQ(this)">How do I reset my PIN? <span>▼</span></div>
+    <div class="faq-answer">Go to Settings > Security > Change PIN. You'll need your current PIN to set a new one. If you forgot it, contact support.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-question" onclick="toggleFAQ(this)">How does voice payment work? <span>▼</span></div>
+    <div class="faq-answer">Record your voice phrase during enrollment. For transfers, speak your phrase + amount + recipient. VoicePay verifies your voice biometrics before processing.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-question" onclick="toggleFAQ(this)">What are my transaction limits? <span>▼</span></div>
+    <div class="faq-answer">Default: ₦50,000 single, ₦500,000 daily, ₦5,000,000 monthly. You can adjust these in Settings > Transaction Limits.</div>
+  </div>
+</div>
+
+<div class="contact-grid">
+  <div class="contact-card" onclick="location.href='./chat.html'">
+    <div class="contact-icon">💬</div>
+    <div style="font-weight:700">Live Chat</div>
+    <div style="font-size:12px;color:var(--text-muted)">Chat with agent</div>
+  </div>
+
+  <div class="contact-card" onclick="window.open('tel:0800VOICEPAY')">
+    <div class="contact-icon">📞</div>
+    <div style="font-weight:700">Call Us</div>
+    <div style="font-size:12px;color:var(--text-muted)">0800-VOICEPAY</div>
+  </div>
+</div>
+
+<script>
+function toggleFAQ(element){
+  element.parentElement.classList.toggle('active');
+}
+
+function searchFAQ(query){
+  const items = document.querySelectorAll('.faq-item');
+  items.forEach(item => {
+    const text = item.innerText.toLowerCase();
+    item.style.display = text.includes(query.toLowerCase())? 'block' : 'none';
+  });
+}
+
+function speakFemale(text){
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-NG';
+  u.pitch = 1.4;
+  u.rate = window.VOICE_SPEED || 0.9;
+  speechSynthesis.speak(u);
+}
+</script>
+</body>
+</html>
