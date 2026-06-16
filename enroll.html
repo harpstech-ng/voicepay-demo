@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Voice Enrollment | VoicePay</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bank-color:#00D084;--bank-glow:rgba(0,208,132,0.4);--bg:#0A0A0F;--card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.08);--text-muted:#8A8A9E}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(1200px 700px at 50% -15%,var(--bank-glow),transparent 60%),var(--bg);color:white;font-family:'Space Grotesk',sans-serif;padding:24px 16px;min-height:100vh;text-align:center}
+.top-bar{display:flex;align-items:center;gap:16px;margin-bottom:32px;text-align:left}
+.back-btn{background:var(--card);border:1px solid var(--border);width:44px;height:44px;border-radius:12px;font-size:20px;cursor:pointer;color:white;transition:all 0.2s}
+.back-btn:hover{border-color:var(--bank-color)}
+h2{font-size:28px;font-weight:800;background:linear-gradient(135deg,#fff 30%,var(--text-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.status-text{font-size:16px;color:var(--text-muted);margin:20px 0;line-height:1.6}
+.instruction{font-size:18px;font-weight:700;color:var(--bank-color);margin:20px 0}
+.mic-circle{width:200px;height:200px;border-radius:50%;background:linear-gradient(135deg,var(--bank-color),#00A866);margin:60px auto;display:flex;align-items:center;justify-content:center;font-size:80px;cursor:pointer;box-shadow:0 0 120px var(--bank-glow);transition:all 0.3s;position:relative}
+.mic-circle.recording{background:linear-gradient(135deg,#ff3b30,#d62828);animation:pulse 1.5s infinite;box-shadow:0 0 120px rgba(255,59,48,0.6)}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.wave{position:absolute;width:100%;height:100%;border-radius:50%;border:2px solid var(--bank-color);animation:wave 2s infinite}
+@keyframes wave{0%{transform:scale(1);opacity:1}100%{transform:scale(1.5);opacity:0}}
+.progress-bar{width:100%;max-width:300px;height:8px;background:var(--card);border-radius:999px;margin:30px auto;overflow:hidden;border:1px solid var(--border)}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--bank-color),#00A866);width:0%;transition:width 0.5s ease}
+.sample-count{font-size:14px;color:var(--text-muted);margin-bottom:20px}
+.btn{width:100%;max-width:300px;padding:17px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--bank-color),#00A866);color:#000;font-weight:800;font-size:16px;cursor:pointer;margin-top:20px;transition:all 0.2s;box-shadow:0 10px 30px var(--bank-glow)}
+.btn:disabled{opacity:0.5;cursor:not-allowed}
+.btn.secondary{background:var(--card);color:white;border:1px solid var(--border);box-shadow:none}
+.success-icon{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--bank-color),#00A866);margin:60px auto;display:flex;align-items:center;justify-content:center;font-size:50px;animation:success-bounce 0.6s ease}
+@keyframes success-bounce{0%{transform:scale(0)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+.hidden{display:none}
+.upload-progress{font-size:12px;color:var(--text-muted);margin-top:10px}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <h2>Voice Enrollment</h2>
+</div>
+
+<div id="enrollScreen">
+  <p class="instruction" id="instructionText">Say: "My voice is my password"</p>
+  <p class="status-text" id="statusText">Tap microphone and speak clearly for 3 seconds</p>
+  
+  <div class="mic-circle" id="micBtn" onclick="toggleRecording()">
+    <div class="wave"></div>
+    🎤
+  </div>
+
+  <div class="sample-count" id="sampleCount">Sample 0 of 3 recorded</div>
+  
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="upload-progress" id="uploadProgress"></div>
+
+  <button class="btn secondary" onclick="retrySample()" id="retryBtn" style="display:none">Retry Sample</button>
+  <button class="btn hidden" onclick="finishEnrollment()" id="finishBtn">Complete Enrollment</button>
+</div>
+
+<div id="successScreen" class="hidden">
+  <div class="success-icon">✓</div>
+  <h2 style="margin-bottom:12px">Enrollment Complete!</h2>
+  <p class="status-text">Your voice is now your security key</p>
+  <button class="btn" onclick="history.back()">Back to Dashboard</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {apiKey:"AIzaSyCe6Gx4tJZ2AIhUWviYFgWhOxnbPoFSd3A",authDomain:"voicepay-harps-tech.firebaseapp.com",projectId:"voicepay-harps-tech",storageBucket:"voicepay-harps-tech.firebasestorage.app",messagingSenderId:"955301626221",appId:"1:955301626221:web:745d7a643b7c0bbbeb9a64"};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// ⚠️ REPLACE WITH YOUR CLOUDINARY CLOUD NAME
+const CLOUDINARY_CLOUD_NAME = 'dwc2sthsd';
+const CLOUDINARY_UPLOAD_PRESET = 'voicepay_unsigned';
+
+let mediaRecorder;
+let audioChunks = [];
+let sampleCount = 0;
+let isRecording = false;
+let currentUser = null;
+let audioBlobs = [];
+
+const phrases = [
+  "My voice is my password",
+  "VoicePay authenticates my transactions", 
+  "I authorize voice banking with Harps Tech"
+];
+
+function speakFemale(text){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-NG';u.pitch=1.4;u.rate=0.9;const voices=speechSynthesis.getVoices();const f=voices.find(v=>v.name.includes('Female')||v.name.includes('Karen'));if(f)u.voice=f;speechSynthesis.speak(u)}
+
+onAuthStateChanged(auth, (user) => {
+  if(!user){window.location.href='./login.html';return}
+  currentUser = user;
+  speakFemale('Voice enrollment started. Follow instructions');
+});
+
+window.toggleRecording = async function(){
+  if(!isRecording){
+    try{
+      const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+      mediaRecorder = new MediaRecorder(stream, {mimeType: 'audio/webm'});
+      audioChunks = [];
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      mediaRecorder.onstop = saveSample;
+      mediaRecorder.start();
+      isRecording = true;
+      document.getElementById('micBtn').classList.add('recording');
+      document.getElementById('statusText').innerText = 'Recording... Speak clearly for 3 seconds';
+      document.getElementById('retryBtn').style.display = 'none';
+      speakFemale('Recording started');
+      
+      setTimeout(()=>{
+        if(isRecording) toggleRecording();
+      },3000);
+    }catch(e){
+      alert('Microphone access denied. Please allow microphone permission.');
+      speakFemale('Microphone permission required');
+    }
+  } else {
+    mediaRecorder.stop();
+    isRecording = false;
+    document.getElementById('micBtn').classList.remove('recording');
+    document.getElementById('statusText').innerText = 'Processing sample...';
+  }
+}
+
+async function saveSample(){
+  const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+  audioBlobs.push(audioBlob);
+  
+  sampleCount++;
+  document.getElementById('progressFill').style.width = (sampleCount/3)*100 + '%';
+  document.getElementById('sampleCount').innerText = `Sample ${sampleCount} of 3 recorded`;
+  document.getElementById('retryBtn').style.display = 'block';
+  
+  if(sampleCount < 3){
+    document.getElementById('instructionText').innerText = `Say: "${phrases[sampleCount]}"`;
+    document.getElementById('statusText').innerText = 'Great! Tap for next sample';
+    speakFemale('Sample recorded. Next sample');
+  } else {
+    document.getElementById('instructionText').innerText = 'All samples recorded!';
+    document.getElementById('statusText').innerText = 'Tap complete to save your voice to cloud';
+    document.getElementById('finishBtn').classList.remove('hidden');
+    document.getElementById('retryBtn').style.display = 'none';
+    speakFemale('All samples recorded successfully');
+  }
+}
+
+window.retrySample = function(){
+  sampleCount--;
+  audioBlobs.pop();
+  document.getElementById('progressFill').style.width = (sampleCount/3)*100 + '%';
+  document.getElementById('sampleCount').innerText = `Sample ${sampleCount} of 3 recorded`;
+  document.getElementById('instructionText').innerText = `Say: "${phrases[sampleCount]}"`;
+  document.getElementById('statusText').innerText = 'Tap microphone to record again';
+  document.getElementById('retryBtn').style.display = 'none';
+  if(sampleCount < 3) document.getElementById('finishBtn').classList.add('hidden');
+}
+
+window.finishEnrollment = async function(){
+  const finishBtn = document.getElementById('finishBtn');
+  finishBtn.disabled = true;
+  finishBtn.innerText = 'Uploading to Cloudinary...';
+  document.getElementById('statusText').innerText = 'Saving voice samples to cloud storage...';
+
+  try{
+    const cloudinaryUrls = [];
+    
+    // Upload each sample to Cloudinary
+    for(let i=0; i<audioBlobs.length; i++){
+      document.getElementById('uploadProgress').innerText = `Uploading sample ${i+1} of 3...`;
+      
+      const formData = new FormData();
+      formData.append('file', audioBlobs[i]);
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+      formData.append('folder', `voicepay/${currentUser.uid}`);
+      formData.append('resource_type', 'video'); // Cloudinary uses 'video' for audio files
+
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`, {
+        method: 'POST',
+        body: formData
+      });
+      
+      if(!res.ok) throw new Error('Upload failed');
+      
+      const data = await res.json();
+      cloudinaryUrls.push(data.secure_url);
+    }
+
+    document.getElementById('uploadProgress').innerText = 'Saving to database...';
+
+    // Save URLs to Firestore - FREE
+    await updateDoc(doc(db, 'users', currentUser.uid), {
+      voiceEnrolled: true,
+      voiceSamples: cloudinaryUrls,
+      voiceEnrolledAt: serverTimestamp()
+    });
+
+    document.getElementById('uploadProgress').innerText = '';
+    document.getElementById('enrollScreen').classList.add('hidden');
+    document.getElementById('successScreen').classList.remove('hidden');
+    speakFemale('Voice enrollment complete. Your voice is now your security key');
+
+  }catch(e){
+    console.error('Upload error:', e);
+    alert('Error uploading to cloud. Check internet connection and Cloudinary settings.');
+    speakFemale('Error saving voice');
+    finishBtn.disabled = false;
+    finishBtn.innerText = 'Complete Enrollment';
+    document.getElementById('uploadProgress').innerText = '';
+  }
+}
+</script>
+</body>
+</html>
