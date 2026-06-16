@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>My Cards | VoicePay</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bank-color:#00D084;--bank-glow:rgba(0,208,132,0.4);--bank-color-rgb:0,208,132;--bg:#0A0A0F;--card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.08);--text-muted:#8A8A9E}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(1200px 700px at 50% -15%,var(--bank-glow),transparent 60%),var(--bg);color:white;font-family:'Space Grotesk',sans-serif;padding:24px 16px;min-height:100vh}
+.top-bar{display:flex;align-items:center;gap:16px;margin-bottom:32px}
+.back-btn{background:var(--card);border:1px solid var(--border);width:44px;height:44px;border-radius:12px;font-size:20px;cursor:pointer;color:white}
+h2{font-size:28px;font-weight:800;background:linear-gradient(135deg,#fff 30%,var(--text-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.card-item{background:linear-gradient(135deg,rgba(var(--bank-color-rgb),0.15),rgba(var(--bank-color-rgb),0.05));border:1px solid var(--bank-color);padding:20px;border-radius:20px;margin-bottom:16px;position:relative;overflow:hidden}
+.card-item::before{content:'';position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle,var(--bank-glow),transparent 70%);animation:shimmer 3s infinite}
+@keyframes shimmer{0%,100%{transform:rotate(0deg)}50%{transform:rotate(180deg)}}
+.card-number{font-size:18px;font-weight:700;letter-spacing:2px;margin-bottom:12px;position:relative;z-index:2}
+.card-details{display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);position:relative;z-index:2}
+.card-bank{position:absolute;top:20px;right:20px;font-size:24px;z-index:2}
+.delete-btn{position:absolute;top:10px;right:10px;background:rgba(255,59,48,0.2);border:none;color:#ff3b30;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;z-index:3}
+.add-card{background:var(--card);border:2px dashed var(--border);padding:40px 20px;border-radius:20px;text-align:center;cursor:pointer;transition:all 0.3s}
+.add-card:hover{border-color:var(--bank-color);background:rgba(var(--bank-color-rgb),0.05)}
+.add-icon{font-size:48px;color:var(--bank-color);margin-bottom:12px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal.show{display:flex}
+.modal-card{background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:24px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto}
+.modal h3{color:var(--bank-color);margin-bottom:20px;font-size:20px}
+.input-group{margin-bottom:16px}
+.input-group label{font-size:12px;color:var(--text-muted);margin-bottom:6px;display:block;font-weight:600;text-transform:uppercase}
+.input-group input{width:100%;padding:14px 16px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:white;font-size:15px;font-family:'Space Grotesk',sans-serif}
+.input-group input:focus{outline:none;border-color:var(--bank-color)}
+.upload-area{border:2px dashed var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all 0.2s}
+.upload-area:hover{border-color:var(--bank-color)}
+.upload-area img{max-width:100%;max-height:120px;border-radius:8px;margin-top:10px}
+.btn{width:100%;padding:17px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--bank-color),#00A866);color:#000;font-weight:800;font-size:16px;cursor:pointer;margin-top:12px;transition:all 0.2s}
+.btn:disabled{opacity:0.5}
+.btn.secondary{background:var(--card);color:white;border:1px solid var(--border)}
+.loading{text-align:center;color:var(--text-muted);padding:40px}
+.empty{text-align:center;color:var(--text-muted);padding:60px 20px}
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--bank-color);color:#000;padding:14px 24px;border-radius:12px;font-weight:700;opacity:0;transition:opacity 0.3s;z-index:2000}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <h2>My Cards</h2>
+</div>
+
+<div id="loadingDiv" class="loading">Loading cards...</div>
+<div id="cardsList"></div>
+
+<div class="add-card" onclick="openModal()">
+  <div class="add-icon">+</div>
+  <div style="font-weight:700;font-size:16px">Add New Card</div>
+  <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Debit or Credit Card</div>
+</div>
+
+<!-- Add Card Modal -->
+<div class="modal" id="cardModal">
+  <div class="modal-card">
+    <h3>Add Card</h3>
+    <div class="input-group">
+      <label>Card Number</label>
+      <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="input-group">
+        <label>Expiry</label>
+        <input type="text" id="expiry" placeholder="MM/YY" maxlength="5">
+      </div>
+      <div class="input-group">
+        <label>CVV</label>
+        <input type="password" id="cvv" placeholder="***" maxlength="3">
+      </div>
+    </div>
+    <div class="input-group">
+      <label>Cardholder Name</label>
+      <input type="text" id="cardName" placeholder="JOHN DOE">
+    </div>
+    <div class="input-group">
+      <label>Bank</label>
+      <input type="text" id="bankName" placeholder="GTBank, Access, etc">
+    </div>
+
+    <div class="input-group">
+      <label>Card Front Photo <span style="color:var(--text-muted);font-size:11px">(Optional)</span></label>
+      <div class="upload-area" onclick="uploadFront()">
+        <div id="frontPreview">📷 Tap to upload front photo</div>
+        <input type="file" id="frontFile" accept="image/*" style="display:none">
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>Card Back Photo <span style="color:var(--text-muted);font-size:11px">(Optional)</span></label>
+      <div class="upload-area" onclick="uploadBack()">
+        <div id="backPreview">📷 Tap to upload back photo</div>
+        <input type="file" id="backFile" accept="image/*" style="display:none">
+      </div>
+    </div>
+
+    <button class="btn" id="saveBtn" onclick="saveCard()">Save Card</button>
+    <button class="btn secondary" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">Card saved successfully!</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs, addDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {apiKey:"AIzaSyCe6Gx4tJZ2AIhUWviYFgWhOxnbPoFSd3A",authDomain:"voicepay-harps-tech.firebaseapp.com",projectId:"voicepay-harps-tech",storageBucket:"voicepay-harps-tech.firebasestorage.app",messagingSenderId:"955301626221",appId:"1:955301626221:web:745d7a643b7c0bbbeb9a64"};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// YOUR CLOUDINARY DETAILS
+const CLOUDINARY_CLOUD_NAME = 'dwc2sthsd';
+const CLOUDINARY_UPLOAD_PRESET = 'voicepay_unsigned';
+
+let currentUser = null;
+let frontFile = null;
+let backFile = null;
+
+function speakFemale(text){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-NG';u.pitch=1.4;u.rate=0.9;const voices=speechSynthesis.getVoices();const f=voices.find(v=>v.name.includes('Female')||v.name.includes('Karen'));if(f)u.voice=f;speechSynthesis.speak(u)}
+
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.innerText = msg;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),3000);
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if(!user){window.location.href='./login.html';return}
+  currentUser = user;
+  await loadCards();
+});
+
+async function loadCards(){
+  const list = document.getElementById('cardsList');
+  try{
+    const q = query(collection(db, 'cards'), where('userId', '==', currentUser.uid));
+    const snap = await getDocs(q);
+
+    if(snap.empty){
+      list.innerHTML = '<div class="empty">No cards added yet<br>Tap "Add New Card" below</div>';
+      document.getElementById('loadingDiv').style.display = 'none';
+      return;
+    }
+
+    list.innerHTML = '';
+    snap.forEach(docSnap => {
+      const card = docSnap.data();
+      const masked = '**** **** ' + card.last4;
+      list.innerHTML += `
+        <div class="card-item">
+          <button class="delete-btn" onclick="deleteCard('${docSnap.id}')">×</button>
+          <div class="card-bank">💳</div>
+          <div class="card-number">${masked}</div>
+          <div class="card-details">
+            <span>${card.cardName}</span>
+            <span>${card.expiry}</span>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:8px">${card.bankName}</div>
+        </div>
+      `;
+    });
+    document.getElementById('loadingDiv').style.display = 'none';
+  }catch(e){
+    console.error(e);
+    list.innerHTML = '<div class="empty">Error loading cards</div>';
+  }
+}
+
+window.openModal = function(){
+  document.getElementById('cardModal').classList.add('show');
+  speakFemale('Add new card form opened');
+}
+
+window.closeModal = function(){
+  document.getElementById('cardModal').classList.remove('show');
+  document.getElementById('cardNumber').value = '';
+  document.getElementById('expiry').value = '';
+  document.getElementById('cvv').value = '';
+  document.getElementById('cardName').value = '';
+  document.getElementById('bankName').value = '';
+  document.getElementById('frontPreview').innerHTML = '📷 Tap to upload front photo';
+  document.getElementById('backPreview').innerHTML = '📷 Tap to upload back photo';
+  frontFile = null;
+  backFile = null;
+}
+
+window.uploadFront = function(){document.getElementById('frontFile').click()}
+window.uploadBack = function(){document.getElementById('backFile').click()}
+
+document.getElementById('frontFile').addEventListener('change', function(e){
+  frontFile = e.target.files[0];
+  if(frontFile){
+    const reader = new FileReader();
+    reader.onload = e => document.getElementById('frontPreview').innerHTML = `<img src="${e.target.result}">`;
+    reader.readAsDataURL(frontFile);
+  }
+});
+
+document.getElementById('backFile').addEventListener('change', function(e){
+  backFile = e.target.files[0];
+  if(backFile){
+    const reader = new FileReader();
+    reader.onload = e => document.getElementById('backPreview').innerHTML = `<img src="${e.target.result}">`;
+    reader.readAsDataURL(backFile);
+  }
+});
+
+// Format card number
+document.getElementById('cardNumber').addEventListener('input', function(e){
+  let v = e.target.value.replace(/\s/g, '').replace(/\D/g, '');
+  let formatted = v.match(/.{1,4}/g)?.join(' ') || v;
+  e.target.value = formatted;
+});
+
+// Format expiry
+document.getElementById('expiry').addEventListener('input', function(e){
+  let v = e.target.value.replace(/\D/g, '');
+  if(v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2,4);
+  e.target.value = v;
+});
+
+async function uploadToCloudinary(file){
+  if(!file) return null;
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  formData.append('folder', `voicepay/cards/${currentUser.uid}`);
+  formData.append('resource_type', 'image');
+
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+    method: 'POST',
+    body: formData
+  });
+  const data = await res.json();
+  return data.secure_url;
+}
+
+window.saveCard = async function(){
+  const saveBtn = document.getElementById('saveBtn');
+  const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+  const expiry = document.getElementById('expiry').value;
+  const cvv = document.getElementById('cvv').value;
+  const cardName = document.getElementById('cardName').value.trim();
+  const bankName = document.getElementById('bankName').value.trim();
+
+  if(cardNumber.length < 16){
+    showToast('Enter valid card number');
+    speakFemale('Enter valid card number');
+    return;
+  }
+  if(!expiry || expiry.length < 5){
+    showToast('Enter expiry date MM/YY');
+    return;
+  }
+  if(!cardName){
+    showToast('Enter cardholder name');
+    return;
+  }
+
+  saveBtn.disabled = true;
+  saveBtn.innerText = 'Uploading photos...';
+
+  try{
+    // Upload photos to Cloudinary
+    const frontUrl = await uploadToCloudinary(frontFile);
+    const backUrl = await uploadToCloudinary(backFile);
+
+    saveBtn.innerText = 'Saving card...';
+
+    // Save to Firestore - NEVER save full card number or CVV
+    await addDoc(collection(db, 'cards'), {
+      userId: currentUser.uid,
+      last4: cardNumber.slice(-4),
+      expiry: expiry,
+      cardName: cardName.toUpperCase(),
+      bankName: bankName,
+      frontPhoto: frontUrl,
+      backPhoto: backUrl,
+      createdAt: serverTimestamp()
+    });
+
+    showToast('Card added successfully!');
+    speakFemale('Card added successfully');
+    closeModal();
+    await loadCards();
+    saveBtn.disabled = false;
+    saveBtn.innerText = 'Save Card';
+
+  }catch(e){
+    console.error('Error saving card:', e);
+    showToast('Error saving card');
+    speakFemale('Error saving card');
+    saveBtn.disabled = false;
+    saveBtn.innerText = 'Save Card';
+  }
+}
+
+window.deleteCard = async function(cardId){
+  if(!confirm('Delete this card?')) return;
+  try{
+    await deleteDoc(doc(db, 'cards', cardId));
+    showToast('Card deleted');
+    speakFemale('Card deleted');
+    await loadCards();
+  }catch(e){
+    showToast('Error deleting card');
+  }
+}
+</script>
+</body>
+</html>
