@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>About VoicePay | Voice Banking</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+(function(){
+  const theme = localStorage.getItem('voicepay_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
+<style>
+:root{--bank-color:#00D084;--bank-glow:rgba(0,208,132,0.4);--bank-color-rgb:0,208,132;--bg:#0A0A0F;--card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.08);--text-muted:#8A8A9E}
+[data-theme="light"]{--bg:#F8FAFC;--card:rgba(0,0,0,0.04);--border:rgba(0,0,0,0.12);--text-muted:#64748B;--bank-glow:rgba(0,208,132,0.2);color:#0F172A}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(1200px 700px at 50% -15%,var(--bank-glow),transparent 60%),var(--bg);color:white;font-family:'Space Grotesk',sans-serif;padding:24px 16px;min-height:100vh}
+.top-bar{display:flex;align-items:center;gap:16px;margin-bottom:32px}
+.back-btn{background:var(--card);border:1px solid var(--border);width:44px;height:44px;border-radius:12px;font-size:20px;cursor:pointer;color:white}
+h2{font-size:28px;font-weight:800;background:linear-gradient(135deg,#fff 30%,var(--text-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-box{width:100px;height:100px;border-radius:24px;background:linear-gradient(135deg,var(--bank-color),#00A866);display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:800;margin:0 auto 24px;box-shadow:0 20px 40px var(--bank-glow)}
+.desc{color:var(--text-muted);font-size:15px;line-height:1.7;text-align:center;margin-bottom:32px}
+.section{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;margin-bottom:16px}
+.section-title{font-size:16px;font-weight:800;margin-bottom:16px;color:var(--bank-color)}
+.feature{display:flex;gap:16px;margin-bottom:16px}
+.feature-icon{width:48px;height:48px;border-radius:14px;background:rgba(var(--bank-color-rgb),0.15);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.feature-text{flex:1}
+.feature-title{font-weight:700;font-size:15px;margin-bottom:4px}
+.feature-desc{font-size:13px;color:var(--text-muted)}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.stat-box{text-align:center;padding:16px;background:rgba(var(--bank-color-rgb),0.1);border-radius:14px}
+.stat-number{font-size:24px;font-weight:800;color:var(--bank-color)}
+.stat-label{font-size:11px;color:var(--text-muted);margin-top:4px}
+.version{color:var(--text-muted);font-size:12px;text-align:center;margin-top:32px}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <h2>About VoicePay</h2>
+</div>
+
+<div class="logo-box">VP</div>
+
+<p class="desc">
+  VoicePay is Nigeria's first voice-powered banking app. Send money, check balance, and manage your account using just your voice. No typing, no stress.
+</p>
+
+<div class="section">
+  <div class="section-title">Why Choose VoicePay</div>
+  
+  <div class="feature">
+    <div class="feature-icon">🎤</div>
+    <div class="feature-text">
+      <div class="feature-title">Voice Authentication</div>
+      <div class="feature-desc">Your voice is your password. Biometric security with 99.9% accuracy.</div>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="feature-icon">⚡</div>
+    <div class="feature-text">
+      <div class="feature-title">Instant Transfers</div>
+      <div class="feature-desc">Send money in 3 seconds. "Send 5000 to John 0123456789 GTBank"</div>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="feature-icon">🌍</div>
+    <div class="feature-text">
+      <div class="feature-title">5 Local Languages</div>
+      <div class="feature-desc">English, Yoruba, Hausa, Igbo, and Pidgin support.</div>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="feature-icon">🔒</div>
+    <div class="feature-text">
+      <div class="feature-title">Bank-Level Security</div>
+      <div class="feature-desc">256-bit encryption, SHA-256 PIN hashing, CBN compliant.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Our Impact</div>
+  <div class="stats-grid">
+    <div class="stat-box">
+      <div class="stat-number">50K+</div>
+      <div class="stat-label">Users</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number">₦2B+</div>
+      <div class="stat-label">Transferred</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number">99.9%</div>
+      <div class="stat-label">Uptime</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Contact Us</div>
+  <div style="font-size:14px;color:var(--text-muted);line-height:1.6">
+    📧 support@voicepay.ng<br>
+    📞 0800-VOICEPAY<br>
+    📍 Abuja, Federal Capital Territory, Nigeria<br>
+    🌐 www.voicepay.ng
+  </div>
+</div>
+
+<div class="version">VoicePay v1.0.0 | Powered by Harps Tech | © 2026</div>
+
+<script>
+function speakFemale(text){
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-NG';
+  u.pitch = 1.4;
+  u.rate = window.VOICE_SPEED || 0.9;
+  const voices = speechSynthesis.getVoices();
+  const f = voices.find(v => v.name.includes('Female') || v.name.includes('Karen'));
+  if(f) u.voice = f;
+  speechSynthesis.speak(u);
+}
+
+window.onload = () => {
+  setTimeout(() => speakFemale('Welcome to VoicePay. Nigeria first voice banking app'), 1000);
+}
+</script>
+</body>
+</html>
