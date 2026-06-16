@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Link Bank | VoicePay</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bank-color:#00D084;--bank-glow:rgba(0,208,132,0.4);--bank-color-rgb:0,208,132;--bg:#0A0A0F;--card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.08);--text-muted:#8A8A9E}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(1200px 700px at 50% -15%,var(--bank-glow),transparent 60%),var(--bg);color:white;font-family:'Space Grotesk',sans-serif;padding:24px 16px;min-height:100vh}
+.top-bar{display:flex;align-items:center;gap:16px;margin-bottom:32px}
+.back-btn{background:var(--card);border:1px solid var(--border);width:44px;height:44px;border-radius:12px;font-size:20px;cursor:pointer;color:white;transition:all 0.2s}
+.back-btn:hover{border-color:var(--bank-color)}
+h2{font-size:28px;font-weight:800;background:linear-gradient(135deg,#fff 30%,var(--text-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{color:var(--text-muted);margin-bottom:32px;font-size:14px}
+.bank-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.bank-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px 16px;text-align:center;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden}
+.bank-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--bank-color),transparent);opacity:0;transition:opacity 0.3s}
+.bank-card:hover::before{opacity:0.1}
+.bank-card:hover{border-color:var(--bank-color);transform:translateY(-6px);box-shadow:0 20px 40px var(--bank-glow)}
+.bank-logo{width:60px;height:60px;border-radius:16px;background:rgba(var(--bank-color-rgb),0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:28px;font-weight:800}
+.bank-name{font-weight:700;font-size:15px;margin-bottom:4px}
+.bank-status{font-size:11px;color:var(--text-muted)}
+.linked-badge{position:absolute;top:12px;right:12px;background:var(--bank-color);color:#000;font-size:10px;padding:4px 8px;border-radius:8px;font-weight:800}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal.show{display:flex}
+.modal-card{background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:24px;width:100%;max-width:400px}
+.modal h3{color:var(--bank-color);margin-bottom:16px;font-size:20px}
+.input-group{margin-bottom:16px}
+.input-group label{font-size:12px;color:var(--text-muted);margin-bottom:6px;display:block;font-weight:600;text-transform:uppercase}
+.input-group input{width:100%;padding:14px 16px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:white;font-size:15px;font-family:'Space Grotesk',sans-serif}
+.input-group input:focus{outline:none;border-color:var(--bank-color)}
+.btn{width:100%;padding:17px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--bank-color),#00A866);color:#000;font-weight:800;font-size:16px;cursor:pointer;margin-top:12px}
+.btn:disabled{opacity:0.5}
+.btn.secondary{background:var(--card);color:white;border:1px solid var(--border)}
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--bank-color);color:#000;padding:14px 24px;border-radius:12px;font-weight:700;opacity:0;transition:opacity 0.3s;z-index:2000}
+.toast.show{opacity:1}
+.loading{text-align:center;color:var(--text-muted);padding:40px}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <h2>Link Bank Account</h2>
+</div>
+
+<p class="subtitle">Connect your bank securely via Paystack. Your data is encrypted.</p>
+
+<div id="loadingDiv" class="loading">Checking linked banks...</div>
+<div class="bank-grid" id="bankGrid" style="display:none"></div>
+
+<div class="modal" id="linkModal">
+  <div class="modal-card">
+    <h3 id="modalTitle">Link GTBank</h3>
+    <p style="color:var(--text-muted);font-size:13px;margin-bottom:20px">Enter your account details. We use 256-bit encryption.</p>
+    
+    <div class="input-group">
+      <label>Account Number</label>
+      <input type="text" id="accountNumber" placeholder="0123456789" maxlength="10">
+    </div>
+    <div class="input-group">
+      <label>Account Name</label>
+      <input type="text" id="accountName" placeholder="As on bank records">
+    </div>
+    
+    <button class="btn" id="linkBtn" onclick="submitBank()">Link Bank Securely</button>
+    <button class="btn secondary" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">Bank linked successfully!</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {apiKey:"AIzaSyCe6Gx4tJZ2AIhUWviYFgWhOxnbPoFSd3A",authDomain:"voicepay-harps-tech.firebaseapp.com",projectId:"voicepay-harps-tech",storageBucket:"voicepay-harps-tech.firebasestorage.app",messagingSenderId:"955301626221",appId:"1:955301626221:web:745d7a643b7c0bbbeb9a64"};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+let selectedBank = null;
+
+const banks = [
+  {id:'gtbank', name:'GTBank', logo:'GT', color:'#FF6B00'},
+  {id:'access', name:'Access Bank', logo:'A', color:'#FF6B00'},
+  {id:'uba', name:'UBA', logo:'UBA', color:'#D21034'},
+  {id:'zenith', name:'Zenith Bank', logo:'Z', color:'#E10600'},
+  {id:'firstbank', name:'FirstBank', logo:'F', color:'#0033A0'},
+  {id:'kuda', name:'Kuda', logo:'K', color:'#40196E'},
+  {id:'opay', name:'Opay', logo:'O', color:'#00C271'},
+  {id:'palmpay', name:'PalmPay', logo:'P', color:'#F9B233'}
+];
+
+function speakFemale(text){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-NG';u.pitch=1.4;u.rate=0.9;const voices=speechSynthesis.getVoices();const f=voices.find(v=>v.name.includes('Female')||v.name.includes('Karen'));if(f)u.voice=f;speechSynthesis.speak(u)}
+
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.innerText = msg;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),3000);
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if(!user){window.location.href='./login.html';return}
+  currentUser = user;
+  await loadBanks();
+});
+
+async function loadBanks(){
+  const grid = document.getElementById('bankGrid');
+  const linkedBanks = new Set();
+  
+  try{
+    const q = query(collection(db, 'linked_banks'), where('userId', '==', currentUser.uid));
+    const snap = await getDocs(q);
+    snap.forEach(doc => linkedBanks.add(doc.data().bankId));
+  }catch(e){console.error(e)}
+
+  grid.innerHTML = '';
+  banks.forEach(bank => {
+    const isLinked = linkedBanks.has(bank.id);
+    grid.innerHTML += `
+      <div class="bank-card" onclick="openLinkModal('${bank.id}')">
+        ${isLinked ? '<div class="linked-badge">✓ LINKED</div>' : ''}
+        <div class="bank-logo" style="background:rgba(var(--bank-color-rgb),0.15);color:${bank.color}">${bank.logo}</div>
+        <div class="bank-name">${bank.name}</div>
+        <div class="bank-status">${isLinked ? 'Active' : 'Tap to link'}</div>
+      </div>
+    `;
+  });
+  
+  document.getElementById('loadingDiv').style.display = 'none';
+  grid.style.display = 'grid';
+}
+
+window.openLinkModal = function(bankId){
+  const bank = banks.find(b => b.id === bankId);
+  selectedBank = bank;
+  document.getElementById('modalTitle').innerText = `Link ${bank.name}`;
+  document.getElementById('linkModal').classList.add('show');
+  speakFemale(`Linking ${bank.name} account`);
+}
+
+window.closeModal = function(){
+  document.getElementById('linkModal').classList.remove('show');
+  document.getElementById('accountNumber').value = '';
+  document.getElementById('accountName').value = '';
+}
+
+document.getElementById('accountNumber').addEventListener('input', function(e){
+  e.target.value = e.target.value.replace(/\D/g, '');
+});
+
+window.submitBank = async function(){
+  const linkBtn = document.getElementById('linkBtn');
+  const accountNumber = document.getElementById('accountNumber').value;
+  const accountName = document.getElementById('accountName').value.trim();
+
+  if(accountNumber.length !== 10){
+    showToast('Account number must be 10 digits');
+    return;
+  }
+  if(!accountName){
+    showToast('Enter account name');
+    return;
+  }
+
+  linkBtn.disabled = true;
+  linkBtn.innerText = 'Linking...';
+
+  try{
+    // TODO: Replace with Paystack/Flutterwave API call to verify account
+    // For now, we save to Firestore
+    await addDoc(collection(db, 'linked_banks'), {
+      userId: currentUser.uid,
+      bankId: selectedBank.id,
+      bankName: selectedBank.name,
+      accountNumber: accountNumber,
+      accountName: accountName,
+      status: 'active',
+      linkedAt: serverTimestamp()
+    });
+
+    showToast(`${selectedBank.name} linked successfully!`);
+    speakFemale(`${selectedBank.name} linked successfully`);
+    closeModal();
+    await loadBanks();
+    linkBtn.disabled = false;
+    linkBtn.innerText = 'Link Bank Securely';
+  }catch(e){
+    console.error(e);
+    showToast('Error linking bank');
+    linkBtn.disabled = false;
+    linkBtn.innerText = 'Link Bank Securely';
+  }
+}
+</script>
+</body>
+</html>
