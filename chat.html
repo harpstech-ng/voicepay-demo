@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Chat Support | VoicePay</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+(function(){
+  const theme = localStorage.getItem('voicepay_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+  const lang = localStorage.getItem('voicepay_lang') || 'en';
+  document.documentElement.setAttribute('data-lang', lang);
+  const voiceSpeed = localStorage.getItem('voicepay_speed') || '0.9';
+  window.VOICE_SPEED = parseFloat(voiceSpeed);
+})();
+</script>
+<style>
+:root{--bank-color:#00D084;--bank-glow:rgba(0,208,132,0.4);--bg:#0A0A0F;--card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.08);--text-muted:#8A8A9E}
+[data-theme="light"]{--bg:#F8FAFC;--card:rgba(0,0,0,0.04);--border:rgba(0,0,0,0.12);--text-muted:#64748B;--bank-glow:rgba(0,208,132,0.2);color:#0F172A}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:white;font-family:'Space Grotesk',sans-serif;display:flex;flex-direction:column;height:100vh}
+.top-bar{display:flex;align-items:center;gap:16px;padding:20px 16px;border-bottom:1px solid var(--border);background:var(--card)}
+.back-btn{background:transparent;border:none;width:44px;height:44px;font-size:20px;cursor:pointer;color:white}
+h2{font-size:20px;font-weight:800}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#00D084;margin-left:auto;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.status-text{font-size:11px;color:var(--text-muted);margin-left:6px}
+.chat-container{flex:1;overflow-y:auto;padding:20px 16px;display:flex;flex-direction:column;gap:16px}
+.message{max-width:78%;padding:14px 16px;border-radius:18px;font-size:14px;line-height:1.5;animation:slideIn 0.3s;word-wrap:break-word}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px)}}
+.message.user{background:var(--bank-color);color:#000;align-self:flex-end;border-bottom-right-radius:4px}
+.message.bot{background:rgba(var(--bank-color),0.15);border:1px solid var(--bank-color);align-self:flex-start;border-bottom-left-radius:4px}
+.message.agent{background:var(--card);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px}
+.message-time{font-size:10px;color:var(--text-muted);margin-top:6px}
+.sender-label{font-size:10px;font-weight:700;color:var(--bank-color);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.typing-dots{display:flex;gap:4px;padding:8px 0}
+.typing-dots span{width:8px;height:8px;border-radius:50%;background:var(--bank-color);animation:typing 1.4s infinite}
+.typing-dots span:nth-child(2){animation-delay:0.2s}
+.typing-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-10px)}}
+.input-area{padding:16px;border-top:1px solid var(--border);background:var(--card);display:flex;gap:12px}
+.input-area input{flex:1;padding:14px 16px;border-radius:14px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:white;font-size:15px}
+.input-area input:focus{outline:none;border-color:var(--bank-color)}
+.send-btn{width:48px;height:48px;border-radius:14px;background:var(--bank-color);border:none;font-size:20px;cursor:pointer;color:#000}
+.quick-replies{display:flex;gap:8px;overflow-x:auto;padding:0 16px 12px}
+.quick-btn{padding:8px 16px;background:var(--card);border:1px solid var(--border);border-radius:20px;font-size:12px;white-space:nowrap;cursor:pointer}
+.quick-btn:hover{border-color:var(--bank-color)}
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--bank-color);color:#000;padding:14px 24px;border-radius:12px;font-weight:700;opacity:0;transition:opacity 0.3s;z-index:2000}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <h2>VoicePay Support</h2>
+  <div class="status-dot"></div>
+  <div class="status-text">AI Bot Online</div>
+</div>
+
+<div class="chat-container" id="chatContainer"></div>
+
+<div class="quick-replies">
+  <div class="quick-btn" onclick="sendQuick('reset pin')">Reset PIN</div>
+  <div class="quick-btn" onclick="sendQuick('transfer failed')">Transfer Failed</div>
+  <div class="quick-btn" onclick="sendQuick('check balance')">Check Balance</div>
+  <div class="quick-btn" onclick="sendQuick('talk to human')">Talk to Human</div>
+</div>
+
+<div class="input-area">
+  <input type="text" id="messageInput" placeholder="Ask me anything..." onkeypress="if(event.key==='Enter')sendMessage()">
+  <button class="send-btn" onclick="sendMessage()">➤</button>
+</div>
+
+<div class="toast" id="toast">Message sent!</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {apiKey:"AIzaSyCe6Gx4tJZ2AIhUWviYFgWhOxnbPoFSd3A",authDomain:"voicepay-harps-tech.firebaseapp.com",projectId:"voicepay-harps-tech",storageBucket:"voicepay-harps-tech.firebasestorage.app",messagingSenderId:"955301626221",appId:"1:955301626221:web:745d7a643b7c0bbbeb9a64"};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+let conversationContext = [];
+let botInitialized = false;
+
+// SMART AI BRAIN - UNDERSTANDS ANY MESSAGE
+const AI_BRAIN = {
+  intents: [
+    {
+      name: 'greeting',
+      patterns: ['hi', 'hello', 'hey', 'morning', 'afternoon', 'evening'],
+      responses: [
+        "Hi there! 👋 I'm VoicePay AI Assistant. I can help with transfers, PIN, balance, and more. What do you need?",
+        "Hello! Welcome to VoicePay support 😊 How can I assist you today?",
+        "Hey! I'm here to help you 24/7. What's on your mind?"
+      ]
+    },
+    {
+      name: 'pin_issue',
+      patterns: ['pin', 'password', 'reset', 'forgot', 'locked', 'change pin'],
+      responses: [
+        "I can help with your PIN 🔐 Go to Settings > Security > Change PIN.\n\nIf you forgot it, I can verify you and reset it. Say 'talk to human' for instant help.",
+        "PIN issues are common. If locked out after 3 tries, wait 30 mins OR say 'talk to human' and I'll unlock it for you now."
+      ]
+    },
+    {
+      name: 'transfer_issue',
+      patterns: ['transfer', 'send money', 'failed', 'not received', 'debit', 'reversed'],
+      responses: [
+        "Sorry about your transfer 😔 Most failures are due to:\n1. Insufficient balance\n2. Wrong account number\n3. Network timeout\nIf debited but not received, it auto-reverses in 24hrs. Need me to escalate to an agent?",
+        "Transfer problems are stressful. Check your balance first. If money is stuck, say 'talk to human' and our agent will trace it for you."
+      ]
+    },
+    {
+      name: 'balance',
+      patterns: ['balance', 'money', 'how much', 'account'],
+      responses: [
+        "For security, I can't show balance here 💳 Open your dashboard and say 'Check my balance' or tap the Balance card. VoicePay will tell you instantly!",
+        "Check balance in 1 second: Go to Dashboard > Balance. Or use voice command 'What's my balance?'"
+      ]
+    },
+    {
+      name: 'fees',
+      patterns: ['fee', 'charge', 'cost', 'how much', 'cut'],
+      responses: [
+        "VoicePay fees are transparent 💰 ₦10 for transfers under ₦5,000. ₦25 for transfers above ₦5,000. No monthly fees, no hidden charges.",
+        "Only ₦10 or ₦25 per transfer. That's all. No subscription fees ever."
+      ]
+    },
+    {
+      name: 'limits',
+      patterns: ['limit', 'maximum', 'increase', 'daily', 'monthly'],
+      responses: [
+        "Current limits: ₦50,000 per transfer, ₦500,000 daily, ₦5,000,000 monthly.\n\nWant higher limits? Go to Settings > Transaction Limits. BVN verification needed for increases.",
+        "You can adjust limits anytime in Settings > Transaction Limits. Higher limits = more security checks."
+      ]
+    },
+    {
+      name: 'voice_issue',
+      patterns: ['voice', 'microphone', 'speak', 'not hearing', 'mic'],
+      responses: [
+        "Voice problems? Let's fix it 🎤\n1. Allow microphone permission\n2. Speak clearly in quiet place\n3. Test mic in Settings > Voice Settings\nStill stuck? Say 'talk to human' for tech support.",
+        "Try speaking slower and closer to your phone. If voice still fails, our tech team can help. Just say 'talk to human'."
+      ]
+    },
+    {
+      name: 'angry',
+      patterns: ['stupid', 'useless', 'scam', 'thief', 'refund', 'angry', 'bad', 'hate'],
+      responses: [
+        "I'm truly sorry you're upset 😔 You deserve better service. Let me get you a senior agent right now who can fix this faster.",
+        "I understand your frustration. I can't resolve this alone. Transferring you to a human agent immediately..."
+      ],
+      escalate: true
+    },
+    {
+      name: 'thanks',
+      patterns: ['thank', 'thanks', 'grateful', 'helped'],
+      responses: [
+        "You're very welcome! 😊 Happy I could help. Anything else I can do for you?",
+        "Glad to help! VoicePay is always here for you 24/7."
+      ]
+    },
+    {
+      name: 'human',
+      patterns: ['human', 'agent', 'person', 'representative', 'talk to'],
+      responses: [
+        "Connecting you to a human agent now 👨‍💼 Please hold for 1-2 minutes while I transfer your chat history.",
+        "No problem! A real agent will join this chat shortly. Average wait time: 2 minutes."
+      ],
+      escalate: true
+    }
+  ],
+
+  // FALLBACK RESPONSES FOR UNKNOWN MESSAGES
+  fallbacks: [
+    "I want to help you properly 🤝 Could you tell me more? For example: 'reset pin', 'transfer failed', or 'check balance'.",
+    "I'm listening! Tell me what's bothering you. If it's urgent, say 'talk to human' and I'll get you an agent.",
+    "Hmm, I didn't catch that. Try asking about: PIN, transfers, balance, fees, or limits. Or type 'talk to human' for an agent.",
+    "Let me help you better! Can you rephrase that? You can also say 'talk to human' if you need a real person."
+  ],
+
+  // CONTEXTUAL FOLLOW-UPS
+  followUps: {
+    'transfer_issue': "Did your money get debited from your account?",
+    'pin_issue': "Are you locked out or just want to change your PIN?",
+    'voice_issue': "Is your microphone working in other apps?"
+  }
+};
+
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.innerText = msg;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),2000);
+}
+
+function speakFemale(text){
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-NG';
+  u.pitch = 1.4;
+  u.rate = window.VOICE_SPEED;
+  const voices = speechSynthesis.getVoices();
+  const f = voices.find(v => v.name.includes('Female') || v.name.includes('Karen'));
+  if(f) u.voice = f;
+  speechSynthesis.speak(u);
+}
+
+// SMART AI UNDERSTANDING ENGINE
+function understandMessage(userMessage){
+  const msg = userMessage.toLowerCase().trim();
+  conversationContext.push(msg);
+
+  // Check all intents
+  for(let intent of AI_BRAIN.intents){
+    if(intent.patterns.some(p => msg.includes(p))){
+      const response = intent.responses[Math.floor(Math.random() * intent.responses.length)];
+
+      // Add contextual follow-up question
+      let finalResponse = response;
+      if(AI_BRAIN.followUps[intent.name] && Math.random() > 0.5){
+        finalResponse += '\n\n' + AI_BRAIN.followUps[intent.name];
+      }
+
+      return {reply: finalResponse, type: intent.name, escalate: intent.escalate || false};
+    }
+  }
+
+  // NO MATCH FOUND - USE SMART FALLBACK
+  const fallback = AI_BRAIN.fallbacks[Math.floor(Math.random() * AI_BRAIN.fallbacks.length)];
+  return {reply: fallback, type: 'unknown', escalate: false};
+}
+
+function showTyping(){
+  const container = document.getElementById('chatContainer');
+  container.innerHTML += `
+    <div class="message bot" id="typingIndicator">
+      <div class="sender-label">🤖 VoicePay AI</div>
+      <div class="typing-dots">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  `;
+  container.scrollTop = container.scrollHeight;
+}
+
+function removeTyping(){
+  const typing = document.getElementById('typingIndicator');
+  if(typing) typing.remove();
+}
+
+function addMessage(sender, text, time){
+  const container = document.getElementById('chatContainer');
+  const label = sender === 'user'? '' : `<div class="sender-label">${sender === 'bot'? '🤖 VoicePay AI' : '👨‍💼 Support Agent'}</div>`;
+  container.innerHTML += `
+    <div class="message ${sender}">
+      ${label}${text.replace(/\n/g, '<br>')}
+      <div class="message-time">${time}</div>
+    </div>
+  `;
+  container.scrollTop = container.scrollHeight;
+}
+
+function escalateToAgent(){
+  setTimeout(() => {
+    addMessage('agent', 'A human agent has joined the chat 👨‍💼 They can see your full conversation. Please describe your issue in detail.', 'now');
+
+    addDoc(collection(db, 'support_chats'), {
+      userId: currentUser.uid,
+      userEmail: currentUser.email,
+      message: 'ESCALATED_TO_AGENT',
+      sender: 'system',
+      timestamp: serverTimestamp(),
+      context: conversationContext
+    });
+  }, 2000);
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if(!user){window.location.href='./login.html';return}
+  currentUser = user;
+
+  setTimeout(() => {
+    addMessage('bot', 'Hi! I\'m VoicePay AI Assistant 🤖 I understand context and can help with ANY question about your account. Try me! What\'s bothering you?', 'now');
+    botInitialized = true;
+  }, 500);
+
+  loadMessages();
+});
+
+function loadMessages(){
+  const q = query(collection(db, 'support_chats'), where('userId', '==', currentUser.uid), orderBy('timestamp', 'asc'));
+  onSnapshot(q, (snapshot) => {
+    if(!botInitialized) return;
+    snapshot.docChanges().forEach(change => {
+      if(change.type === 'added'){
+        const msg = change.doc.data();
+        if(msg.sender === 'agent' || msg.sender === 'system'){
+          addMessage(msg.sender, msg.message, msg.timestamp?.toDate? new Date(msg.timestamp.toDate()).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : 'now');
+        }
+      }
+    });
+  });
+}
+
+window.sendMessage = async function(){
+  const input = document.getElementById('messageInput');
+  const message = input.value.trim();
+  if(!message) return;
+
+  input.value = '';
+  addMessage('user', message, 'now');
+
+  showTyping();
+
+  // Save to Firestore
+  addDoc(collection(db, 'support_chats'), {
+    userId: currentUser.uid,
+    userEmail: currentUser.email,
+    message: message,
+    sender: 'user',
+    timestamp: serverTimestamp()
+  });
+
+  // AI thinks for 800ms then replies
+  setTimeout(() => {
+    removeTyping();
+    const aiData = understandMessage(message);
+    addMessage('bot', aiData.reply, 'now');
+
+    addDoc(collection(db, 'support_chats'), {
+      userId: currentUser.uid,
+      message: aiData.reply,
+      sender: 'bot',
+      timestamp: serverTimestamp(),
+      intent: aiData.type
+    });
+
+    if(aiData.escalate){
+      escalateToAgent();
+    }
+
+    speakFemale(aiData.reply.split('\n')[0]);
+    showToast('AI replied');
+  }, 800);
+}
+
+window.sendQuick = function(text){
+  document.getElementById('messageInput').value = text;
+  sendMessage();
+}
+</script>
+</body>
+</html>
