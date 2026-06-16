@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Change PIN | VoicePay</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bank-color:#00D084;--bank-glow:rgba(0,208,132,0.4);--bank-color-rgb:0,208,132;--bg:#0A0A0F;--card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.08);--text-muted:#8A8A9E;--danger:#ff3b30}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(1200px 700px at 50% -15%,var(--bank-glow),transparent 60%),var(--bg);color:white;font-family:'Space Grotesk',sans-serif;padding:24px 16px;min-height:100vh}
+.top-bar{display:flex;align-items:center;gap:16px;margin-bottom:32px}
+.back-btn{background:var(--card);border:1px solid var(--border);width:44px;height:44px;border-radius:12px;font-size:20px;cursor:pointer;color:white;transition:all 0.2s}
+.back-btn:hover{border-color:var(--bank-color)}
+h2{font-size:28px;font-weight:800;background:linear-gradient(135deg,#fff 30%,var(--text-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.security-banner{background:rgba(var(--bank-color-rgb),0.1);border:1px solid rgba(var(--bank-color-rgb),0.3);padding:16px;border-radius:14px;margin-bottom:24px;font-size:12px;color:#7FFFCC;line-height:1.5}
+.card{background:var(--card);border:1px solid var(--border);padding:28px 24px;border-radius:20px}
+.input-group{margin-bottom:24px}
+.input-group label{font-size:12px;color:var(--text-muted);margin-bottom:12px;display:block;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.pin-inputs{display:flex;gap:12px;justify-content:center}
+.pin-box{width:60px;height:60px;border:2px solid var(--border);border-radius:16px;background:rgba(255,255,255,0.04);color:white;font-size:28px;font-weight:800;text-align:center;font-family:'Space Grotesk',sans-serif;transition:all 0.2s}
+.pin-box:focus{outline:none;border-color:var(--bank-color);box-shadow:0 0 20px var(--bank-glow);transform:scale(1.05)}
+.pin-box.filled{border-color:var(--bank-color);background:rgba(var(--bank-color-rgb),0.1)}
+.error-text{color:var(--danger);font-size:12px;margin-top:8px;text-align:center;display:none}
+.btn{width:100%;padding:17px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--bank-color),#00A866);color:#000;font-weight:800;font-size:16px;cursor:pointer;margin-top:24px;transition:all 0.2s}
+.btn:disabled{opacity:0.5}
+.btn.secondary{background:var(--card);color:white;border:1px solid var(--border)}
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--bank-color);color:#000;padding:14px 24px;border-radius:12px;font-weight:700;opacity:0;transition:opacity 0.3s;z-index:2000}
+.toast.show{opacity:1}
+.loading{text-align:center;color:var(--text-muted);padding:40px}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <h2>Change PIN</h2>
+</div>
+
+<div class="security-banner">
+  🔒 Your PIN is encrypted with SHA-256. Never share it with anyone including VoicePay staff.
+</div>
+
+<div id="loadingDiv" class="loading">Loading security settings...</div>
+
+<div id="pinContent" style="display:none">
+  <div class="card">
+    <div class="input-group">
+      <label>Current PIN</label>
+      <div class="pin-inputs" id="oldPinInputs"></div>
+      <div class="error-text" id="oldPinError">Incorrect PIN</div>
+    </div>
+
+    <div class="input-group">
+      <label>New PIN</label>
+      <div class="pin-inputs" id="newPinInputs"></div>
+    </div>
+
+    <div class="input-group">
+      <label>Confirm New PIN</label>
+      <div class="pin-inputs" id="confirmPinInputs"></div>
+      <div class="error-text" id="matchError">PINs do not match</div>
+    </div>
+
+    <button class="btn" id="updateBtn" onclick="changePin()">Update PIN</button>
+    <button class="btn secondary" onclick="history.back()">Cancel</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">PIN updated!</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {apiKey:"AIzaSyCe6Gx4tJZ2AIhUWviYFgWhOxnbPoFSd3A",authDomain:"voicepay-harps-tech.firebaseapp.com",projectId:"voicepay-harps-tech",storageBucket:"voicepay-harps-tech.firebasestorage.app",messagingSenderId:"955301626221",appId:"1:955301626221:web:745d7a643b7c0bbbeb9a64"};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+let storedPinHash = null;
+
+function speakFemale(text){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-NG';u.pitch=1.4;u.rate=0.9;const voices=speechSynthesis.getVoices();const f=voices.find(v=>v.name.includes('Female')||v.name.includes('Karen'));if(f)u.voice=f;speechSynthesis.speak(u)}
+
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.innerText = msg;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),3000);
+}
+
+// SHA-256 hash function
+async function hashPin(pin){
+  const msgBuffer = new TextEncoder().encode(pin);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function createPinInputs(containerId, onComplete){
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  const inputs = [];
+
+  for(let i = 0; i < 4; i++){
+    const input = document.createElement('input');
+    input.type = 'password';
+    input.maxLength = 1;
+    input.className = 'pin-box';
+    input.dataset.index = i;
+
+    input.addEventListener('input', (e) => {
+      const val = e.target.value.replace(/\D/g, '');
+      e.target.value = val;
+
+      if(val) {
+        e.target.classList.add('filled');
+        if(i < 3) inputs[i+1].focus();
+      } else {
+        e.target.classList.remove('filled');
+      }
+
+      if(onComplete) onComplete(getPinValue(inputs));
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if(e.key === 'Backspace' &&!e.target.value && i > 0){
+        inputs[i-1].focus();
+        inputs[i-1].value = '';
+        inputs[i-1].classList.remove('filled');
+      }
+    });
+
+    container.appendChild(input);
+    inputs.push(input);
+  }
+
+  inputs[0].focus();
+  return inputs;
+}
+
+function getPinValue(inputs){
+  return inputs.map(i => i.value).join('');
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if(!user){window.location.href='./login.html';return}
+  currentUser = user;
+
+  try{
+    const docSnap = await getDoc(doc(db, 'user_security', currentUser.uid));
+    if(docSnap.exists()){
+      storedPinHash = docSnap.data().pinHash;
+    }
+
+    // Create 3 sets of PIN inputs
+    window.oldPinInputs = createPinInputs('oldPinInputs');
+    window.newPinInputs = createPinInputs('newPinInputs');
+    window.confirmPinInputs = createPinInputs('confirmPinInputs', validateMatch);
+
+    document.getElementById('loadingDiv').style.display = 'none';
+    document.getElementById('pinContent').style.display = 'block';
+  }catch(e){
+    console.error(e);
+  }
+});
+
+function validateMatch(){
+  const newPin = getPinValue(window.newPinInputs);
+  const confirmPin = getPinValue(window.confirmPinInputs);
+  const error = document.getElementById('matchError');
+
+  if(newPin.length === 4 && confirmPin.length === 4){
+    if(newPin!== confirmPin){
+      error.style.display = 'block';
+    } else {
+      error.style.display = 'none';
+    }
+  }
+}
+
+window.changePin = async function(){
+  const updateBtn = document.getElementById('updateBtn');
+  const oldPin = getPinValue(window.oldPinInputs);
+  const newPin = getPinValue(window.newPinInputs);
+  const confirmPin = getPinValue(window.confirmPinInputs);
+
+  document.getElementById('oldPinError').style.display = 'none';
+  document.getElementById('matchError').style.display = 'none';
+
+  if(oldPin.length!== 4){
+    showToast('Enter current PIN');
+    return;
+  }
+  if(newPin.length!== 4){
+    showToast('New PIN must be 4 digits');
+    return;
+  }
+  if(newPin!== confirmPin){
+    document.getElementById('matchError').style.display = 'block';
+    speakFemale('PINs do not match');
+    return;
+  }
+  if(newPin === oldPin){
+    showToast('New PIN must be different');
+    return;
+  }
+
+  updateBtn.disabled = true;
+  updateBtn.innerText = 'Verifying...';
+
+  try{
+    const oldHash = await hashPin(oldPin);
+
+    // If user has existing PIN, verify it
+    if(storedPinHash && oldHash!== storedPinHash){
+      document.getElementById('oldPinError').style.display = 'block';
+      showToast('Current PIN is incorrect');
+      speakFemale('Current PIN is incorrect');
+      updateBtn.disabled = false;
+      updateBtn.innerText = 'Update PIN';
+      return;
+    }
+
+    updateBtn.innerText = 'Updating...';
+    const newHash = await hashPin(newPin);
+
+    await setDoc(doc(db, 'user_security', currentUser.uid), {
+      pinHash: newHash,
+      pinUpdatedAt: serverTimestamp()
+    }, {merge: true});
+
+    showToast('PIN updated successfully!');
+    speakFemale('PIN changed successfully');
+
+    setTimeout(() => history.back(), 1500);
+
+  }catch(e){
+    console.error(e);
+    showToast('Error updating PIN');
+    updateBtn.disabled = false;
+    updateBtn.innerText = 'Update PIN';
+  }
+}
+</script>
+</body>
+</html>
