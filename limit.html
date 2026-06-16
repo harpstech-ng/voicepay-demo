@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Transaction Limits | VoicePay</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bank-color:#00D084;--bank-glow:rgba(0,208,132,0.4);--bank-color-rgb:0,208,132;--bg:#0A0A0F;--card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.08);--text-muted:#8A8A9E}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(1200px 700px at 50% -15%,var(--bank-glow),transparent 60%),var(--bg);color:white;font-family:'Space Grotesk',sans-serif;padding:24px 16px;min-height:100vh}
+.top-bar{display:flex;align-items:center;gap:16px;margin-bottom:32px}
+.back-btn{background:var(--card);border:1px solid var(--border);width:44px;height:44px;border-radius:12px;font-size:20px;cursor:pointer;color:white;transition:all 0.2s}
+.back-btn:hover{border-color:var(--bank-color)}
+h2{font-size:28px;font-weight:800;background:linear-gradient(135deg,#fff 30%,var(--text-muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.info-banner{background:rgba(var(--bank-color-rgb),0.1);border:1px solid rgba(var(--bank-color-rgb),0.3);padding:16px;border-radius:14px;margin-bottom:24px;font-size:13px;color:#7FFFCC;line-height:1.5}
+.limit-card{background:var(--card);border:1px solid var(--border);padding:20px;border-radius:20px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;transition:all 0.3s}
+.limit-card:hover{border-color:var(--bank-color);transform:translateX(6px)}
+.limit-label{font-size:12px;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600}
+.limit-value{font-size:28px;font-weight:800;color:var(--bank-color)}
+.edit-btn{background:rgba(var(--bank-color-rgb),0.15);border:1px solid var(--bank-color);color:var(--bank-color);padding:10px 18px;border-radius:12px;cursor:pointer;font-weight:700;font-size:14px;transition:all 0.2s}
+.edit-btn:hover{background:var(--bank-color);color:#000}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal.show{display:flex}
+.modal-card{background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:24px;width:100%;max-width:400px}
+.modal h3{color:var(--bank-color);margin-bottom:8px;font-size:20px}
+.modal p{color:var(--text-muted);font-size:13px;margin-bottom:20px}
+.input-group{margin-bottom:16px}
+.input-group label{font-size:12px;color:var(--text-muted);margin-bottom:6px;display:block;font-weight:600;text-transform:uppercase}
+.input-group input{width:100%;padding:16px;border-radius:12px;border:2px solid var(--border);background:rgba(255,255,255,0.04);color:white;font-size:24px;font-weight:700;font-family:'Space Grotesk',sans-serif;text-align:center}
+.input-group input:focus{outline:none;border-color:var(--bank-color)}
+.currency{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:24px;font-weight:800;color:var(--bank-color)}
+.input-wrapper{position:relative}
+.btn{width:100%;padding:17px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--bank-color),#00A866);color:#000;font-weight:800;font-size:16px;cursor:pointer;margin-top:12px}
+.btn:disabled{opacity:0.5}
+.btn.secondary{background:var(--card);color:white;border:1px solid var(--border)}
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--bank-color);color:#000;padding:14px 24px;border-radius:12px;font-weight:700;opacity:0;transition:opacity 0.3s;z-index:2000}
+.toast.show{opacity:1}
+.loading{text-align:center;color:var(--text-muted);padding:40px}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <button class="back-btn" onclick="history.back()">←</button>
+  <h2>Transaction Limits</h2>
+</div>
+
+<div class="info-banner">
+  🔒 Set limits to control spending. You can change these anytime. CBN tier limits apply.
+</div>
+
+<div id="loadingDiv" class="loading">Loading limits...</div>
+
+<div id="limitsContent" style="display:none">
+  <div class="limit-card">
+    <div>
+      <div class="limit-label">Single Transaction</div>
+      <div class="limit-value" id="singleLimit">₦50,000</div>
+    </div>
+    <button class="edit-btn" onclick="openModal('single')">Edit</button>
+  </div>
+
+  <div class="limit-card">
+    <div>
+      <div class="limit-label">Daily Limit</div>
+      <div class="limit-value" id="dailyLimit">₦500,000</div>
+    </div>
+    <button class="edit-btn" onclick="openModal('daily')">Edit</button>
+  </div>
+
+  <div class="limit-card">
+    <div>
+      <div class="limit-label">Monthly Limit</div>
+      <div class="limit-value" id="monthlyLimit">₦5,000,000</div>
+    </div>
+    <button class="edit-btn" onclick="openModal('monthly')">Edit</button>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal" id="limitModal">
+  <div class="modal-card">
+    <h3 id="modalTitle">Edit Single Transaction Limit</h3>
+    <p id="modalDesc">Set maximum amount for one transfer</p>
+
+    <div class="input-wrapper">
+      <span class="currency">₦</span>
+      <input type="text" id="limitInput" placeholder="50000">
+    </div>
+    <p style="font-size:11px;color:var(--text-muted);margin-top:8px;text-align:center">Min: ₦1,000 | Max: ₦10,000,000</p>
+
+    <button class="btn" id="saveBtn" onclick="saveLimit()">Update Limit</button>
+    <button class="btn secondary" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">Limit updated!</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {apiKey:"AIzaSyCe6Gx4tJZ2AIhUWviYFgWhOxnbPoFSd3A",authDomain:"voicepay-harps-tech.firebaseapp.com",projectId:"voicepay-harps-tech",storageBucket:"voicepay-harps-tech.firebasestorage.app",messagingSenderId:"955301626221",appId:"1:955301626221:web:745d7a643b7c0bbbeb9a64"};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+let currentType = null;
+let limits = {single: 50000, daily: 500000, monthly: 5000000};
+
+function speakFemale(text){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-NG';u.pitch=1.4;u.rate=0.9;const voices=speechSynthesis.getVoices();const f=voices.find(v=>v.name.includes('Female')||v.name.includes('Karen'));if(f)u.voice=f;speechSynthesis.speak(u)}
+
+function formatAmount(num){
+  return '₦' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.innerText = msg;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),3000);
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if(!user){window.location.href='./login.html';return}
+  currentUser = user;
+  await loadLimits();
+});
+
+async function loadLimits(){
+  try{
+    const docRef = doc(db, 'user_limits', currentUser.uid);
+    const docSnap = await getDoc(docRef);
+
+    if(docSnap.exists()){
+      limits = docSnap.data();
+    }
+
+    document.getElementById('singleLimit').innerText = formatAmount(limits.single);
+    document.getElementById('dailyLimit').innerText = formatAmount(limits.daily);
+    document.getElementById('monthlyLimit').innerText = formatAmount(limits.monthly);
+
+    document.getElementById('loadingDiv').style.display = 'none';
+    document.getElementById('limitsContent').style.display = 'block';
+  }catch(e){
+    console.error(e);
+  }
+}
+
+window.openModal = function(type){
+  currentType = type;
+  const titles = {
+    single: 'Single Transaction Limit',
+    daily: 'Daily Transfer Limit',
+    monthly: 'Monthly Transfer Limit'
+  };
+  const descs = {
+    single: 'Maximum amount for one transfer',
+    daily: 'Maximum total per day',
+    monthly: 'Maximum total per month'
+  };
+
+  document.getElementById('modalTitle').innerText = titles[type];
+  document.getElementById('modalDesc').innerText = descs[type];
+  document.getElementById('limitInput').value = limits[type];
+  document.getElementById('limitModal').classList.add('show');
+  speakFemale(`Editing ${titles[type]}`);
+}
+
+window.closeModal = function(){
+  document.getElementById('limitModal').classList.remove('show');
+  currentType = null;
+}
+
+// Format input with commas
+document.getElementById('limitInput').addEventListener('input', function(e){
+  let value = e.target.value.replace(/\D/g, '');
+  if(value) e.target.value = parseInt(value).toLocaleString();
+});
+
+window.saveLimit = async function(){
+  const saveBtn = document.getElementById('saveBtn');
+  const input = document.getElementById('limitInput').value.replace(/,/g, '');
+  const amount = parseInt(input);
+
+  if(!amount || amount < 1000){
+    showToast('Minimum limit is ₦1,000');
+    return;
+  }
+  if(amount > 10000000){
+    showToast('Maximum limit is ₦10,000,000');
+    return;
+  }
+
+  // Validation: daily >= single, monthly >= daily
+  if(currentType === 'single' && amount > limits.daily){
+    showToast('Single limit cannot exceed daily limit');
+    return;
+  }
+  if(currentType === 'daily' && (amount < limits.single || amount > limits.monthly)){
+    showToast('Daily limit must be between single and monthly');
+    return;
+  }
+  if(currentType === 'monthly' && amount < limits.daily){
+    showToast('Monthly limit cannot be less than daily');
+    return;
+  }
+
+  saveBtn.disabled = true;
+  saveBtn.innerText = 'Saving...';
+
+  try{
+    limits[currentType] = amount;
+
+    await setDoc(doc(db, 'user_limits', currentUser.uid), {
+     ...limits,
+      updatedAt: serverTimestamp()
+    }, {merge: true});
+
+    document.getElementById(currentType + 'Limit').innerText = formatAmount(amount);
+
+    showToast('Limit updated successfully!');
+    speakFemale('Transaction limit updated');
+    closeModal();
+    saveBtn.disabled = false;
+    saveBtn.innerText = 'Update Limit';
+  }catch(e){
+    console.error(e);
+    showToast('Error updating limit');
+    saveBtn.disabled = false;
+    saveBtn.innerText = 'Update Limit';
+  }
+}
+</script>
+</body>
+</html>
