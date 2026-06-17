@@ -619,13 +619,13 @@ h2{
       <div class="username" id="userName">Loading...</div>
       <div class="team">
         <span class="team-dot"></span>
-        <span id="bankLabel">VoicePay Platform</span>
+        <span id="bankLabel">VoicePay</span>
       </div>
     </div>
   </div>
 </div>
 
-<span class="badge" id="bankBadge">VoicePay Platform</span>
+<span class="badge" id="bankBadge">VoicePay</span>
 
 <h2>Dashboard</h2>
 <p class="sub">Voice-authenticated banking powered by AI</p>
@@ -787,7 +787,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const BACKEND_URL = 'https://harps-tech-api.onrender.com';
+const BACKEND_URL = 'https://voicepay-backend-h203.onrender.com';
 
 let currentUser = null;
 let allTransactions = [];
