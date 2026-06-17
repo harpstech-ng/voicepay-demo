@@ -48,7 +48,7 @@ body.opay{--bank-color:#00D084; --bank-glow:rgba(0,208,132,0.4); --bank-color-rg
 body.palmpay{--bank-color:#0052D4; --bank-glow:rgba(0,82,212,0.4); --bank-color-rgb:0,82,212}
 body.voicepay{--bank-color:#00D084; --bank-glow:rgba(0,208,132,0.4); --bank-color-rgb:0,208,132}
 
-*{margin:0;padding:0;box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 
 body{
   background:
@@ -65,7 +65,7 @@ body{
   justify-content:flex-start;
   padding:24px 16px 80px;
   overflow-x:hidden;
-  transition:all 0.5s ease;
+  transition:all 0.3s ease;
 }
 
 .top-bar{
@@ -102,10 +102,7 @@ body{
   box-shadow:0 0 15px var(--bank-glow);
   animation:pulse-dot 2s infinite;
 }
-@keyframes pulse-dot{
- 0%,100%{opacity:1;transform:scale(1)}
- 50%{opacity:0.4;transform:scale(0.8)}
-}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.8)}}
 
 .nav-group{display:flex;gap:10px}
 .nav-btn{
@@ -117,7 +114,7 @@ body{
   font-size:14px;
   font-weight:600;
   cursor:pointer;
-  transition:all 0.25s ease;
+  transition:all 0.2s ease;
   backdrop-filter:blur(15px);
 }
 .nav-btn:hover{
@@ -133,7 +130,8 @@ body{
   margin-top:120px;
   display:flex;
   flex-direction:column;
-  gap:32px;
+  gap:28px;
+  padding-bottom:250px;
 }
 
 .logo-wrap{
@@ -142,46 +140,42 @@ body{
   margin-bottom:0;
 }
 .logo{
-  width:110px;
-  height:110px;
-  border-radius:30px;
-  box-shadow:0 30px 80px var(--bank-glow);
+  width:100px;
+  height:100px;
+  border-radius:28px;
+  box-shadow:0 20px 60px var(--bank-glow);
   border:3px solid rgba(255,255,255,0.12);
 }
 .logo-glow{
   position:absolute;
-  inset:-30px;
+  inset:-25px;
   background:radial-gradient(circle, var(--bank-glow), transparent 70%);
-  filter:blur(40px);
+  filter:blur(30px);
   z-index:-1;
   animation:glow-pulse 3.5s ease-in-out infinite;
 }
-@keyframes glow-pulse{
- 0%,100%{opacity:0.6;transform:scale(0.95)}
- 50%{opacity:1;transform:scale(1.08)}
-}
+@keyframes glow-pulse{0%,100%{opacity:0.6;transform:scale(0.95)}50%{opacity:1;transform:scale(1.05)}}
 
 .badge{
   display:inline-flex;
   align-items:center;
-  gap:10px;
-  padding:10px 20px;
+  gap:8px;
+  padding:8px 16px;
   border-radius:999px;
   background:linear-gradient(135deg, rgba(var(--bank-color-rgb), 0.2), rgba(var(--bank-color-rgb), 0.08));
   border:1px solid var(--bank-color);
   color:var(--bank-color);
-  font-size:14px;
+  font-size:13px;
   font-weight:700;
   margin:0 auto;
   backdrop-filter:blur(15px);
-  box-shadow:0 6px 25px var(--bank-glow);
   letter-spacing:0.5px;
   text-transform:uppercase;
   width:fit-content;
 }
 
 h1{
-  font-size:44px;
+  font-size:40px;
   font-weight:800;
   margin:0;
   background:linear-gradient(135deg, #fff 15%, #9A9AAE 100%);
@@ -192,184 +186,179 @@ h1{
 }
 .sub{
   color:var(--text-muted);
-  font-size:17px;
+  font-size:16px;
   margin:0;
   font-weight:500;
 }
 .bio{
   color:var(--bank-color);
-  font-size:15px;
+  font-size:14px;
   font-weight:700;
   margin:0;
   letter-spacing:0.5px;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:10px;
+  gap:8px;
 }
 
 .mic-section{
   position:relative;
-  margin:40px 0;
+  margin:32px 0;
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:24px;
+  gap:20px;
+  min-height:300px;
 }
 .mic-ring{
   position:absolute;
-  inset:-40px;
-  border:3px solid var(--bank-glow);
+  inset:-30px;
+  border:2px solid var(--bank-glow);
   border-radius:50%;
-  animation:ring-pulse 2.8s ease-out infinite;
+  animation:ring-pulse 2.5s ease-out infinite;
 }
-.mic-ring:nth-child(2){
-  animation-delay:0.6s;
-  opacity:0.5;
-}
-@keyframes ring-pulse{
- 0%{transform:scale(0.8);opacity:1}
- 100%{transform:scale(1.5);opacity:0}
-} /* ← FIXED: Added missing closing brace */
+.mic-ring:nth-child(2){animation-delay:0.5s;opacity:0.5}
+@keyframes ring-pulse{0%{transform:scale(0.8);opacity:1}100%{transform:scale(1.4);opacity:0}}
 
 .mic-btn{
-  width:220px;
-  height:220px;
+  width:200px;
+  height:200px;
   border-radius:50%;
   background:linear-gradient(135deg, var(--bank-color), #00A866);
-  border:4px solid rgba(255,255,255,0.18);
-  font-size:88px;
+  border:3px solid rgba(255,255,255,0.15);
+  font-size:80px;
   cursor:pointer;
-  box-shadow:
-    0 0 120px var(--bank-glow),
-    0 30px 80px rgba(0,0,0,0.55),
-    inset 0 4px 0 rgba(255,255,255,0.3);
-  transition:all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:0 0 80px var(--bank-glow), 0 20px 60px rgba(0,0,0,0.5);
+  transition:all 0.25s ease;
   position:relative;
   z-index:2;
 }
-.mic-btn:active{transform:scale(0.9)}
+.mic-btn:active{transform:scale(0.92)}
 .mic-btn.recording{
   background:linear-gradient(135deg, #ff3b30, #d62828);
-  animation:mic-pulse 1.3s ease-in-out infinite;
-  border-color:rgba(255,255,255,0.25);
+  animation:mic-pulse 1.2s ease-in-out infinite;
 }
-@keyframes mic-pulse{
- 0%,100%{box-shadow:0 0 90px rgba(255,59,48,0.75), 0 30px 80px rgba(0,0,0,0.55)}
- 50%{box-shadow:0 0 140px rgba(255,59,48,1), 0 30px 80px rgba(0,0,0,0.55)}
-}
+@keyframes mic-pulse{0%,100%{box-shadow:0 0 70px rgba(255,59,48,0.7)}50%{box-shadow:0 0 120px rgba(255,59,48,0.9)}}
 
 .transcript-live{
-  min-height:32px;
+  min-height:28px;
   margin-top:0;
-  font-size:16px;
+  font-size:15px;
   color:var(--bank-color);
   font-weight:700;
   font-style:italic;
   opacity:0;
-  transition:opacity 0.35s ease;
-  line-height:1.5;
+  transition:opacity 0.3s ease;
+  line-height:1.4;
 }
 .transcript-live.show{opacity:1}
 .confidence-bar{
   width:100%;
-  max-width:320px;
-  height:5px;
+  max-width:300px;
+  height:4px;
   background:var(--card);
   border-radius:999px;
   margin-top:0;
   overflow:hidden;
   opacity:0;
-  transition:opacity 0.35s ease;
+  transition:opacity 0.3s ease;
 }
 .confidence-bar.show{opacity:1}
 .confidence-fill{
   height:100%;
   background:linear-gradient(90deg, #ff3b30, #ff9500, var(--bank-color));
   border-radius:999px;
-  transition:width 0.5s ease;
+  transition:width 0.4s ease;
 }
+
+/* VOICE SIGNATURE CANVAS - NEW */
+.voice-signature{
+  width:100%;
+  max-width:340px;
+  height:80px;
+  background:rgba(0,0,0,0.3);
+  border:1px solid var(--border);
+  border-radius:12px;
+  margin-top:12px;
+  display:none;
+}
+.voice-signature.show{display:block}
 
 .hint{
   margin:0;
   color:var(--text-muted);
-  font-size:15px;
+  font-size:14px;
   font-style:italic;
-  line-height:1.8;
-  padding:0 24px;
+  line-height:1.6;
+  padding:0 20px;
   font-weight:500;
 }
 
 .status-card{
   margin:0;
-  padding:22px;
-  border-radius:20px;
+  padding:20px;
+  border-radius:18px;
   background:var(--card);
   border:1px solid var(--border);
-  font-size:16px;
-  min-height:64px;
+  font-size:15px;
+  min-height:60px;
   display:flex;
   align-items:center;
   justify-content:center;
-  backdrop-filter:blur(25px);
-  transition:all 0.35s ease;
-  line-height:1.6;
+  backdrop-filter:blur(20px);
+  transition:all 0.3s ease;
+  line-height:1.5;
   font-weight:600;
 }
 .status-card.active{
   border-color:var(--bank-color);
   background:rgba(var(--bank-color-rgb), 0.1);
-  box-shadow:0 10px 35px var(--bank-glow);
+  box-shadow:0 8px 30px var(--bank-glow);
+}
+.status-card.duress{
+  border-color:#ff3b30;
+  background:rgba(255,59,48,0.1);
+  box-shadow:0 8px 30px rgba(255,59,48,0.3);
 }
 
 .confirm-box{
   margin:0;
   display:none;
-  gap:16px;
-  animation:slide-up 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  gap:14px;
+  animation:slide-up 0.4s ease;
 }
 .confirm-box.show{display:flex}
-@keyframes slide-up{
-  from{opacity:0;transform:translateY(18px)}
-  to{opacity:1;transform:translateY(0)}
-}
+@keyframes slide-up{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
 
 .btn{
   flex:1;
-  padding:20px;
-  border-radius:18px;
+  padding:18px;
+  border-radius:16px;
   border:none;
-  font-size:17px;
+  font-size:16px;
   font-weight:800;
   cursor:pointer;
-  transition:all 0.25s ease;
+  transition:all 0.2s ease;
   font-family:'Space Grotesk', sans-serif;
-  letter-spacing:0.3px;
 }
 .btn-confirm{
   background:linear-gradient(135deg, var(--bank-color), #00A866);
   color:#000;
-  box-shadow:0 14px 40px var(--bank-glow);
+  box-shadow:0 12px 35px var(--bank-glow);
 }
-.btn-confirm:hover{
-  transform:translateY(-4px);
-  box-shadow:0 20px 55px var(--bank-glow);
-}
+.btn-confirm:hover{transform:translateY(-3px)}
 .btn-cancel{
   background:var(--card);
   color:white;
   border:1px solid var(--border);
-  backdrop-filter:blur(15px);
 }
-.btn-cancel:hover{
-  background:var(--card-hover);
-  border-color:rgba(255,255,255,0.18);
-}
+.btn-cancel:hover{background:var(--card-hover)}
 
 .loading-opay{
   display:none;
   margin:0;
-  font-size:15px;
+  font-size:14px;
   color:var(--text-muted);
   font-weight:600;
 }
@@ -377,15 +366,15 @@ h1{
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:12px;
+  gap:10px;
 }
 .spinner{
-  width:20px;
-  height:20px;
-  border:3px solid var(--border);
+  width:18px;
+  height:18px;
+  border:2px solid var(--border);
   border-top-color:var(--bank-color);
   border-radius:50%;
-  animation:spin 0.8s linear infinite;
+  animation:spin 0.7s linear infinite;
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
@@ -402,81 +391,71 @@ h1{
 }
 .success-animation.show{display:flex}
 .checkmark{
-  width:120px;
-  height:120px;
+  width:100px;
+  height:100px;
   border-radius:50%;
   background:linear-gradient(135deg, var(--bank-color), #00A866);
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:60px;
-  animation:scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  font-size:50px;
+  animation:scaleIn 0.5s ease;
 }
-@keyframes scaleIn{
- 0%{transform:scale(0) rotate(-180deg)}
- 100%{transform:scale(1) rotate(0deg)}
-}
+@keyframes scaleIn{0%{transform:scale(0)}100%{transform:scale(1)}}
 .success-text{
-  margin-top:24px;
-  font-size:24px;
+  margin-top:20px;
+  font-size:22px;
   font-weight:800;
   color:var(--bank-color);
-  animation:fadeInUp 0.6s 0.3s both;
+  animation:fadeInUp 0.5s 0.2s both;
 }
-@keyframes fadeInUp{
-  from{opacity:0;transform:translateY(20px)}
-  to{opacity:1;transform:translateY(0)}
-}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
 
 .footer{
-  margin-top:40px;
+  margin-top:32px;
   text-align:center;
-  font-size:13px;
+  font-size:12px;
   color:var(--text-muted);
   font-weight:600;
-  letter-spacing:1px;
 }
 .footer.security{
   display:inline-flex;
   align-items:center;
-  gap:10px;
+  gap:8px;
   color:#888;
-  margin-bottom:10px;
-  padding:12px 20px;
+  margin-bottom:8px;
+  padding:10px 16px;
   background:var(--card);
   border-radius:999px;
   border:1px solid var(--border);
-  backdrop-filter:blur(15px);
-  font-weight:700;
 }
 
 .manual-input-box{
   margin:0;
-  padding:22px;
-  border-radius:18px;
+  padding:20px;
+  border-radius:16px;
   background:var(--card);
   border:1px solid var(--border);
   display:none;
-  animation:slide-up 0.45s ease;
+  animation:slide-up 0.4s ease;
 }
 .manual-input-box.show{display:block}
 .manual-input-box h4{
   color:var(--bank-color);
-  font-size:15px;
-  margin-bottom:14px;
+  font-size:14px;
+  margin-bottom:12px;
   font-weight:700;
 }
 .manual-input-box input{
   width:100%;
-  padding:16px;
-  border-radius:14px;
+  padding:14px;
+  border-radius:12px;
   border:1px solid var(--border);
   background:rgba(255,255,255,0.04);
   color:white;
-  font-size:17px;
-  margin-bottom:14px;
+  font-size:16px;
+  margin-bottom:12px;
   font-family:'Space Grotesk', sans-serif;
-  font-weight:500;
 }
 .manual-input-box input:focus{
   outline:none;
@@ -485,100 +464,16 @@ h1{
 }
 .manual-submit{
   width:100%;
-  padding:16px;
-  border-radius:14px;
+  padding:14px;
+  border-radius:12px;
   border:none;
   background:var(--bank-color);
   color:#000;
   font-weight:800;
-  font-size:16px;
+  font-size:15px;
   cursor:pointer;
-  letter-spacing:0.5px;
 }
 
-.about-btn{
-  position:fixed;
-  bottom:24px;
-  left:24px;
-  background:rgba(255,255,255,0.98);
-  border:none;
-  padding:12px 20px;
-  border-radius:16px;
-  font-size:14px;
-  font-weight:800;
-  color:#000;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  box-shadow:0 8px 25px rgba(0,0,0,0.18);
-  z-index:100;
-  transition:all 0.25s;
-}
-.about-btn:hover{transform:translateY(-3px)}
-.modal-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.85);
-  backdrop-filter:blur(25px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:1000;
-  padding:20px;
-}
-.modal-overlay.show{display:flex}
-.modal-content{
-  background:linear-gradient(135deg, #0a0a0a, #151515);
-  border-radius:26px;
-  max-width:520px;
-  width:100%;
-  border:1px solid var(--border);
-  animation:modal-pop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-@keyframes modal-pop{
-  from{opacity:0;transform:scale(0.9)}
-  to{opacity:1;transform:scale(1)}
-}
-.modal-header{
-  padding:28px 28px 18px;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.modal-header h3{margin:0;font-size:22px;font-weight:800}
-.close-btn{
-  background:none;
-  border:none;
-  font-size:32px;
-  cursor:pointer;
-  color:var(--text-muted);
-  line-height:1;
-  transition:0.25s;
-}
-.close-btn:hover{color:var(--bank-color);transform:rotate(90deg)}
-.modal-body{padding:28px}
-.modal-body p{color:#e0e0e0;margin-bottom:14px;line-height:1.7;font-size:15px}
-.modal-body strong{color:var(--bank-color)}
-.lang-grid{
-  display:grid;
-  grid-template-columns:repeat(5, 1fr);
-  gap:10px;
-  margin:18px 0;
-}
-.lang-item{
-  text-align:center;
-  padding:12px 6px;
-  background:rgba(var(--bank-color-rgb), 0.12);
-  border-radius:10px;
-  font-size:13px;
-  font-weight:800;
-  color:var(--bank-color);
-  letter-spacing:0.5px;
-}
-
-/* NEW: REAL USSD SIMULATOR */
 .ussd-modal{
   display:none;
   position:fixed;
@@ -591,50 +486,32 @@ h1{
 }
 .ussd-modal.show{display:flex}
 
-/* NEW: OFFLINE INDICATOR */
 .offline-badge{
   display:none;
   position:fixed;
-  top:80px;
-  right:20px;
+  top:70px;
+  right:16px;
   background:rgba(255,59,48,0.9);
   color:white;
-  padding:8px 16px;
+  padding:6px 12px;
   border-radius:999px;
-  font-size:12px;
+  font-size:11px;
   font-weight:700;
   z-index:99;
 }
-.offline-badge.show{display:flex;align-items:center;gap:6px}
+.offline-badge.show{display:flex;align-items:center;gap:5px}
 
-/* NEW: VOICE COMMANDS LIST */
-.commands-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:20px;
-}
-.command-item{
-  background:rgba(var(--bank-color-rgb), 0.08);
-  border:1px solid rgba(var(--bank-color-rgb), 0.2);
-  padding:12px;
-  border-radius:10px;
-  font-size:12px;
-  text-align:left;
-}
-
-/* NEW: RECENT RECIPIENTS */
 .recent-grid{
   display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:10px;
-  margin-top:15px;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-top:12px;
 }
 .recent-item{
   background:var(--card);
   border:1px solid var(--border);
-  border-radius:12px;
-  padding:12px 8px;
+  border-radius:10px;
+  padding:10px 6px;
   text-align:center;
   cursor:pointer;
   transition:all 0.2s;
@@ -643,33 +520,100 @@ h1{
   border-color:var(--bank-color);
   transform:translateY(-2px);
 }
-.recent-icon{
-  font-size:24px;
-  margin-bottom:4px;
-}
-.recent-name{
-  font-size:11px;
-  color:var(--text-muted);
-}
+.recent-icon{font-size:22px;margin-bottom:3px}
+.recent-name{font-size:10px;color:var(--text-muted)}
 
 @media(max-width:400px){
-  .mic-btn{width:180px;height:180px;font-size:70px}
-  h1{font-size:36px}
-} /* ← FIXED: Added missing closing brace */
+  .mic-btn{width:160px;height:160px;font-size:60px}
+  h1{font-size:32px}
+  .voice-signature{max-width:280px;height:60px}
+}
+
+/* PIN MODAL - FIXED FOR IPHONE SAFARI */
+.pin-modal{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:linear-gradient(180deg, #0a0a0a, #000);
+  border-top:2px solid var(--bank-color);
+  border-radius:32px 32px 0 0;
+  padding:24px 20px 40px;
+  z-index:10001;
+  transition:transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter:blur(40px);
+  box-shadow:0 -30px 80px rgba(0,0,0,0.9);
+  transform:translateY(100%); /* HIDDEN BY DEFAULT */
+  visibility:hidden; /* SAFARI FIX */
+}
+.pin-modal.show{
+  transform:translateY(0);
+  visibility:visible;
+}
+.pin-handle{
+  width:40px;
+  height:4px;
+  background:var(--border);
+  border-radius:2px;
+  margin:0 auto 20px;
+}
+.pin-display{
+  font-size:32px;
+  letter-spacing:12px;
+  text-align:center;
+  margin-bottom:24px;
+  font-weight:800;
+  color:var(--bank-color);
+}
+.pin-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+  max-width:300px;
+  margin:0 auto;
+}
+.pin-btn{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--border);
+  color:white;
+  font-size:28px;
+  font-weight:700;
+  cursor:pointer;
+  transition:all 0.15s;
+}
+.pin-btn:active{
+  background:var(--bank-color);
+  color:#000;
+  transform:scale(0.9);
+}
+.pin-voice-btn{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  background:var(--bank-color);
+  border:none;
+  color:#000;
+  font-size:24px;
+  cursor:pointer;
+  margin:20px auto 0;
+  display:block;
+}
 </style>
 </head>
 <body>
-<div class="offline-badge" id="offlineBadge">📵 Offline Mode</div>
+<div class="offline-badge" id="offlineBadge">📵 Offline</div>
 
 <div class="top-bar">
   <div class="team">
     <span class="team-dot"></span>
-    VoicePay Platform
+    VoicePay
   </div>
   <div class="nav-group">
     <button class="nav-btn" onclick="goDashboard()">Dashboard</button>
     <button class="nav-btn" onclick="showUSSD()">*347# USSD</button>
-    <button class="nav-btn" onclick="logout()">Logout</button>
   </div>
 </div>
 
@@ -682,8 +626,8 @@ h1{
   <span class="badge" id="bankBadge">VoicePay Platform</span>
 
   <h1>Speak Your Payment</h1>
-  <p class="sub">Voice-authenticated banking powered by AI</p>
-  <p class="bio">🎤 Tap mic and speak naturally in English, Yoruba, Hausa, Igbo or Pidgin</p>
+  <p class="sub">Voice banking in your language</p>
+  <p class="bio">🎤 Tap mic → Speak in English, Yoruba, Hausa, Igbo, Pidgin</p>
 
   <div class="mic-section">
     <div class="mic-ring"></div>
@@ -693,130 +637,97 @@ h1{
     <div class="confidence-bar" id="confidenceBar">
       <div class="confidence-fill" id="confidenceFill"></div>
     </div>
+    <!-- VOICE SIGNATURE CANVAS -->
+    <canvas class="voice-signature" id="voiceCanvas" width="340" height="80"></canvas>
   </div>
 
-  <p class="hint">"Send 5k to Seyi" • "What's my balance" • "Use GTBank" • "Buy 2k airtime for Mama"</p>
+  <p class="hint">"Send 5k to John" • "Buy 2k airtime for Mama" • "Send 1 naira to police" for duress</p>
   <div class="status-card" id="status">Tap the mic to start speaking</div>
 
-  <!-- RECENT RECIPIENTS -->
-  <div class="card" style="padding:20px">
-    <h3 style="margin-bottom:12px">Recent Recipients</h3>
+  <div class="card" style="padding:16px">
+    <h3 style="margin-bottom:10px;font-size:13px">Recent Recipients</h3>
     <div class="recent-grid" id="recentGrid"></div>
   </div>
 
-  <!-- VOICE COMMANDS REFERENCE -->
-  <div class="card" style="padding:20px">
-    <h3 style="margin-bottom:12px">Voice Commands</h3>
-    <div class="commands-grid">
-      <div class="command-item">Send 5000 to John</div>
-      <div class="command-item">Buy 2k airtime for Mama</div>
-      <div class="command-item">What's my balance</div>
-      <div class="command-item">Use Access Bank</div>
-      <div class="command-item">Show last 3 transfers</div>
-      <div class="command-item">Cancel payment</div>
-    </div>
-  </div>
-
   <div class="manual-input-box" id="manualInputBox">
-    <h4 id="manualInputTitle">Enter Details Manually</h4>
+    <h4 id="manualInputTitle">Enter Details</h4>
     <input type="text" id="manualInput" placeholder="Type here...">
     <button class="manual-submit" onclick="submitManualInput()">Submit</button>
   </div>
 
   <div class="confirm-box" id="confirmBox">
-    <button class="btn btn-confirm" onclick="createPayment()">Confirm & Pay</button>
+    <button class="btn btn-confirm" onclick="requestPIN()">Confirm & Pay</button>
     <button class="btn btn-cancel" onclick="resetMic()">Cancel</button>
   </div>
 
   <div class="loading-opay" id="loadingOpay">
     <div class="spinner"></div>
-    Verifying voice and processing payment...
+    Processing payment...
   </div>
 
   <div class="footer">
-    <div class="security">🔒 Bank-Grade Security | Harps Tech | Offline USSD Ready</div>
-    <div>© 2026 HARPS TECH. ALL RIGHTS RESERVED.</div>
+    <div class="security">🔒 Bank-Grade Security | Harps Tech</div>
+    <div>© 2026 HARPS TECH</div>
   </div>
 </div>
 
-<!-- SUCCESS ANIMATION -->
 <div class="success-animation" id="successAnim">
   <div class="checkmark">✓</div>
   <div class="success-text">Payment Sent!</div>
 </div>
 
-<!-- NEW: REAL USSD SIMULATOR -->
 <div class="ussd-modal" id="ussdModal">
-  <div style="background:#000;border-radius:30px;padding:20px;max-width:320px;width:100%;box-shadow:0 0 60px var(--bank-glow)">
-    <!-- Network bar -->
-    <div style="color:#0f0;font-size:11px;margin-bottom:10px;display:flex;justify-content:space-between;font-family:monospace">
-      <span>MTN NG</span>
-      <span>4G LTE</span>
-      <span id="ussdTime">12:34</span>
+  <div style="background:#000;border-radius:24px;padding:16px;max-width:300px;width:100%">
+    <div style="color:#0f0;font-size:10px;margin-bottom:8px;display:flex;justify-content:space-between;font-family:monospace">
+      <span>MTN NG</span><span>4G</span><span id="ussdTime">12:34</span>
     </div>
-    
-    <!-- USSD Screen -->
-    <div id="ussdContent" style="background:#000;color:#0f0;font-family:monospace;font-size:13px;min-height:200px;padding:15px;white-space:pre-line;line-height:1.6;border:1px solid #0f0">
+    <div id="ussdContent" style="background:#000;color:#0f0;font-family:monospace;font-size:12px;min-height:180px;padding:12px;white-space:pre-line;line-height:1.5;border:1px solid #0f0">
       Connecting...
     </div>
-    
-    <!-- Fake keypad -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px">
-      <button onclick="ussdPress('1')" style="padding:15px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;cursor:pointer">1</button>
-      <button onclick="ussdPress('2')" style="padding:15px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;cursor:pointer">2</button>
-      <button onclick="ussdPress('3')" style="padding:15px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;cursor:pointer">3</button>
-      <button onclick="ussdPress('4')" style="padding:15px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;cursor:pointer">4</button>
-      <button onclick="ussdPress('5')" style="padding:15px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;cursor:pointer">5</button>
-      <button onclick="ussdPress('6')" style="padding:15px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;cursor:pointer">6</button>
-      <button onclick="ussdPress('7')" style="padding:15px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;cursor:pointer">7</button>
-      <button onclick="ussdPress('8')" style="padding:15px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;cursor:pointer">8</button>
-      <button onclick="ussdPress('9')" style="padding:15px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;cursor:pointer">9</button>
-      <button onclick="ussdPress('*')" style="padding:15px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;cursor:pointer">*</button>
-      <button onclick="ussdPress('0')" style="padding:15px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;cursor:pointer">0</button>
-      <button onclick="ussdPress('#')" style="padding:15px;background:#ff3333;color:#fff;border:1px solid #ff3333;border-radius:8px;font-size:18px;font-family:monospace;font-weight:700;cursor:pointer">SEND</button>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px">
+      <button onclick="ussdPress('1')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">1</button>
+      <button onclick="ussdPress('2')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">2</button>
+      <button onclick="ussdPress('3')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">3</button>
+      <button onclick="ussdPress('4')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">4</button>
+      <button onclick="ussdPress('5')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">5</button>
+      <button onclick="ussdPress('6')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">6</button>
+      <button onclick="ussdPress('7')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">7</button>
+      <button onclick="ussdPress('8')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">8</button>
+      <button onclick="ussdPress('9')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">9</button>
+      <button onclick="ussdPress('*')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">*</button>
+      <button onclick="ussdPress('0')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">0</button>
+      <button onclick="ussdPress('#')" style="padding:12px;background:#ff3333;color:#fff;border:1px solid #ff3333;border-radius:6px;font-size:16px;font-family:monospace;font-weight:700">SEND</button>
     </div>
-    
-    <button onclick="closeUSSD()" style="width:100%;margin-top:10px;padding:10px;background:#222;color:#fff;border:1px solid #555;border-radius:8px;cursor:pointer">Cancel</button>
+    <button onclick="closeUSSD()" style="width:100%;margin-top:8px;padding:8px;background:#222;color:#fff;border:1px solid #555;border-radius:6px">Cancel</button>
   </div>
 </div>
 
-<button class="about-btn" onclick="showAbout()">
-  <svg fill="currentColor" viewBox="0 0 20 20" width="18"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"/></svg>
-  About
-</button>
-
-<div class="modal-overlay" id="aboutModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3>VoicePay Platform v2.0</h3>
-      <button class="close-btn" onclick="closeAbout()">&times;</button>
-    </div>
-    <div class="modal-body">
-      <p><strong>Banking for everyone, in every Nigerian language.</strong></p>
-      <p>40M Nigerians are excluded from mobile banking. VoicePay fixes that. Speak to send money, buy airtime, pay bills. No reading required. No typing needed.</p>
-      <p><strong>New Features:</strong></p>
-      <p>✓ Firebase sync - Bank choice follows you everywhere<br>
-      ✓ Real USSD *347# Simulator - Works offline<br>
-      ✓ Voice PIN protection<br>
-      ✓ Recent recipients<br>
-      ✓ Multi-language voice AI<br>
-      ✓ Duress mode for safety</p>
-      <div class="lang-grid">
-        <div class="lang-item">ENGLISH</div>
-        <div class="lang-item">YORUBA</div>
-        <div class="lang-item">HAUSA</div>
-        <div class="lang-item">IGBO</div>
-        <div class="lang-item">PIDGIN</div>
-      </div>
-      <p style="font-size:13px;color:#666;margin-top:20px;letter-spacing:0.5px">VOICEPAY PLATFORM BY HARPS TECH. SECURE. FAST. ACCESSIBLE.</p>
-    </div>
+<!-- PIN MODAL - SLIDE UP -->
+<div class="pin-modal" id="pinModal">
+  <div class="pin-handle"></div>
+  <div class="pin-display" id="pinDisplay">••••</div>
+  <div class="pin-grid">
+    <button class="pin-btn" onclick="addPIN('1')">1</button>
+    <button class="pin-btn" onclick="addPIN('2')">2</button>
+    <button class="pin-btn" onclick="addPIN('3')">3</button>
+    <button class="pin-btn" onclick="addPIN('4')">4</button>
+    <button class="pin-btn" onclick="addPIN('5')">5</button>
+    <button class="pin-btn" onclick="addPIN('6')">6</button>
+    <button class="pin-btn" onclick="addPIN('7')">7</button>
+    <button class="pin-btn" onclick="addPIN('8')">8</button>
+    <button class="pin-btn" onclick="addPIN('9')">9</button>
+    <button class="pin-btn" onclick="clearPIN()">⌫</button>
+    <button class="pin-btn" onclick="addPIN('0')">0</button>
+    <button class="pin-btn" onclick="submitPIN()">✓</button>
   </div>
+  <button class="pin-voice-btn" onclick="recordPINVoice()">🎤</button>
+  <p style="text-align:center;margin-top:12px;font-size:13px;color:var(--text-muted)">Say your PIN or tap manually</p>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, addDoc, serverTimestamp, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCe6Gx4tJZ2AIhUWviYFgWhOxnbPoFSd3A",
@@ -824,19 +735,12 @@ const firebaseConfig = {
   projectId: "voicepay-harps-tech",
   storageBucket: "voicepay-harps-tech.firebasestorage.app",
   messagingSenderId: "955301626221",
-  appId: "1:955301626221:web:745d7a643b7c0bbbeb9a64",
-  measurementId: "G-TXDEJZV3ZK"
+  appId: "1:955301626221:web:745d7a643b7c0bbbeb9a64"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-
-const AES_KEY = "ebf3d793b82478420df7a12a5c86795224ae7613d9355f1dd2158a3bca47ff80";
-function encrypt(text) {
-  return CryptoJS.AES.encrypt(text.toString(), AES_KEY).toString();
-}
-
 const BACKEND_URL = 'https://harps-tech-api.onrender.com';
 
 const mic = document.getElementById('mic');
@@ -852,13 +756,15 @@ const manualInputTitle = document.getElementById('manualInputTitle');
 const bankBadge = document.getElementById('bankBadge');
 const successAnim = document.getElementById('successAnim');
 const offlineBadge = document.getElementById('offlineBadge');
+const voiceCanvas = document.getElementById('voiceCanvas');
+const canvasCtx = voiceCanvas.getContext('2d');
+const pinModal = document.getElementById('pinModal');
+const pinDisplay = document.getElementById('pinDisplay');
 
-// STATE VARIABLES
 let currentIntent = null;
 let currentUser = null;
 let currentUserData = null;
 let availableVoices = [];
-let hasSpokenWelcome = false;
 let savedContacts = {};
 let voiceFailCount = 0;
 let voicesLoaded = false;
@@ -870,7 +776,11 @@ let recognitionTimeout = null;
 let silenceTimer = null;
 let isReadingDigits = false;
 let selectedBank = 'voicepay';
-let userPIN = localStorage.getItem('userPIN') || '1234'; // NEW: PIN protection
+let audioContext = null;
+let analyser = null;
+let dataArray = null;
+let isRecordingSignature = false;
+let enteredPIN = '';
 
 let conversationState = {
   amount: null,
@@ -881,16 +791,14 @@ let conversationState = {
   intent: 'transfer',
   step: 'start',
   manualField: null,
-  duress: false,
-  currency: 'NGN',
-  original_amount: null
+  accountName: null,
+  duress: false
 };
 
-// RECENT RECIPIENTS - NEW FEATURE
 let recentRecipients = JSON.parse(localStorage.getItem('recentRecipients') || '[]');
 
 function saveRecipient(account, name) {
-  recentRecipients = [{account, name, date: Date.now()},...recentRecipients.filter(r => r.account!== account).slice(0,4)];
+  recentRecipients = [{account, name, date: Date.now()},...recentRecipients.filter(r => r.account!== account).slice(0,3)];
   localStorage.setItem('recentRecipients', JSON.stringify(recentRecipients));
   renderRecentRecipients();
 }
@@ -898,7 +806,7 @@ function saveRecipient(account, name) {
 function renderRecentRecipients() {
   const grid = document.getElementById('recentGrid');
   if (recentRecipients.length === 0) {
-    grid.innerHTML = '<div style="grid-column:1/-1;color:var(--text-muted);font-size:12px">No recent recipients yet</div>';
+    grid.innerHTML = '<div style="grid-column:1/-1;color:var(--text-muted);font-size:11px">No recent yet</div>';
     return;
   }
   grid.innerHTML = recentRecipients.map(r => `
@@ -912,11 +820,10 @@ function renderRecentRecipients() {
 window.selectRecent = (account, name) => {
   conversationState.account_number = account;
   conversationState.recipient = name;
-  status.innerText = `Selected ${name}. Say amount to send.`;
+  status.innerText = `Selected ${name}. Say amount.`;
   speakFemale(`Selected ${name}. How much?`, detectedUserLang);
 };
 
-// BANK COLORS CONFIG
 const bankColors = {
   gtbank: { color: '#F37321', rgb: '243,115,33' },
   access: { color: '#F78F1E', rgb: '247,143,30' },
@@ -929,329 +836,270 @@ const bankColors = {
   voicepay: { color: '#00D084', rgb: '0,208,132' }
 };
 
-// OFFLINE DETECTION
 window.addEventListener('online', () => offlineBadge.classList.remove('show'));
 window.addEventListener('offline', () => offlineBadge.classList.add('show'));
 if (!navigator.onLine) offlineBadge.classList.add('show');
 
-// NIGERIAN AMOUNT NORMALIZER
 function normalizeNigerianAmount(text) {
   let normalized = text.toLowerCase().trim();
   normalized = normalized.replace(/(\d+(?:\.\d+)?)\s*k\b/g, (match, num) => String(parseFloat(num) * 1000));
   normalized = normalized.replace(/(\d+(?:\.\d+)?)\s*g\b/g, (match, num) => String(parseFloat(num) * 1000));
-  normalized = normalized.replace(/(\d+(?:\.\d+)?)\s*grand\b/g, (match, num) => String(parseFloat(num) * 1000));
   normalized = normalized.replace(/(\d+(?:\.\d+)?)\s*thousand\b/g, (match, num) => String(parseFloat(num) * 1000));
-  normalized = normalized.replace(/(\d+(?:\.\d+)?)\s*million\b/g, (match, num) => String(parseFloat(num) * 1000000));
-  normalized = normalized.replace(/point\s+(\d+)/g, '0.$1');
   return normalized;
 }
 
-// LANGUAGE DETECTION
 function detectLanguage(text) {
   const lower = text.toLowerCase();
-  if (/bawo|owo|se jowo|jowo|ekaro|ekasan|ranse|kinni|owo|naira/.test(lower)) return 'yo-NG';
-  if (/kedu|ego|biko|ndewo|daalu|iziga|naira/.test(lower)) return 'ig-NG';
-  if (/sannu|kudi|yaya|ina|barka|aika|naira/.test(lower)) return 'ha-NG';
+  if (/bawo|owo|se jowo|jowo|ekaro|ranse|kinni/.test(lower)) return 'yo-NG';
+  if (/kedu|ego|biko|ndewo|daalu|iziga/.test(lower)) return 'ig-NG';
+  if (/sannu|kudi|yaya|ina|barka|aika/.test(lower)) return 'ha-NG';
   if (/abeg|wey|dey|na|make|how far|comot|sha/.test(lower)) return 'pcm-NG';
   return 'en-NG';
 }
 
-// MULTI-LANGUAGE RESPONSES
+// DURESS KEYWORDS - NEW FEATURE
+function detectDuress(text) {
+  const lower = text.toLowerCase();
+  return /help me|police|duress|send 1 naira|emergency|i am in danger|kidnap|robbery/.test(lower);
+}
+
 const responses = {
   'en-NG': {
     listening: 'I am listening.',
-    hello: (name) => `Hello ${name}. Tap the microphone and tell me what to do.`,
+    hello: (name) => `Hello ${name}. Tap mic and speak.`,
     noSpeech: 'No speech detected. Tap mic again.',
     micBlocked: 'Mic permission denied. Enable in Settings.',
-    micError: 'Voice not available. Use typing instead.',
-    notSupported: 'Voice not supported on this browser.',
-    howMuch: (recipient) => `How much should I send to ${recipient}?`,
+    howMuch: (recipient) => `How much for ${recipient}?`,
     whoToSend: (amount) => `Send ₦${amount.toLocaleString()} to who?`,
-    whoToAirtime: (amount) => `Buy ₦${amount.toLocaleString()} airtime for who?`,
     confirmSend: (amount, recipient) => `Send ₦${amount.toLocaleString()} to ${recipient}?`,
-    confirmAirtime: (amount, recipient) => `Buy ₦${amount.toLocaleString()} airtime for ${recipient}?`,
-    firstTimeAcc: (recipient) => `First time sending to ${recipient}. Say the account number.`,
-    firstTimePhone: (recipient) => `First time sending to ${recipient}. Say their phone number.`,
-    saved: (amount, recipient) => `Saved ${recipient}. Send ₦${amount.toLocaleString()} to ${recipient}?`,
-    didNotCatch: 'Sorry, I did not understand. Speak again clearly.',
-    typeField: (field) => `Sorry, I didn't catch that. Please type the ${field}.`,
-    verifying: 'Verifying voice and processing payment...',
-    voiceFailed: 'Voice not recognized. Using PIN verification.',
-    duressSuccess: 'Transfer successful!',
-    openingPayment: (amount, recipient) => `Opening payment. Amount ₦${amount.toLocaleString()} to ${recipient} is locked.`,
-    paymentFailed: 'Sorry, could not process payment',
-    tapToStart: 'Tap the mic to start',
-    balance: (bal) => `Your current balance is ${bal}`,
-    history: 'This is a demo. Transaction history will show here when connected to your bank.',
-    ussd: 'USSD dialer opened. Use the keypad to navigate.',
-    enterPIN: 'Please say your 4 digit PIN'
+    firstTimeAcc: (recipient) => `First time for ${recipient}. Say account number.`,
+    firstTimeBank: (recipient) => `Which bank for ${recipient}?`,
+    firstTimeName: (recipient) => `What is the account name on ${recipient}'s account?`,
+    saved: (amount, recipient) => `Saved ${recipient}. Send ₦${amount.toLocaleString()}?`,
+    didNotCatch: 'Sorry, I did not understand. Speak clearly.',
+    typeField: (field) => `Type the ${field} below.`,
+    verifying: 'Processing payment...',
+    paymentSuccess: 'Payment successful!',
+    duressSuccess: 'Payment successful!',
+    tapToStart: 'Tap mic to start'
   },
   'yo-NG': {
     listening: 'Mo n gbọ ọ.',
-    hello: (name) => `Bawo ni ${name}. Tẹ microphone ki o sọ ohun ti o fẹ ṣe.`,
+    hello: (name) => `Bawo ni ${name}. Tẹ mic ki o sọ ohun ti o fẹ.`,
     noSpeech: 'N kò gbọ ohun. Tẹ mic lẹkansi.',
-    micBlocked: 'A ko gba mic laaye. Lọ si Settings.',
-    micError: 'A ko le lo ohun. Kọ ọ.',
-    notSupported: 'A ko le lo ohun lori browser yii.',
     howMuch: (recipient) => `Elo ni o fe fi ranse si ${recipient}?`,
     whoToSend: (amount) => `Ta ni o fẹ fi ₦${amount.toLocaleString()} ranṣẹ si?`,
     confirmSend: (amount, recipient) => `Ṣe o fẹ fi ₦${amount.toLocaleString()} ranṣẹ si ${recipient}?`,
-    firstTimeAcc: (recipient) => `Eyi ni igba akọkọ fun ${recipient}. Kinni number account re?`,
-    saved: (amount, recipient) => `A ti fipamọ ${recipient}. Ṣe o fẹ fi ₦${amount.toLocaleString()} ranṣẹ si ${recipient}?`,
-    didNotCatch: 'Ma binu, n kò gbọ. Jọwọ sọ lẹkansi kedere.',
-    typeField: (field) => `Ma binu, n kò gbọ. Jọwọ kọ ${field}.`,
-    verifying: 'N ṣe ayẹwo ohun ati ṣẹda isanwo...',
-    voiceFailed: 'A ko mọ ohun rẹ. N lo PIN dipo.',
-    duressSuccess: 'Gbigbe owo ṣaṣeyọri!',
-    openingPayment: (amount, recipient) => `N ṣi isanwo. Iye ₦${amount.toLocaleString()} si ${recipient} ti pa.`,
-    paymentFailed: 'Ma binu, ko le ṣẹda isanwo',
-    tapToStart: 'Tẹ mic lati bẹrẹ',
-    balance: (bal) => `Iwọntunwọnsi rẹ ni ${bal}`,
-    history: 'Eyi jẹ demo. Itan iṣowo yoo han nibi.',
-    ussd: 'A ṣii USSD dialer. Lo keypad.',
-    enterPIN: 'Jọwọ sọ PIN rẹ ti o jẹ nọmba 4'
+    firstTimeAcc: (recipient) => `Kinni number account ${recipient}?`,
+    firstTimeBank: (recipient) => `Wo ni banki ${recipient}?`,
+    firstTimeName: (recipient) => `Kini oruko ti o wa lori account ${recipient}?`,
+    saved: (amount, recipient) => `A ti fipamọ ${recipient}. Fi ₦${amount.toLocaleString()} ranṣẹ?`,
+    didNotCatch: 'Ma binu, n kò gbọ. Sọ lẹkansi.',
+    typeField: (field) => `Kọ ${field} ni isale.`,
+    verifying: 'N ṣe isanwo...',
+    paymentSuccess: 'Owo ti lọ!',
+    duressSuccess: 'Owo ti lọ!',
+    tapToStart: 'Tẹ mic lati bẹrẹ'
   },
   'ig-NG': {
     listening: 'Ana m ege ntị.',
-    hello: (name) => `Kedu ${name}. Pịa microphone ma gwa m ihe ị chọrọ ime.`,
-    noSpeech: 'Anụghị m olu. Pịa mic ọzọ.',
-    micBlocked: 'Anabataghị mic. Gaa Settings.',
-    micError: 'Enweghị ike iji olu. Dee ya.',
-    notSupported: 'Enweghị ike iji olu na browser a.',
+    hello: (name) => `Kedu ${name}. Pịa mic ma gwa m ihe ị chọrọ.`,
     howMuch: (recipient) => `Ego ole ka ị chọrọ iziga ${recipient}?`,
     whoToSend: (amount) => `Onye ka ị chọrọ iziga ₦${amount.toLocaleString()}?`,
     confirmSend: (amount, recipient) => `Ị chọrọ iziga ₦${amount.toLocaleString()} nye ${recipient}?`,
-    firstTimeAcc: (recipient) => `Nke a bụ oge mbụ maka ${recipient}. Kedu number account ya?`,
-    saved: (amount, recipient) => `Echekwara ${recipient}. Ị chọrọ iziga ₦${amount.toLocaleString()} nye ${recipient}?`,
-    didNotCatch: 'Ndo, aghọtaghị m. Biko kwuo ọzọ nke ọma.',
-    typeField: (field) => `Ndo, aghọtaghị m. Biko dee ${field}.`,
-    verifying: 'Na-enyocha olu ma na-emepụta ịkwụ ụgwọ...',
-    voiceFailed: 'Amataghị olu gị. Na-eji PIN.',
-    duressSuccess: 'Mbufe ego gara nke ọma!',
-    openingPayment: (amount, recipient) => `Na-emepe ịkwụ ụgwọ. Ọnụ ₦${amount.toLocaleString()} nye ${recipient} akpọchiela.`,
-    paymentFailed: 'Ndo, enweghị ike ịmepụta ịkwụ ụgwọ',
-    tapToStart: 'Pịa mic ka ịmalite',
-    balance: (bal) => `Ego gị dị ${bal}`,
-    history: 'Nke a bụ demo. Akụkọ azụmahịa ga-apụta ebe a.',
-    ussd: 'Emeghere USSD dialer. Jiri keypad.',
-    enterPIN: 'Biko kwuo PIN gị nke nwere nọmba 4'
+    firstTimeAcc: (recipient) => `Kedu number account ${recipient}?`,
+    firstTimeBank: (recipient) => `Kedu bank ${recipient}?`,
+    firstTimeName: (recipient) => `Kedu aha dị na account ${recipient}?`,
+    saved: (amount, recipient) => `Echekwara ${recipient}. Ziga ₦${amount.toLocaleString()}?`,
+    didNotCatch: 'Ndo, aghọtaghị m. Kwuo ọzọ.',
+    typeField: (field) => `Dee ${field}.`,
+    verifying: 'Na-emepe ịkwụ ụgwọ...',
+    paymentSuccess: 'Ego agaala!',
+    duressSuccess: 'Ego agaala!',
+    tapToStart: 'Pịa mic ka ịmalite'
   },
   'ha-NG': {
     listening: 'Ina sauraro.',
-    hello: (name) => `Sannu ${name}. Danna microphone kuma ka gaya mani abin da za ka yi.`,
+    hello: (name) => `Sannu ${name}. Danna mic kuma ka gaya mani abin da za ka yi.`,
     noSpeech: 'Ban ji magana ba. Danna mic kuma.',
     micBlocked: 'An hana mic. Je zuwa Settings.',
-    micError: 'Ba a iya amfani da murya. Rubuta shi.',
-    notSupported: 'Ba a iya amfani da murya a wannan browser.',
     howMuch: (recipient) => `Nawa kake son aika wa ${recipient}?`,
     whoToSend: (amount) => `Wa kake son aika ₦${amount.toLocaleString()}?`,
     confirmSend: (amount, recipient) => `Kana son aika ₦${amount.toLocaleString()} zuwa ${recipient}?`,
-    firstTimeAcc: (recipient) => `Wannan ne karo na farko da ${recipient}. Menene lambar asusun?`,
-    saved: (amount, recipient) => `An adana ${recipient}. Kana son aika ₦${amount.toLocaleString()} zuwa ${recipient}?`,
-    didNotCatch: 'Yi hakuri, ban gane ba. Don Allah sake magana a bayyane.',
-    typeField: (field) => `Yi hakuri, ban gane ba. Don Allah rubuta ${field}.`,
-    verifying: 'Ana tabbatar da murya da sarrafa biya...',
-    voiceFailed: 'Ba a gane muryar ka ba. Ana amfani da PIN.',
-    duressSuccess: 'Canja wurin kuɗi ya yi nasara!',
-    openingPayment: (amount, recipient) => `Ana buɗe biya. Adadin ₦${amount.toLocaleString()} zuwa ${recipient} an kulle.`,
-    paymentFailed: 'Yi hakuri, ba za a iya sarrafa biya ba',
-    tapToStart: 'Danna mic don farawa',
-    balance: (bal) => `Ma\'adananka shine ${bal}`,
-    history: 'Wannan demo ne. Tarihin ma\'amala zai bayyana anan.',
-    ussd: 'An buɗe USSD dialer. Yi amfani da keypad.',
-    enterPIN: 'Da fatan za a faɗi PIN ɗinka na lambobi 4'
+    firstTimeAcc: (recipient) => `Menene lambar asusun ${recipient}?`,
+    firstTimeBank: (recipient) => `Wane banki ${recipient} yake amfani da shi?`,
+    firstTimeName: (recipient) => `Menene sunan da ke kan asusun ${recipient}?`,
+    saved: (amount, recipient) => `An adana ${recipient}. Aika ₦${amount.toLocaleString()}?`,
+    didNotCatch: 'Yi hakuri, ban gane ba. Don Allah sake magana.',
+    typeField: (field) => `Don Allah rubuta ${field}.`,
+    verifying: 'Ana sarrafa biya...',
+    paymentSuccess: 'Kuɗi ya tafi!',
+    duressSuccess: 'Kuɗi ya tafi!',
+    tapToStart: 'Danna mic don farawa'
   },
   'pcm-NG': {
     listening: 'I dey hear you.',
-    hello: (name) => `How far ${name}. Tap microphone make you tell me wetin you wan do.`,
+    hello: (name) => `How far ${name}. Tap mic make you tell me wetin you wan do.`,
     noSpeech: 'I no hear anything. Tap mic again.',
     micBlocked: 'Dem block mic. Go Settings.',
-    micError: 'Voice no dey work here. Type am.',
-    notSupported: 'Voice no support this browser.',
     howMuch: (recipient) => `How much you wan send give ${recipient}?`,
     whoToSend: (amount) => `Who you wan send ₦${amount.toLocaleString()} give?`,
-    whoToAirtime: (amount) => `Who you wan buy ₦${amount.toLocaleString()} airtime for?`,
     confirmSend: (amount, recipient) => `You wan send ₦${amount.toLocaleString()} give ${recipient}?`,
-    confirmAirtime: (amount, recipient) => `You wan buy ₦${amount.toLocaleString()} airtime for ${recipient}?`,
-    firstTimeAcc: (recipient) => `Na first time for ${recipient}. Wetin be the account number?`,
-    firstTimePhone: (recipient) => `Na first time for ${recipient}. Wetin be the phone number?`,
-    saved: (amount, recipient) => `I don save ${recipient}. You wan send ₦${amount.toLocaleString()} give ${recipient}?`,
+    firstTimeAcc: (recipient) => `Na first time for ${recipient}. Wetin be account number?`,
+    firstTimeBank: (recipient) => `Which bank ${recipient} dey use?`,
+    firstTimeName: (recipient) => `Wetin be name wey dey ${recipient} account?`,
+    saved: (amount, recipient) => `I don save ${recipient}. Send ₦${amount.toLocaleString()}?`,
     didNotCatch: 'Abeg, I no understand. Talk am again clear.',
-    typeField: (field) => `Abeg, I no catch am. Type the ${field}.`,
-    verifying: 'I dey check voice and process payment...',
-    voiceFailed: 'I no recognize your voice. I dey use PIN instead.',
-    duressSuccess: 'Transfer don work!',
-    openingPayment: (amount, recipient) => `I dey open payment. Amount ₦${amount.toLocaleString()} give ${recipient} don lock.`,
-    paymentFailed: 'Abeg, I no fit process payment',
-    tapToStart: 'Tap mic make we start',
-    balance: (bal) => `Your balance na ${bal}`,
-    history: 'Na demo be this. Transaction history go show here.',
-    ussd: 'USSD dialer don open. Use keypad.',
-    enterPIN: 'Abeg talk your 4 digit PIN'
+    typeField: (field) => `Abeg type the ${field}.`,
+    verifying: 'I dey process payment...',
+    paymentSuccess: 'Money don go!',
+    duressSuccess: 'Money don go!',
+    tapToStart: 'Tap mic make we start'
   }
 };
 
-// HTTPS CHECK
-if (location.protocol!== 'https:' && location.hostname!== 'localhost') {
-  status.innerText = '⚠️ Mic requires HTTPS. Use https:// link.';
-  status.classList.add('active');
+// REAL-TIME DASHBOARD SYNC - LISTEN FOR CHANGES
+function setupDashboardSync() {
+  if (!currentUser) return;
+  
+  // Listen to user document changes
+  const userRef = doc(db, 'users', currentUser.uid);
+  const unsubscribeUser = onSnapshot(userRef, (doc) => {
+    if (doc.exists()) {
+      const data = doc.data();
+      if (data.selectedBank !== selectedBank) {
+        selectedBank = data.selectedBank || 'voicepay';
+        const bankData = bankColors[selectedBank];
+        document.body.className = selectedBank;
+        document.documentElement.style.setProperty('--bank-color', bankData.color);
+        document.documentElement.style.setProperty('--bank-glow', `rgba(${bankData.rgb}, 0.4)`);
+        document.documentElement.style.setProperty('--bank-color-rgb', bankData.rgb);
+        bankBadge.innerText = selectedBank === 'voicepay'? 'VoicePay' : `${selectedBank.toUpperCase()}`;
+        speakFemale(`${selectedBank.toUpperCase()} bank selected`, detectedUserLang);
+      }
+    }
+  });
+
+  // Listen to contacts changes
+  const contactsRef = collection(db, 'contacts');
+  const q = query(contactsRef, where('userId', '==', currentUser.uid));
+  const unsubscribeContacts = onSnapshot(q, (snapshot) => {
+    savedContacts = {};
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      savedContacts[data.name.toLowerCase()] = data;
+    });
+    renderRecentRecipients();
+  });
+
+  // Store unsubscribe functions
+  window.dashboardUnsubscribers = [unsubscribeUser, unsubscribeContacts];
 }
 
-// AUTH STATE
+// VOICE SIGNATURE DRAWER - NEW FEATURE
+function drawVoiceSignature() {
+  if (!analyser || !isRecordingSignature) return;
+  
+  requestAnimationFrame(drawVoiceSignature);
+  
+  analyser.getByteTimeDomainData(dataArray);
+  
+  canvasCtx.fillStyle = 'rgba(5, 5, 10, 0.1)';
+  canvasCtx.fillRect(0, 0, voiceCanvas.width, voiceCanvas.height);
+  
+  canvasCtx.lineWidth = 2;
+  canvasCtx.strokeStyle = `rgb(${bankColors[selectedBank].rgb})`;
+  canvasCtx.beginPath();
+  
+  const sliceWidth = voiceCanvas.width * 1.0 / analyser.frequencyBinCount;
+  let x = 0;
+  
+  for (let i = 0; i < analyser.frequencyBinCount; i++) {
+    const v = dataArray[i] / 128.0;
+    const y = v * voiceCanvas.height / 2;
+    
+    if (i === 0) canvasCtx.moveTo(x, y);
+    else canvasCtx.lineTo(x, y);
+    
+    x += sliceWidth;
+  }
+  
+  canvasCtx.lineTo(voiceCanvas.width, voiceCanvas.height / 2);
+  canvasCtx.stroke();
+}
+
+// SAVE VOICE SIGNATURE AS IMAGE
+async function saveVoiceSignature() {
+  const signatureData = voiceCanvas.toDataURL('image/png');
+  if (currentUser) {
+    await addDoc(collection(db, 'voiceSignatures'), {
+      userId: currentUser.uid,
+      signature: signatureData,
+      timestamp: serverTimestamp(),
+      text: finalTranscriptBuffer
+    });
+  }
+  return signatureData;
+}
+
 onAuthStateChanged(auth, async (user) => {
   if (!user) window.location.href = './login.html';
   else {
     currentUser = user;
-
     try {
       const userDoc = await getDoc(doc(db, 'users', user.uid));
       if (userDoc.exists()) {
         currentUserData = userDoc.data();
         selectedBank = currentUserData.selectedBank || 'voicepay';
-
-        if (currentUserData.locked) {
-          await speakFemale('Your account is temporarily locked for security. Contact support.', 'en-NG');
-          await signOut(auth);
-          return;
-        }
       }
-
       const contactsQuery = query(collection(db, 'contacts'), where('userId', '==', user.uid));
       const contactsSnapshot = await getDocs(contactsQuery);
       contactsSnapshot.forEach((doc) => {
         const data = doc.data();
-        savedContacts[data.name.toLowerCase()] = {
-          account_number: data.account_number,
-          bank: data.bank || null,
-          phone: data.phone || null,
-          type: data.type || 'bank',
-          name: data.name
-        };
+        savedContacts[data.name.toLowerCase()] = data;
       });
-
       const bankData = bankColors[selectedBank];
       document.body.classList.add(selectedBank);
       document.documentElement.style.setProperty('--bank-color', bankData.color);
       document.documentElement.style.setProperty('--bank-glow', `rgba(${bankData.rgb}, 0.4)`);
       document.documentElement.style.setProperty('--bank-color-rgb', bankData.rgb);
-      bankBadge.innerText = selectedBank === 'voicepay'? 'VoicePay Platform' : `${selectedBank.toUpperCase()} Connected`;
-
-    } catch (e) {
-      console.error('Error loading user data:', e);
-    }
-
+      bankBadge.innerText = selectedBank === 'voicepay'? 'VoicePay' : `${selectedBank.toUpperCase()}`;
+    } catch (e) {console.error(e)}
     loadVoicesFast();
     renderRecentRecipients();
+    setupDashboardSync(); // REAL-TIME SYNC
     setTimeout(() => {
-      if (!hasSpokenWelcome) {
-        const name = currentUserData?.displayName || 'there';
-        speakFemale(responses[detectedUserLang].hello(name), detectedUserLang);
-        hasSpokenWelcome = true;
-      }
+      const name = currentUserData?.displayName || 'there';
+      speakFemale(responses[detectedUserLang].hello(name), detectedUserLang);
     }, 500);
   }
 });
 
 function loadVoicesFast() {
   speechSynthesis.getVoices();
-  if (speechSynthesis.onvoiceschanged!== undefined) {
-    speechSynthesis.onvoiceschanged = () => {
-      availableVoices = speechSynthesis.getVoices();
-      voicesLoaded = true;
-    };
-  }
-  setTimeout(() => {
+  speechSynthesis.onvoiceschanged = () => {
     availableVoices = speechSynthesis.getVoices();
     voicesLoaded = true;
-  }, 100);
+  };
+  setTimeout(() => {availableVoices = speechSynthesis.getVoices(); voicesLoaded = true}, 100);
 }
 
 function speakFemale(text, lang = 'en-NG') {
   speechSynthesis.cancel();
-  clearTimeout(window.speechTimeout);
-  window.speechTimeout = setTimeout(() => {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = lang;
-    if (voicesLoaded && availableVoices.length > 0) {
-      let voice = availableVoices.find(v => v.lang === 'en-NG' && v.name.toLowerCase().includes('female'));
-      if (!voice) voice = availableVoices.find(v => v.name.toLowerCase().includes('zira'));
-      if (!voice) voice = availableVoices.find(v => v.name === 'Google UK English Female');
-      if (!voice) voice = availableVoices.find(v => v.name === 'Samantha');
-      if (!voice) voice = availableVoices.find(v => v.lang.startsWith('en') &&!v.name.toLowerCase().includes('male'));
-      if (voice) {
-        utterance.voice = voice;
-        utterance.pitch = 1.3;
-        utterance.rate = 0.85;
-      }
-    }
-    speechSynthesis.speak(utterance);
-  }, 50);
-}
-
-function fireConfetti() {
-  const duration = 3000;
-  const animationEnd = Date.now() + duration;
-  const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000 };
-
-  function randomInRange(min, max) {
-    return Math.random() * (max - min) + min;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = lang;
+  if (voicesLoaded && availableVoices.length > 0) {
+    let voice = availableVoices.find(v => v.lang === lang && v.name.toLowerCase().includes('female'));
+    if (!voice) voice = availableVoices.find(v => v.lang.startsWith(lang.split('-')[0]) && v.name.toLowerCase().includes('female'));
+    if (!voice) voice = availableVoices.find(v => v.name.toLowerCase().includes('zira') || v.name.includes('Karen') || v.name.includes('Samantha'));
+    if (!voice) voice = availableVoices.find(v => !v.name.toLowerCase().includes('male'));
+    if (voice) utterance.voice = voice;
   }
-
-  const interval = setInterval(function() {
-    const timeLeft = animationEnd - Date.now();
-    if (timeLeft <= 0) return clearInterval(interval);
-
-    const particleCount = 50 * (timeLeft / duration);
-    confetti(Object.assign({}, defaults, {
-      particleCount,
-      origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-      colors: [bankColors[selectedBank].color, '#00D084', '#FFD700']
-    }));
-    confetti(Object.assign({}, defaults, {
-      particleCount,
-      origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-      colors: [bankColors[selectedBank].color, '#00D084', '#FFD700']
-    }));
-  }, 250);
+  utterance.pitch = 1.4;
+  utterance.rate = 0.9;
+  speechSynthesis.speak(utterance);
 }
 
-async function getLocation() {
-  return new Promise((resolve) => {
-    if (!navigator.geolocation) return resolve(null);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => resolve({lat: pos.coords.latitude, lng: pos.coords.longitude}),
-      () => resolve(null),
-      {timeout: 3000}
-    );
-  });
-}
-
-async function saveContactToFirebase(contactData) {
-  if (!currentUser) return;
-  try {
-    await addDoc(collection(db, 'contacts'), {
-      userId: currentUser.uid,
-      name: contactData.name,
-      account_number: contactData.account_number || null,
-      bank: contactData.bank || null,
-      phone: contactData.phone || null,
-      type: contactData.type || 'bank',
-      createdAt: serverTimestamp()
-    });
-    savedContacts[contactData.name.toLowerCase()] = contactData;
-  } catch (e) {
-    console.error('Error saving contact:', e);
-  }
-}
-
-// SMS RECEIPT SIMULATION - NEW FEATURE
-function sendSMSReceipt(amount, recipient, ref) {
-  const sms = `VoicePay Alert: You sent ₦${amount.toLocaleString()} to ${recipient}. Ref: ${ref}. Bal: ₦125,450`;
-  speakFemale(sms, 'en-NG');
-  status.innerText = `SMS sent: ${sms}`;
-}
-
-// SPEECH RECOGNITION SETUP
 let recognition;
 let isListening = false;
 let finalTranscriptBuffer = '';
@@ -1260,23 +1108,43 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SpeechRecognition();
   recognition.lang = 'en-US';
-  recognition.continuous = true;
+  recognition.continuous = false;
   recognition.interimResults = true;
   recognition.maxAlternatives = 1;
 
   recognition.onstart = async () => {
     isListening = true;
-    isReadingDigits = false;
     finalTranscriptBuffer = '';
     mic.classList.add('recording');
     status.innerText = responses[detectedUserLang].listening;
     status.classList.add('active');
     confirmBox.classList.remove('show');
-    manualInputBox.classList.remove('show');
     transcriptLive.classList.add('show');
     confidenceBar.classList.remove('show');
-    speakFemale(responses[detectedUserLang].listening, detectedUserLang);
-
+    voiceCanvas.classList.add('show');
+    isRecordingSignature = true;
+    
+    // START VOICE SIGNATURE ANALYZER
+    if (!audioContext) {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 2048;
+      const bufferLength = analyser.frequencyBinCount;
+      dataArray = new Uint8Array(bufferLength);
+    }
+    
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const source = audioContext.createMediaStreamSource(stream);
+      source.connect(analyser);
+      drawVoiceSignature();
+      
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      mediaRecorder.start();
+    } catch(e) {console.log('Audio failed:', e)}
+    
     clearTimeout(recognitionTimeout);
     recognitionTimeout = setTimeout(() => {
       if (isListening) {
@@ -1284,39 +1152,26 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
         voiceFailCount++;
         if (voiceFailCount >= 2) showManualInput();
       }
-    }, 15000);
-
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder = new MediaRecorder(stream);
-      audioChunks = [];
-      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-      mediaRecorder.start();
-    } catch(e) {
-      console.log('Mic recording failed:', e);
-    }
+    }, 8000);
   };
 
-  recognition.onend = () => {
+  recognition.onend = async () => {
     clearTimeout(recognitionTimeout);
     clearTimeout(silenceTimer);
     isListening = false;
     mic.classList.remove('recording');
-
-    if (mediaRecorder && mediaRecorder.state!== 'inactive') {
+    voiceCanvas.classList.remove('show');
+    isRecordingSignature = false;
+    
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
       mediaRecorder.stop();
       mediaRecorder.onstop = () => {
         liveVoiceBlob = new Blob(audioChunks, { type: 'audio/webm' });
       };
     }
-
-    if (isReadingDigits && finalTranscriptBuffer.length < 10) {
-      setTimeout(() => {
-        if (!isListening) recognition.start();
-      }, 300);
-      return;
-    }
-
+    
+    await saveVoiceSignature(); // SAVE SIGNATURE
+    
     if (finalTranscriptBuffer.trim()) {
       processTranscript(finalTranscriptBuffer.trim());
     } else {
@@ -1332,35 +1187,22 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
     let finalTranscript = '';
     for (let i = e.resultIndex; i < e.results.length; i++) {
       const transcript = e.results[i][0].transcript;
-      if (e.results[i].isFinal) {
-        finalTranscript += transcript;
-      } else {
-        interimTranscript += transcript;
-      }
+      if (e.results[i].isFinal) finalTranscript += transcript;
+      else interimTranscript += transcript;
     }
-
     const currentText = finalTranscript || interimTranscript;
     transcriptLive.innerText = currentText;
-
-    isReadingDigits = /\b\d{3,}\b/.test(currentText) || /\d\s+\d\s+\d/.test(currentText);
-
+    
     clearTimeout(silenceTimer);
-    const silenceDuration = isReadingDigits? 4000 : 2500;
     silenceTimer = setTimeout(() => {
       if (isListening) recognition.stop();
-    }, silenceDuration);
+    }, 2000);
 
     if (finalTranscript) {
       finalTranscriptBuffer = finalTranscript;
       const confidence = e.results[e.results.length-1][0].confidence;
       confidenceBar.classList.add('show');
       confidenceFill.style.width = (confidence * 100) + '%';
-      if (confidence < 0.5 &&!isReadingDigits) {
-        voiceFailCount++;
-        if (voiceFailCount >= 2) showManualInput();
-      } else {
-        voiceFailCount = 0;
-      }
     }
   };
 
@@ -1369,54 +1211,43 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
     clearTimeout(silenceTimer);
     isListening = false;
     mic.classList.remove('recording');
+    voiceCanvas.classList.remove('show');
+    isRecordingSignature = false;
     transcriptLive.classList.remove('show');
     voiceFailCount++;
-    console.log('Speech error:', e.error, 'Fail count:', voiceFailCount);
-
-    if (e.error === 'not-allowed') {
-      status.innerText = responses[detectedUserLang].micBlocked;
-      showManualInput();
-    } else if (voiceFailCount >= 2) {
-      status.innerText = responses[detectedUserLang].micError;
-      speakFemale(responses[detectedUserLang].micError, detectedUserLang);
-      showManualInput();
-    } else {
-      status.innerText = responses[detectedUserLang].noSpeech;
-    }
+    if (voiceFailCount >= 2) showManualInput();
+    else status.innerText = responses[detectedUserLang].noSpeech;
   };
-} else {
-  status.innerText = responses[detectedUserLang].notSupported;
 }
 
-// MANUAL INPUT FALLBACK
 function showManualInput() {
   let fieldName = 'details';
   let placeholder = 'Type here...';
-  if (conversationState.step === 'amount' ||!conversationState.amount) {
-    fieldName = 'amount';
-    placeholder = 'Enter amount (e.g. 5000)';
+  if (conversationState.step === 'amount') {
+    fieldName = 'amount'; placeholder = '5000';
     manualInputTitle.innerText = 'Enter Amount';
     conversationState.manualField = 'amount';
-  } else if (conversationState.step === 'recipient' ||!conversationState.recipient) {
-    fieldName = 'recipient name';
-    placeholder = 'Enter name (e.g. Seyi)';
-    manualInputTitle.innerText = 'Enter Recipient Name';
+  } else if (conversationState.step === 'recipient') {
+    fieldName = 'recipient name'; placeholder = 'John';
+    manualInputTitle.innerText = 'Enter Name';
     conversationState.manualField = 'recipient';
   } else if (conversationState.step === 'account_number') {
-    fieldName = 'account number';
-    placeholder = 'Enter 10-digit account number';
+    fieldName = 'account number'; placeholder = '0123456789';
     manualInputTitle.innerText = 'Enter Account Number';
     conversationState.manualField = 'account_number';
-  } else if (conversationState.step === 'phone') {
-    fieldName = 'phone number';
-    placeholder = 'Enter phone number';
-    manualInputTitle.innerText = 'Enter Phone Number';
-    conversationState.manualField = 'phone';
+  } else if (conversationState.step === 'bank') {
+    fieldName = 'bank name'; placeholder = 'GTBank';
+    manualInputTitle.innerText = 'Enter Bank Name';
+    conversationState.manualField = 'bank';
+  } else if (conversationState.step === 'accountName') {
+    fieldName = 'account name'; placeholder = 'JOHN DOE';
+    manualInputTitle.innerText = 'Enter Account Name';
+    conversationState.manualField = 'accountName';
   }
   manualInput.placeholder = placeholder;
   manualInput.value = '';
   manualInputBox.classList.add('show');
-  status.innerText = `Voice failed. Type the ${fieldName} below.`;
+  status.innerText = responses[detectedUserLang].typeField(fieldName);
   speakFemale(responses[detectedUserLang].typeField(fieldName), detectedUserLang);
 }
 
@@ -1425,52 +1256,42 @@ window.submitManualInput = () => {
   if (!value) return;
   manualInputBox.classList.remove('show');
   voiceFailCount = 0;
-  if (conversationState.manualField === 'amount') {
-    conversationState.amount = parseInt(value.replace(/\D/g,''));
-  } else if (conversationState.manualField === 'recipient') {
-    conversationState.recipient = value;
-  } else if (conversationState.manualField === 'account_number') {
-    conversationState.account_number = value.replace(/\D/g,'');
-  } else if (conversationState.manualField === 'phone') {
-    conversationState.phone = value.replace(/\D/g,'');
-  }
+  if (conversationState.manualField === 'amount') conversationState.amount = parseInt(value.replace(/\D/g,''));
+  else if (conversationState.manualField === 'recipient') conversationState.recipient = value;
+  else if (conversationState.manualField === 'account_number') conversationState.account_number = value.replace(/\D/g,'');
+  else if (conversationState.manualField === 'bank') conversationState.bank = value;
+  else if (conversationState.manualField === 'accountName') conversationState.accountName = value.toUpperCase();
   processConversationStep();
 };
 
-// CONVERSATION FLOW
 async function processConversationStep() {
   if (conversationState.amount && conversationState.recipient) {
     const contactKey = conversationState.recipient.toLowerCase();
-    if (savedContacts[contactKey]) {
-      const contact = savedContacts[contactKey];
-      conversationState.account_number = contact.account_number;
-      conversationState.bank = contact.bank;
-      conversationState.phone = contact.phone;
+    if (savedContacts[contactKey] && savedContacts[contactKey].account_number) {
+      conversationState.account_number = savedContacts[contactKey].account_number;
+      conversationState.bank = savedContacts[contactKey].bank;
+      conversationState.accountName = savedContacts[contactKey].accountName;
       conversationState.step = 'confirm';
-      let confirmText;
-      if (conversationState.intent === 'airtime') {
-        confirmText = responses[detectedUserLang].confirmAirtime(conversationState.amount, conversationState.recipient);
-      } else if (conversationState.currency!== 'NGN') {
-        confirmText = `Send ${conversationState.original_amount} ${conversationState.currency}, that's ₦${conversationState.amount.toLocaleString()}, to ${conversationState.recipient}?`;
-      } else {
-        confirmText = responses[detectedUserLang].confirmSend(conversationState.amount, conversationState.recipient);
-      }
+      const confirmText = responses[detectedUserLang].confirmSend(conversationState.amount, conversationState.recipient);
       status.innerText = confirmText;
       speakFemale(confirmText, detectedUserLang);
       confirmBox.classList.add('show');
     } else {
-      if (conversationState.intent === 'airtime' || conversationState.intent === 'data') {
-        conversationState.step = 'phone';
-        const ask = responses[detectedUserLang].firstTimePhone(conversationState.recipient);
-        status.innerText = ask;
-        speakFemale(ask, detectedUserLang);
-      } else {
-        conversationState.step = 'account_number';
-        const ask = responses[detectedUserLang].firstTimeAcc(conversationState.recipient);
-        status.innerText = ask;
-        speakFemale(ask, detectedUserLang);
-      }
+      conversationState.step = 'account_number';
+      const ask = responses[detectedUserLang].firstTimeAcc(conversationState.recipient);
+      status.innerText = ask;
+      speakFemale(ask, detectedUserLang);
     }
+  } else if (conversationState.amount && conversationState.recipient && conversationState.account_number && !conversationState.bank) {
+    conversationState.step = 'bank';
+    const ask = responses[detectedUserLang].firstTimeBank(conversationState.recipient);
+    status.innerText = ask;
+    speakFemale(ask, detectedUserLang);
+  } else if (conversationState.amount && conversationState.recipient && conversationState.account_number && conversationState.bank && !conversationState.accountName) {
+    conversationState.step = 'accountName';
+    const ask = responses[detectedUserLang].firstTimeName(conversationState.recipient);
+    status.innerText = ask;
+    speakFemale(ask, detectedUserLang);
   } else if (!conversationState.amount && conversationState.recipient) {
     conversationState.step = 'amount';
     const ask = responses[detectedUserLang].howMuch(conversationState.recipient);
@@ -1478,538 +1299,368 @@ async function processConversationStep() {
     speakFemale(ask, detectedUserLang);
   } else if (!conversationState.recipient && conversationState.amount) {
     conversationState.step = 'recipient';
-    let ask;
-    if (conversationState.intent === 'airtime') {
-      ask = responses[detectedUserLang].whoToAirtime(conversationState.amount);
-    } else {
-      ask = responses[detectedUserLang].whoToSend(conversationState.amount);
-    }
+    const ask = responses[detectedUserLang].whoToSend(conversationState.amount);
     status.innerText = ask;
     speakFemale(ask, detectedUserLang);
   }
 }
 
-// PROCESS TRANSCRIPT
+async function getLocation() {
+  return new Promise((resolve) => {
+    if (!navigator.geolocation) return resolve(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => resolve({lat: pos.coords.latitude, lng: pos.coords.longitude}),
+      () => resolve(null),
+      {timeout: 3000}
+    );
+  });
+}
+
 async function processTranscript(final) {
   const normalizedText = normalizeNigerianAmount(final);
-  status.innerText = `Processing: "${normalizedText}"`;
+  status.innerText = `Processing...`;
   status.classList.add('active');
   transcriptLive.classList.remove('show');
-
   detectedUserLang = detectLanguage(normalizedText);
 
-  // BALANCE CHECK - NEW FEATURE
-  if (/balance|money|kudi|owo|ego|account/i.test(normalizedText)) {
-    const fakeBalance = '₦125,450.00';
-    status.innerText = responses[detectedUserLang].balance(fakeBalance);
-    speakFemale(responses[detectedUserLang].balance(fakeBalance), detectedUserLang);
-    resetMic();
+  // DURESS MODE CHECK - NEW FEATURE
+  if (detectDuress(normalizedText)) {
+    conversationState.duress = true;
+    status.classList.add('duress');
+    status.innerText = 'Processing silently...';
+    
+    // FAKE SUCCESS FOR ATTACKER
+    setTimeout(async () => {
+      const location = await getLocation();
+      await addDoc(collection(db, 'duressAlerts'), {
+        userId: currentUser.uid,
+        location: location,
+        transcript: final,
+        timestamp: serverTimestamp(),
+        status: 'active'
+      });
+      
+      // Lock account
+      await updateDoc(doc(db, 'users', currentUser.uid), {locked: true});
+      
+      successAnim.classList.add('show');
+      speakFemale(responses[detectedUserLang].duressSuccess, detectedUserLang);
+      
+      setTimeout(() => {
+        successAnim.classList.remove('show');
+        resetMic();
+        // Redirect to fake success page
+        window.location.href = './success.html';
+      }, 2000);
+    }, 1000);
     return;
-  }
-
-  // HISTORY CHECK
-  if (/history|last|recent|transfers|sent/i.test(normalizedText)) {
-    status.innerText = responses[detectedUserLang].history;
-    speakFemale(responses[detectedUserLang].history, detectedUserLang);
-    resetMic();
-    return;
-  }
-
-  // BANK DETECTION + SAVE TO FIREBASE
-  const bankMatch = normalizedText.match(/(gtbank|gtb|access|uba|first bank|zenith|kuda|palmpay|opay)/i);
-  if (bankMatch) {
-    const detectedBank = bankMatch[1].toLowerCase().replace(' ', '');
-    if (bankColors[detectedBank]) {
-      selectedBank = detectedBank;
-
-      if (currentUser) {
-        await updateDoc(doc(db, 'users', currentUser.uid), {
-          selectedBank: detectedBank,
-          updatedAt: serverTimestamp()
-        });
-      }
-
-      const bankData = bankColors[detectedBank];
-      document.body.className = detectedBank;
-      document.documentElement.style.setProperty('--bank-color', bankData.color);
-      document.documentElement.style.setProperty('--bank-glow', `rgba(${bankData.rgb}, 0.4)`);
-      document.documentElement.style.setProperty('--bank-color-rgb', bankData.rgb);
-      bankBadge.innerText = `${detectedBank.toUpperCase()} Selected`;
-      speakFemale(`${detectedBank.toUpperCase()} selected`, detectedUserLang);
-    }
   }
 
   try {
     const amountMatch = normalizedText.match(/\b(\d+)\b/);
-    if (amountMatch) {
-      conversationState.amount = parseInt(amountMatch[1]);
-    }
-
-    const relationMatch = normalizedText.match(/(?:to|for|si|nye|zuwa)\s+(?:my\s+)?(mum|mama|mom|dad|papa|baba|sister|brother|guy|friend|uncle|aunty)\b/i);
-    const nameMatch = normalizedText.match(/(?:to|for|si|nye|zuwa)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/);
-
-    if (relationMatch) {
-      const rel = relationMatch[1].toLowerCase();
-      conversationState.recipient = rel === 'mum' || rel === 'mom'? 'Mama' :
-                                   rel === 'dad' || rel === 'papa'? 'Papa' :
-                                   rel.charAt(0).toUpperCase() + rel.slice(1);
-    } else if (nameMatch) {
-      conversationState.recipient = nameMatch[1];
-    }
-
+    if (amountMatch) conversationState.amount = parseInt(amountMatch[1]);
+    
+    const nameMatch = normalizedText.match(/(?:to|for|give)\s+([a-z]+)/i);
+    if (nameMatch) conversationState.recipient = nameMatch[1].charAt(0).toUpperCase() + nameMatch[1].slice(1);
+    
     const accountMatch = normalizedText.match(/\b(\d{10})\b/);
-    if (accountMatch) {
-      conversationState.account_number = accountMatch[1];
-    }
-
-    if (/airtime|credit/i.test(normalizedText)) conversationState.intent = 'airtime';
-    else if (/data|gig|mb|gb/i.test(normalizedText)) conversationState.intent = 'data';
-    else if (/bill|nepa|eko|ikeja|dstv|gotv/i.test(normalizedText)) conversationState.intent = 'bill';
-    else conversationState.intent = 'transfer';
-
-    if (conversationState.step === 'account_number' && conversationState.account_number) {
-      await saveContactToFirebase({
-        name: conversationState.recipient,
-        account_number: conversationState.account_number,
-        bank: conversationState.bank,
-        type: 'bank'
-      });
-      saveRecipient(conversationState.account_number, conversationState.recipient);
-      const confirmText = responses[detectedUserLang].saved(conversationState.amount, conversationState.recipient);
-      status.innerText = confirmText;
-      speakFemale(confirmText, detectedUserLang);
-      confirmBox.classList.add('show');
-      conversationState.step = 'confirm';
-      return;
-    } else if (conversationState.step === 'phone' && conversationState.phone) {
-      await saveContactToFirebase({
-        name: conversationState.recipient,
-        phone: conversationState.phone,
-        type: conversationState.intent
-      });
-      saveRecipient(conversationState.phone, conversationState.recipient);
-      const confirmText = conversationState.intent === 'airtime'
-      ? responses[detectedUserLang].confirmAirtime(conversationState.amount, conversationState.recipient)
-        : responses[detectedUserLang].confirmSend(conversationState.amount, conversationState.recipient);
-      status.innerText = confirmText;
-      speakFemale(confirmText, detectedUserLang);
-      confirmBox.classList.add('show');
-      conversationState.step = 'confirm';
-      return;
-    }
-
-    if (!conversationState.amount ||!conversationState.recipient) {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
-
-      const res = await fetch(BACKEND_URL + '/parse', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          transcript: normalizedText,
-          userId: currentUser.uid,
-          lang: detectedUserLang
-        }),
-        signal: controller.signal
-      });
-
-      clearTimeout(timeoutId);
-      if (res.ok) {
-        const data = await res.json();
-        if (data.amount) conversationState.amount = data.amount;
-        if (data.recipient) conversationState.recipient = data.recipient;
-        if (data.intent) conversationState.intent = data.intent;
-        if (data.duress) conversationState.duress = data.duress;
-        if (data.currency) conversationState.currency = data.currency;
-        if (data.original_amount) conversationState.original_amount = data.original_amount;
-      }
-    }
-
-    currentIntent = {
-      amount: conversationState.amount,
-      recipient: conversationState.recipient,
-      account_number: savedContacts[conversationState.recipient?.toLowerCase()]?.account_number || conversationState.account_number || null,
-      bank: savedContacts[conversationState.recipient?.toLowerCase()]?.bank || conversationState.bank || null,
-      phone: savedContacts[conversationState.recipient?.toLowerCase()]?.phone || conversationState.phone || null,
-      intent: conversationState.intent
-    };
-
+    if (accountMatch) conversationState.account_number = accountMatch[1];
+    
+    if (/gtbank|gtb/i.test(normalizedText)) conversationState.bank = 'gtbank';
+    else if (/access/i.test(normalizedText)) conversationState.bank = 'access';
+    else if (/uba/i.test(normalizedText)) conversationState.bank = 'uba';
+    else if (/first/i.test(normalizedText)) conversationState.bank = 'firstbank';
+    else if (/zenith/i.test(normalizedText)) conversationState.bank = 'zenith';
+    
     confidenceBar.classList.add('show');
-    confidenceFill.style.width = '90%';
-
+    confidenceFill.style.width = '95%';
     await processConversationStep();
-
   } catch(err) {
-    console.error('Error:', err);
     voiceFailCount++;
-    if (voiceFailCount >= 2) {
-      showManualInput();
-    } else {
+    if (voiceFailCount >= 2) showManualInput();
+    else {
       status.innerText = responses[detectedUserLang].didNotCatch;
       speakFemale(responses[detectedUserLang].didNotCatch, detectedUserLang);
     }
   }
 }
 
-// MIC BUTTON CLICK
 mic.onclick = async () => {
   if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-    status.innerText = responses[detectedUserLang].notSupported;
-    speakFemale(responses[detectedUserLang].notSupported, detectedUserLang);
+    status.innerText = 'Voice not supported';
     showManualInput();
     return;
   }
+  if (isListening) {recognition.stop(); return}
+  try {recognition.start()} catch (e) {voiceFailCount++; if (voiceFailCount >= 2) showManualInput()}
+};
 
-  try {
-    await navigator.mediaDevices.getUserMedia({ audio: true });
-  } catch (e) {
-    status.innerText = responses[detectedUserLang].micBlocked;
-    showManualInput();
-    return;
-  }
+window.requestPIN = () => {
+  confirmBox.classList.remove('show');
+  pinModal.classList.add('show');
+  enteredPIN = '';
+  updatePINDisplay();
+  speakFemale('Say your PIN or tap manually', detectedUserLang);
+  
+  // AUTO RECORD PIN VOICE
+  setTimeout(() => recordPINVoice(), 800);
+};
 
-  if (isListening) {
-    recognition.stop();
-    return;
-  }
+window.recordPINVoice = async () => {
   try {
-    recognition.start();
-  } catch (e) {
-    status.innerText = 'Tap again to restart mic';
-    voiceFailCount++;
-    if (voiceFailCount >= 2) showManualInput();
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const recorder = new MediaRecorder(stream);
+    const chunks = [];
+    
+    recorder.ondataavailable = e => chunks.push(e.data);
+    recorder.onstop = async () => {
+      const blob = new Blob(chunks, { type: 'audio/webm' });
+      // Use speech recognition to convert PIN speech to numbers
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const pinRec = new SpeechRecognition();
+      pinRec.lang = 'en-US';
+      pinRec.continuous = false;
+      pinRec.interimResults = false;
+      
+      pinRec.onresult = (e) => {
+        const pinText = e.results[0][0].transcript.replace(/\D/g, '').slice(0, 4);
+        if (pinText.length === 4) {
+          enteredPIN = pinText;
+          updatePINDisplay();
+          setTimeout(() => submitPIN(), 500);
+        }
+      };
+      
+      // Play audio to pinRec
+      pinRec.start();
+      setTimeout(() => pinRec.stop(), 3000);
+      
+      stream.getTracks().forEach(track => track.stop());
+    };
+    
+    recorder.start();
+    setTimeout(() => recorder.stop(), 3000);
+    
+  } catch(e) {
+    console.log('PIN voice failed:', e);
   }
 };
 
-// PIN VERIFICATION - NEW FEATURE
-async function verifyPIN() {
-  return new Promise((resolve) => {
-    speakFemale(responses[detectedUserLang].enterPIN, detectedUserLang);
-    status.innerText = 'Say your 4-digit PIN';
-
-    const pinRecognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    pinRecognition.lang = 'en-US';
-    pinRecognition.maxAlternatives = 1;
-
-    pinRecognition.onresult = (e) => {
-      const pin = e.results[0][0].transcript.replace(/\D/g, '');
-      if (pin === userPIN) {
-        resolve(true);
-      } else {
-        speakFemale('Wrong PIN. Try again.', detectedUserLang);
-        resolve(false);
-      }
-    };
-
-    pinRecognition.onerror = () => resolve(false);
-    pinRecognition.start();
-
-    setTimeout(() => {
-      pinRecognition.stop();
-      resolve(false);
-    }, 8000);
-  });
+function updatePINDisplay() {
+  pinDisplay.innerText = enteredPIN.padEnd(4, '•');
 }
 
-// CREATE PAYMENT - WITH PIN FALLBACK
-window.createPayment = async () => {
-  if (!currentIntent ||!currentUser ||!conversationState.amount ||!conversationState.recipient) return;
+window.addPIN = (num) => {
+  if (enteredPIN.length < 4) {
+    enteredPIN += num;
+    updatePINDisplay();
+  }
+};
 
+window.clearPIN = () => {
+  enteredPIN = enteredPIN.slice(0, -1);
+  updatePINDisplay();
+};
+
+window.submitPIN = async () => {
+  if (enteredPIN.length !== 4) {
+    speakFemale('PIN must be 4 digits', detectedUserLang);
+    return;
+  }
+  
+  pinModal.classList.remove('show');
+  loadingOpay.classList.add('show');
+  status.innerText = responses[detectedUserLang].verifying;
+  
+  // VERIFY PIN WITH BACKEND
+  try {
+    const response = await fetch(BACKEND_URL + '/verify-pin', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        userId: currentUser.uid,
+        pin: enteredPIN
+      })
+    });
+    
+    const result = await response.json();
+    if (result.success) {
+      await createPayment();
+    } else {
+      loadingOpay.classList.remove('show');
+      status.innerText = 'Wrong PIN. Try again.';
+      speakFemale('Wrong PIN. Please try again.', detectedUserLang);
+      enteredPIN = '';
+      setTimeout(() => requestPIN(), 1500);
+    }
+  } catch(err) {
+    loadingOpay.classList.remove('show');
+    status.innerText = 'PIN verification failed';
+    enteredPIN = '';
+  }
+};
+
+window.createPayment = async () => {
+  if (!currentUser || !conversationState.amount || !conversationState.recipient) return;
   confirmBox.classList.remove('show');
   loadingOpay.classList.add('show');
   status.innerText = responses[detectedUserLang].verifying;
 
-  let voiceAuthPassed = false;
-  let authMethod = 'voice';
-
   try {
-    // VOICE BIOMETRIC VERIFICATION
-    if (liveVoiceBlob && liveVoiceBlob.size > 100) {
-      const formData = new FormData();
-      formData.append('liveVoice', liveVoiceBlob);
-      formData.append('userId', currentUser.uid);
-
-      const verifyRes = await fetch(BACKEND_URL + '/verify-voice', {
-        method: 'POST',
-        body: formData
-      });
-
-      const verifyData = await verifyRes.json();
-
-      if (verifyData.match && verifyData.confidence >= 0.7) {
-        voiceAuthPassed = true;
-      } else {
-        authMethod = 'pin_fallback';
-        speakFemale(responses[detectedUserLang].voiceFailed, detectedUserLang);
-        status.innerText = 'Voice low. Verifying PIN...';
-
-        const pinValid = await verifyPIN();
-        if (!pinValid) {
-          loadingOpay.classList.remove('show');
-          status.innerText = 'Authentication failed. Try again.';
-          resetMic();
-          return;
-        }
-      }
-    } else {
-      authMethod = 'pin_fallback';
-      const pinValid = await verifyPIN();
-      if (!pinValid) {
-        loadingOpay.classList.remove('show');
-        status.innerText = 'Authentication failed. Try again.';
-        resetMic();
-        return;
-      }
-    }
-
-    // DURESS MODE
-    if (conversationState.duress) {
-      const location = await getLocation();
-      await fetch(BACKEND_URL + '/duress-alert', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({
-          uid: currentUser.uid,
-          location: location,
-          amount: conversationState.amount,
-          recipient: conversationState.recipient,
-          timestamp: Date.now()
-        })
-      });
-      speakFemale(responses[detectedUserLang].duressSuccess, detectedUserLang);
-      status.innerText = responses[detectedUserLang].duressSuccess + ' 🚨 Alert sent';
-      await updateDoc(doc(db, 'users', currentUser.uid), {locked: true});
-      setTimeout(() => resetMic(), 2000);
-      return;
-    }
-
-    // SAVE TRANSACTION TO FIREBASE
     const ref = 'VP-' + Date.now();
     await addDoc(collection(db, 'transactions'), {
       userId: currentUser.uid,
       amount: conversationState.amount * 100,
       recipient: conversationState.recipient,
-      account_number: conversationState.account_number || null,
-      bank: selectedBank,
-      phone: conversationState.phone || null,
-      intent: conversationState.intent,
+      account_number: conversationState.account_number,
+      bank: conversationState.bank,
+      accountName: conversationState.accountName,
       reference: ref,
-      status: 'pending',
-      authMethod: authMethod,
+      status: 'success',
+      duress: conversationState.duress,
+      pinUsed: true,
       createdAt: serverTimestamp()
     });
-
-    // SAVE RECENT RECIPIENT
-    if (conversationState.account_number) {
+    
+    if (conversationState.account_number && !conversationState.duress) {
+      await addDoc(collection(db, 'contacts'), {
+        userId: currentUser.uid,
+        name: conversationState.recipient,
+        account_number: conversationState.account_number,
+        bank: conversationState.bank,
+        accountName: conversationState.accountName,
+        createdAt: serverTimestamp()
+      });
       saveRecipient(conversationState.account_number, conversationState.recipient);
     }
 
-    // SEND SMS RECEIPT
-    sendSMSReceipt(conversationState.amount, conversationState.recipient, ref);
-
-    // SHOW SUCCESS + CONFETTI
     loadingOpay.classList.remove('show');
     successAnim.classList.add('show');
-    fireConfetti();
-    speakFemale('Payment successful!', detectedUserLang);
-
-    localStorage.setItem('receipt', JSON.stringify({
-      amount: conversationState.amount * 100,
-      recipient: conversationState.recipient,
-      bank: selectedBank,
-      reference: ref,
-      date: Date.now()
-    }));
-
-    setTimeout(() => {
-      successAnim.classList.remove('show');
-      resetMic();
-    }, 3000);
-
+    speakFemale(responses[detectedUserLang].paymentSuccess, detectedUserLang);
+    
+    // NAIRA RAIN CONFETTI
+    if (!conversationState.duress) {
+      confetti({particleCount: 100, spread: 70, origin: {y: 0.6}});
+    }
+    
+    setTimeout(() => {successAnim.classList.remove('show'); resetMic()}, 2500);
   } catch (err) {
-    console.error('Auth error, using PIN fallback:', err);
-    const ref = 'VP-FALLBACK-' + Date.now();
     loadingOpay.classList.remove('show');
-    successAnim.classList.add('show');
-    fireConfetti();
-
-    localStorage.setItem('receipt', JSON.stringify({
-      amount: conversationState.amount * 100,
-      recipient: conversationState.recipient,
-      bank: selectedBank,
-      reference: ref,
-      date: Date.now()
-    }));
-
-    setTimeout(() => {
-      successAnim.classList.remove('show');
-      resetMic();
-    }, 3000);
+    status.innerText = 'Payment failed. Try again.';
+    resetMic();
   }
 };
 
-// RESET MIC STATE
 window.resetMic = () => {
   confirmBox.classList.remove('show');
   loadingOpay.classList.remove('show');
   manualInputBox.classList.remove('show');
+  pinModal.classList.remove('show');
+  status.classList.remove('duress');
   status.innerText = responses[detectedUserLang].tapToStart;
   status.classList.remove('active');
-  currentIntent = null;
   voiceFailCount = 0;
-  liveVoiceBlob = null;
-  isReadingDigits = false;
-  conversationState = {
-    amount: null,
-    recipient: null,
-    account_number: null,
-    bank: null,
-    phone: null,
-    intent: 'transfer',
-    step: 'start',
-    manualField: null,
-    duress: false,
-    currency: 'NGN',
-    original_amount: null
-  };
+  enteredPIN = '';
+  conversationState = {amount: null, recipient: null, account_number: null, bank: null, phone: null, intent: 'transfer', step: 'start', manualField: null, accountName: null, duress: false};
+  canvasCtx.clearRect(0, 0, voiceCanvas.width, voiceCanvas.height);
 };
 
-// NAVIGATION FUNCTIONS
-window.goDashboard = () => {
-  window.location.href = './dashboard.html';
-};
+window.goDashboard = () => {window.location.href = './dashboard.html'};
 
-window.logout = async () => {
-  await signOut(auth);
-  localStorage.clear();
-  window.location.href = './login.html';
-};
-
-// ABOUT MODAL
-window.showAbout = () => {
-  document.getElementById('aboutModal').classList.add('show');
-  speakFemale('VoicePay platform by Harps Tech. Banking for everyone in every Nigerian language. Now with Firebase sync and real USSD simulator.', detectedUserLang);
-};
-window.closeAbout = () => {
-  document.getElementById('aboutModal').classList.remove('show');
-  speechSynthesis.cancel();
-};
-
-// REAL USSD SIMULATOR VARIABLES
 let ussdStep = 0;
 let ussdInput = '';
 let ussdAmount = '';
 let ussdAccount = '';
 
-// USSD SIMULATOR FUNCTIONS
 window.showUSSD = () => {
-  ussdStep = 0;
-  ussdInput = '';
-  ussdAmount = '';
-  ussdAccount = '';
+  ussdStep = 0; ussdInput = ''; ussdAmount = ''; ussdAccount = '';
   document.getElementById('ussdModal').classList.add('show');
   updateUSSDTime();
   setInterval(updateUSSDTime, 1000);
   showUSSDMenu(0);
-  speakFemale(responses[detectedUserLang].ussd, detectedUserLang);
+  speakFemale('USSD dialer opened', detectedUserLang);
 };
 
 function updateUSSDTime() {
   const now = new Date();
   const timeEl = document.getElementById('ussdTime');
-  if (timeEl) {
-    timeEl.innerText =
-      String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-  }
+  if (timeEl) timeEl.innerText = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
 }
 
 function showUSSDMenu(step) {
   const content = document.getElementById('ussdContent');
   if (!content) return;
-
-  if(step === 0) {
-    content.innerText = `Welcome to VoicePay
+  if(step === 0) content.innerText = `VoicePay USSD
 1. Send Money
 2. Buy Airtime
-3. Check Balance
-4. Transaction History
-5. Settings
+3. Balance
+4. Duress Mode
 0. Exit
 Enter option:`;
-  }
-  else if(step === 1) {
-    content.innerText = `Send Money
-Enter recipient account number:
+  else if(step === 1) content.innerText = `Send Money
+Enter account number:
 ${ussdAccount}`;
-  }
-  else if(step === 2) {
-    content.innerText = `Enter amount:
+  else if(step === 2) content.innerText = `Enter amount:
 ₦${ussdAmount}`;
-  }
-  else if(step === 3) {
-    content.innerText = `Confirm Transfer
+  else if(step === 3) content.innerText = `Confirm
 To: ${ussdAccount}
 Amount: ₦${ussdAmount}
 1. Confirm
 2. Cancel
-Enter option:`;
-  }
-  else if(step === 4) {
-    content.innerText = `Processing...
-Please wait...
-Success!
-₦${ussdAmount} sent to ${ussdAccount}
-Ref: VP${Date.now().toString().slice(-6)}
+4. Duress Mode`;
+  else if(step === 4) content.innerText = `DURESS MODE ACTIVE
+Silent alert sent.
+Emergency contacts notified.
+Location: Tracking...
 Thank you for using VoicePay`;
-  }
 }
 
 window.ussdPress = (key) => {
   if(key === '#') {
-    // SEND BUTTON
-    if(ussdStep === 1 && ussdAccount.length === 10) {
-      ussdStep = 2;
-      showUSSDMenu(2);
-    }
-    else if(ussdStep === 2 && ussdAmount.length > 0) {
-      ussdStep = 3;
-      showUSSDMenu(3);
-    }
-    else if(ussdStep === 3) {
-      ussdStep = 4;
-      showUSSDMenu(4);
-      // Trigger real payment
-      conversationState.amount = parseInt(ussdAmount);
-      conversationState.account_number = ussdAccount;
-      conversationState.recipient = 'USSD User';
-      setTimeout(() => {
-        closeUSSD();
-        createPayment();
-      }, 3000);
-    }
+    if(ussdStep === 1 && ussdAccount.length === 10) {ussdStep = 2; showUSSDMenu(2)}
+    else if(ussdStep === 2 && ussdAmount.length > 0) {ussdStep = 3; showUSSDMenu(3)}
     ussdInput = '';
   }
   else if(key >= '0' && key <= '9') {
     ussdInput += key;
-
-    if(ussdStep === 0 && key === '1') {
-      ussdStep = 1;
-      showUSSDMenu(1);
+    if(ussdStep === 0 && key === '1') {ussdStep = 1; showUSSDMenu(1)}
+    else if(ussdStep === 0 && key === '4') {
+      // DURESS MODE FROM USSD
+      ussdStep = 4;
+      showUSSDMenu(4);
+      getLocation().then(loc => {
+        addDoc(collection(db, 'duressAlerts'), {
+          userId: currentUser.uid,
+          location: loc,
+          timestamp: serverTimestamp(),
+          method: 'ussd'
+        });
+        updateDoc(doc(db, 'users', currentUser.uid), {locked: true});
+      });
     }
-    else if(ussdStep === 1) {
-      ussdAccount = ussdInput.slice(0,10);
-      showUSSDMenu(1);
-    }
-    else if(ussdStep === 2) {
-      ussdAmount = ussdInput;
-      showUSSDMenu(2);
-    }
+    else if(ussdStep === 1) {ussdAccount = ussdInput.slice(0,10); showUSSDMenu(1)}
+    else if(ussdStep === 2) {ussdAmount = ussdInput; showUSSDMenu(2)}
     else if(ussdStep === 3 && key === '1') {
-      window.ussdPress('#');
+      conversationState.amount = parseInt(ussdAmount);
+      conversationState.account_number = ussdAccount;
+      conversationState.recipient = 'USSD User';
+      closeUSSD();
+      requestPIN();
+    }
+    else if(ussdStep === 3 && key === '4') {
+      ussdStep = 4;
+      showUSSDMenu(4);
+      getLocation().then(loc => {
+        addDoc(collection(db, 'duressAlerts'), {
+          userId: currentUser.uid,
+          location: loc,
+          timestamp: serverTimestamp(),
+          method: 'ussd_confirm'
+        });
+      });
     }
   }
   else if(key === '*') {
-    // BACK BUTTON
     ussdStep = Math.max(0, ussdStep - 1);
     showUSSDMenu(ussdStep);
     ussdInput = '';
@@ -2021,53 +1672,31 @@ window.closeUSSD = () => {
   speechSynthesis.cancel();
 };
 
-// KEYBOARD + CLICK OUTSIDE HANDLERS
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    document.getElementById('aboutModal').classList.remove('show');
-    document.getElementById('ussdModal').classList.remove('show');
-    speechSynthesis.cancel();
-  }
-});
-
-document.getElementById('aboutModal').addEventListener('click', (e) => {
-  if (e.target.id === 'aboutModal') {
-    document.getElementById('aboutModal').classList.remove('show');
-    speechSynthesis.cancel();
-  }
+  if (e.key === 'Escape') document.getElementById('ussdModal').classList.remove('show');
 });
 
 document.getElementById('ussdModal').addEventListener('click', (e) => {
-  if (e.target.id === 'ussdModal') {
-    document.getElementById('ussdModal').classList.remove('show');
-    speechSynthesis.cancel();
-  }
+  if (e.target.id === 'ussdModal') document.getElementById('ussdModal').classList.remove('show');
 });
 
-// SERVICE WORKER FOR PWA
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js');
-  });
+  window.addEventListener('load', () => {navigator.serviceWorker.register('/sw.js')});
 }
 
-// PREVENT ZOOM ON DOUBLE TAP MOBILE
 let lastTouchEnd = 0;
 document.addEventListener('touchend', (e) => {
   const now = Date.now();
-  if (now - lastTouchEnd <= 300) {
-    e.preventDefault();
-  }
+  if (now - lastTouchEnd <= 300) e.preventDefault();
   lastTouchEnd = now;
 }, false);
 
-/* ==========================================================================
-   END OF VOICEPAY INDEX.HTML
-   Features: Multi-language voice, Firebase sync, Bank themes, Real USSD *347# Simulator
-   New: PIN protection, Recent recipients, SMS receipt, Voice balance check
-   Total lines: ~3100 with comments
-   Built by Harps Tech 2026
-   ========================================================================== */
+// CLEANUP ON UNLOAD
+window.addEventListener('beforeunload', () => {
+  if (window.dashboardUnsubscribers) {
+    window.dashboardUnsubscribers.forEach(unsub => unsub());
+  }
+});
 </script>
 </body>
 </html>
