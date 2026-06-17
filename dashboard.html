@@ -563,8 +563,7 @@ h2{
 <!-- SIDE MENU -->
 <div class="side-menu" id="sideMenu">
   <div class="menu-header">
-    <img src="IMG_6416.jpeg" class="menu-logo" alt="VoicePay">
-    <div class="menu-user" id="menuUser">Loading...</div>
+    <img id="sidebarAvatar" src="IMG_6416.jpeg" class="menu-logo" alt="Profile Photo" style="object-fit:cover">    <div class="menu-user" id="menuUser">Loading...</div>
     <div class="menu-email" id="menuEmail">user@email.com</div>
   </div>
 
@@ -698,7 +697,7 @@ h2{
 <div class="card" onclick="checkBalance()">
   <h3>Account Balance</h3>
   <div style="text-align:center;padding:20px 0">
-    <div style="font-size:36px;font-weight:800;color:var(--bank-color);margin-bottom:8px" id="balanceDisplay">₦****.**</div>
+    <div style="font-size:36px;font-weight:800;color:var(--bank-color);margin-bottom:8px" id="balanceDisplay">₦****</div>
     <div style="font-size:13px;color:var(--text-muted)">Tap to hear balance via voice</div>
   </div>
 </div>
@@ -773,7 +772,7 @@ h2{
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, collection, query, where, orderBy, limit, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, collection, query, where, orderBy, limit, getDocs, addDoc, serverTimestamp, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCe6Gx4tJZ2AIhUWviYFgWhOxnbPoFSd3A",
@@ -792,12 +791,14 @@ const BACKEND_URL = 'https://harps-tech-api.onrender.com';
 
 let currentUser = null;
 let allTransactions = [];
+let currentFilter = 'all';
+let dashboardUnsubscribers = [];
+let selectedBank = localStorage.getItem('selectedBank') || 'voicepay';
 
 // MODE SWITCH - ONLY CHANGE YOU NEED
 const isProduction = false; // Set to true when live + connect real bank API
 
 // BANK THEME
-const selectedBank = localStorage.getItem('selectedBank') || 'voicepay';
 const bankColors = {
   gtbank: { color: '#F37321', rgb: '243,115,33' },
   access: { color: '#F78F1E', rgb: '247,143,30' },
@@ -810,16 +811,16 @@ const bankColors = {
   voicepay: { color: '#00D084', rgb: '0,208,132' }
 };
 
-document.body.classList.add(selectedBank);
-const bankData = bankColors[selectedBank];
-document.documentElement.style.setProperty('--bank-color', bankData.color);
-document.documentElement.style.setProperty('--bank-glow', `rgba(${bankData.rgb}, 0.4)`);
-document.documentElement.style.setProperty('--bank-color-rgb', bankData.rgb);
-document.getElementById('bankBadge').innerText = selectedBank === 'voicepay'? 'VoicePay Platform' : `${selectedBank.toUpperCase()} Connected`;
-document.getElementById('bankLabel').innerText = selectedBank.toUpperCase();
-
-// Load theme
-if(localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
+function applyTheme(bank, theme) {
+  document.body.className = bank;
+  if(theme === 'light') document.body.classList.add('light-mode');
+  const bankData = bankColors[bank];
+  document.documentElement.style.setProperty('--bank-color', bankData.color);
+  document.documentElement.style.setProperty('--bank-glow', `rgba(${bankData.rgb}, 0.4)`);
+  document.documentElement.style.setProperty('--bank-color-rgb', bankData.rgb);
+  document.getElementById('bankBadge').innerText = bank === 'voicepay'? 'VoicePay Platform' : `${bank.toUpperCase()} Connected`;
+  document.getElementById('bankLabel').innerText = bank.toUpperCase();
+}
 
 function speakFemale(text) {
   speechSynthesis.cancel();
@@ -841,6 +842,24 @@ onAuthStateChanged(auth, async (user) => {
   }
   currentUser = user;
 
+  // REAL-TIME SYNC WITH INDEX.HTML
+  const userRef = doc(db, 'users', user.uid);
+  const unsubUser = onSnapshot(userRef, (doc) => {
+    if (doc.exists()) {
+      const data = doc.data();
+      const bank = data.selectedBank || 'voicepay';
+      const theme = data.theme || 'dark';
+      applyTheme(bank, theme);
+      selectedBank = bank; // ← ADD THIS
+localStorage.setItem('selectedBank', bank);
+
+      // Update localStorage so index.html reads same values
+      localStorage.setItem('selectedBank', bank);
+      localStorage.setItem('theme', theme);
+    }
+  });
+  dashboardUnsubscribers.push(unsubUser);
+
   try {
     const userDoc = await getDoc(doc(db, 'users', user.uid));
     if (userDoc.exists()) {
@@ -849,6 +868,10 @@ onAuthStateChanged(auth, async (user) => {
       document.getElementById('userName').innerText = name;
       document.getElementById('menuUser').innerText = name;
       document.getElementById('menuEmail').innerText = user.email;
+      const avatar = document.getElementById('sidebarAvatar');
+if (userData.photoUrl) {
+  avatar.src = userData.photoUrl;
+}
       setTimeout(() => speakFemale(`Welcome back ${name}. Your dashboard is ready.`), 1000);
     } else {
       document.getElementById('userName').innerText = user.email.split('@')[0];
@@ -857,7 +880,7 @@ onAuthStateChanged(auth, async (user) => {
     console.error('Error loading user:', e);
   }
 
-  await loadHistoryFromFirestore(user.uid);
+  await loadHistoryRealtime(user.uid);
   const receipt = JSON.parse(localStorage.getItem('receipt') || 'null');
   if (receipt) {
     await displayReceipt(receipt);
@@ -865,30 +888,30 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-async function loadHistoryFromFirestore(uid) {
+async function loadHistoryRealtime(uid) {
   const list = document.getElementById('historyList');
-  try {
-    const q = query(
-      collection(db, 'transactions'),
-      where('userId', '==', uid),
-      orderBy('createdAt', 'desc'),
-      limit(50)
-    );
-    const querySnapshot = await getDocs(q);
-    if (querySnapshot.empty) {
+
+  // REAL-TIME LISTENER INSTEAD OF getDocs
+  const q = query(
+    collection(db, 'transactions'),
+    where('userId', '==', uid),
+    orderBy('createdAt', 'desc'),
+    limit(50)
+  );
+
+  const unsubTx = onSnapshot(q, (snapshot) => {
+    if (snapshot.empty) {
       list.innerHTML = '<div class="empty">No transactions yet. Make your first voice payment!</div>';
       return;
     }
     allTransactions = [];
-    querySnapshot.forEach((doc) => allTransactions.push({ id: doc.id,...doc.data() }));
+    snapshot.forEach((doc) => allTransactions.push({ id: doc.id,...doc.data() }));
     updateStats();
     renderHistory();
     updateChart();
     generateInsight();
-  } catch (e) {
-    console.error('Error loading history:', e);
-    list.innerHTML = '<div class="empty">Error loading transactions. Create Firestore index for userId + createdAt.</div>';
-  }
+  });
+  dashboardUnsubscribers.push(unsubTx);
 }
 
 function generateInsight() {
@@ -920,12 +943,32 @@ function updateStats() {
 
 function updateChart() {
   const bars = document.querySelectorAll('.chart-bar');
+  const today = new Date();
+  const dayTotals = [0, 0, 0, 0, 0, 0, 0]; // Mon to Sun
+  
+  // Group transactions by day of week
+  allTransactions.forEach(tx => {
+    if (!tx.createdAt) return;
+    const date = tx.createdAt.toDate();
+    const diffDays = Math.floor((today - date) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays >= 0 && diffDays < 7) {
+      const dayIndex = (date.getDay() + 6) % 7; // Convert Sun=0 to Mon=0
+      dayTotals[dayIndex] += tx.amount || 0;
+    }
+  });
+  
+  const maxAmount = Math.max(...dayTotals, 1000); // Avoid divide by 0
+  
   bars.forEach((bar, i) => {
-    const height = 30 + Math.random() * 70;
-    bar.style.height = height + '%';
+    const height = maxAmount > 0 ? (dayTotals[i] / maxAmount) * 100 : 10;
+    bar.style.height = Math.max(height, 10) + '%'; // Min 10% so bar shows
+    
+    // Add tooltip with amount
+    const amount = (dayTotals[i] / 100).toLocaleString();
+    bar.title = `₦${amount}`;
   });
 }
-
 function renderHistory(filtered = allTransactions) {
   const list = document.getElementById('historyList');
   if (filtered.length === 0) {
@@ -984,7 +1027,7 @@ window.quickSend = (intent) => {
 window.checkBalance = async function() {
   if(!isProduction){
     // DEMO MODE - doesn't lie about real balance
-    document.getElementById('balanceDisplay').innerText = '₦--,---.--';
+    document.getElementById('balanceDisplay').innerText = '₦****';
     speakFemale('This is demo mode. Your real balance will show when connected to your bank in production mode.');
     alert('DEMO MODE\nReal balance will display when you connect your bank account in production.');
   } else {
@@ -1124,6 +1167,12 @@ window.toggleTheme = function() {
   document.body.classList.toggle('light-mode');
   const theme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
   localStorage.setItem('theme', theme);
+  
+  // SAVE TO FIRESTORE SO INDEX.HTML UPDATES TOO
+  if(currentUser) {
+    updateDoc(doc(db, 'users', currentUser.uid), {theme: theme});
+  }
+  
   speakFemale(`Switched to ${theme} mode`);
   toggleMenu();
 }
@@ -1163,6 +1212,11 @@ document.addEventListener('keydown', (e) => {
     document.getElementById('sideMenu').classList.remove('open');
     document.getElementById('menuOverlay').classList.remove('show');
   }
+});
+
+// CLEANUP ON UNLOAD
+window.addEventListener('beforeunload', () => {
+  dashboardUnsubscribers.forEach(unsub => unsub());
 });
 
 window.logout = async function() {
