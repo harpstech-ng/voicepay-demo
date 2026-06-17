@@ -28,7 +28,6 @@
   --border:rgba(255,255,255,0.06);
   --glow:0 0 80px rgba(0,208,132,0.18);
 }
-/* BALMY BANK COLORS */
 .gtbank{--bank-color:#F37321; --bank-glow:rgba(243,115,33,0.4)}
 .access{--bank-color:#F78F1E; --bank-glow:rgba(247,143,30,0.4)}
 .uba{--bank-color:#E31E24; --bank-glow:rgba(227,30,36,0.4)}
@@ -74,18 +73,14 @@ body{
   box-shadow:var(--glow), 0 40px 100px rgba(0,0,0,0.7);
   position:relative;
   z-index:2;
-  animation:cardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  animation:cardIn 0.3s ease-out;
 }
 @keyframes cardIn{
-  from{opacity:0;transform:translateY(40px) scale(0.93)}
-  to{opacity:1;transform:translateY(0) scale(1)}
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
 }
 .brand{text-align:center;margin-bottom:32px}
-.logo{width:110px;height:110px;margin:0 auto 18px;display:block;border-radius:28px;box-shadow:0 15px 50px rgba(0,208,132,0.35);animation:pulseGlow 3.5s ease-in-out infinite}
-@keyframes pulseGlow{
- 0%,100%{box-shadow:0 15px 50px rgba(0,208,132,0.35)}
- 50%{box-shadow:0 20px 70px rgba(0,208,132,0.55)}
-}
+.logo{width:110px;height:110px;margin:0 auto 18px;display:block;border-radius:28px;box-shadow:0 15px 50px rgba(0,208,132,0.35)}
 .badge{
   display:inline-flex;
   align-items:center;
@@ -100,6 +95,16 @@ body{
   letter-spacing:1px;
   margin-bottom:16px;
   text-transform:uppercase;
+}
+.security-badge{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  font-size:11px;
+  color:#666;
+  margin-top:8px;
+  font-weight:600;
 }
 h2{
   font-size:36px;
@@ -145,13 +150,12 @@ input{
   font-family:'Space Grotesk', sans-serif;
   font-weight:500;
   outline:none;
-  transition:all 0.35s;
+  transition:all 0.2s;
 }
 input:focus{
   border-color:var(--green);
   background:rgba(0,208,132,0.06);
-  box-shadow:0 0 0 4px rgba(0,208,132,0.12);
-  transform:translateY(-2px);
+  box-shadow:0 0 0 3px rgba(0,208,132,0.12);
 }
 .input-group{position:relative;margin-bottom:18px}
 .eye-btn{
@@ -165,9 +169,8 @@ input:focus{
   font-size:22px;
   cursor:pointer;
   padding:8px;
-  transition:0.25s;
 }
-.eye-btn:hover{color:var(--green);transform:translateY(-50%) scale(1.1)}
+.eye-btn:hover{color:var(--green)}
 .btn{
   width:100%;
   padding:18px;
@@ -179,20 +182,18 @@ input:focus{
   font-size:18px;
   margin-top:10px;
   cursor:pointer;
-  transition:all 0.25s;
+  transition:all 0.2s;
   box-shadow:0 10px 30px rgba(0,208,132,0.35);
   letter-spacing:0.5px;
 }
-.btn:active{transform:scale(0.96)}
-.btn:hover{box-shadow:0 15px 40px rgba(0,208,132,0.45);transform:translateY(-3px)}
-.btn:disabled{opacity:0.4;cursor:not-allowed;transform:scale(1)}
+.btn:active{transform:scale(0.97)}
+.btn:disabled{opacity:0.4;cursor:not-allowed}
 .btn-secondary{
   background:rgba(255,255,255,0.05);
   color:white;
   border:1px solid var(--border);
   box-shadow:none;
 }
-.btn-secondary:hover{background:rgba(255,255,255,0.08);transform:translateY(-2px)}
 .link{
   color:var(--green);
   font-size:15px;
@@ -200,9 +201,7 @@ input:focus{
   display:inline-block;
   text-decoration:none;
   font-weight:700;
-  transition:0.2s;
 }
-.link:hover{opacity:0.8}
 .toggle{
   margin-top:28px;
   font-size:15px;
@@ -230,10 +229,10 @@ input:focus{
   font-size:15px;
   font-weight:600;
   display:none;
-  animation:slideDown 0.35s;
+  animation:slideDown 0.2s;
 }
 @keyframes slideDown{
-  from{opacity:0;transform:translateY(-12px)}
+  from{opacity:0;transform:translateY(-8px)}
   to{opacity:1;transform:translateY(0)}
 }
 .error{background:rgba(255,59,48,0.16);border:1px solid rgba(255,59,48,0.45);color:#ff7b7b}
@@ -271,23 +270,22 @@ input:focus{
   margin:0 auto 16px;
   display:block;
   box-shadow:0 0 60px rgba(0,208,132,0.55);
-  transition:all 0.25s;
+  transition:all 0.2s;
 }
-.voice-btn:active{transform:scale(0.88)}
+.voice-btn:active{transform:scale(0.9)}
 .voice-btn.recording{
   background:radial-gradient(circle at 30% 30%, #ff3b30, #d62828);
-  animation:recording 1.3s infinite;
+  animation:recording 1s infinite;
 }
 @keyframes recording{
  0%,100%{box-shadow:0 0 60px rgba(255,59,48,0.65)}
- 50%{box-shadow:0 0 120px rgba(255,59,48,1)}
+ 50%{box-shadow:0 0 100px rgba(255,59,48,1)}
 }
 .voice-status{
   font-size:15px;
   color:#c0c0c0;
   margin-bottom:12px;
   font-weight:600;
-  letter-spacing:0.3px;
 }
 .voice-dots{
   display:flex;
@@ -300,7 +298,7 @@ input:focus{
   height:12px;
   border-radius:50%;
   background:var(--border);
-  transition:all 0.35s;
+  transition:all 0.2s;
 }
 .voice-dot.active{
   background:var(--green);
@@ -319,7 +317,7 @@ input:focus{
   height:10px;
   border-radius:50%;
   background:var(--border);
-  transition:all 0.35s;
+  transition:all 0.2s;
 }
 .step-dot.active{
   background:var(--green);
@@ -348,7 +346,6 @@ input:focus{
   accent-color:var(--green);
 }
 
-/* BALMY BANK SELECTION GRID */
 .bank-grid{
   display:grid;
   grid-template-columns:repeat(2, 1fr);
@@ -362,16 +359,14 @@ input:focus{
   border-radius:20px;
   text-align:center;
   cursor:pointer;
-  transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:all 0.2s;
   font-weight:700;
   font-size:15px;
-  letter-spacing:0.3px;
 }
 .bank-card:hover{
   border-color:var(--bank-color);
   background:linear-gradient(135deg, rgba(var(--bank-color-rgb), 0.12), rgba(var(--bank-color-rgb), 0.05));
-  box-shadow:0 0 30px var(--bank-glow);
-  transform:translateY(-4px) scale(1.02);
+  transform:translateY(-3px);
 }
 .bank-card.selected{
   border-color:var(--bank-color);
@@ -379,96 +374,17 @@ input:focus{
   box-shadow:0 0 40px var(--bank-glow);
 }
 
-.about-btn{
-  position:fixed;
-  bottom:28px;
-  left:28px;
-  background:rgba(255,255,255,0.98);
-  border:none;
-  padding:14px 22px;
-  border-radius:16px;
-  font-size:15px;
-  font-weight:800;
-  color:#000;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.18);
-  z-index:100;
-  transition:all 0.25s;
+/* REMOVED ABOUT BUTTON */
+
+/* LOADING SHIMMER */
+.loading-shimmer{
+  background:linear-gradient(90deg, transparent, rgba(0,208,132,0.2), transparent);
+  background-size:200% 100%;
+  animation:shimmer 1s infinite;
 }
-.about-btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 15px 40px rgba(0,0,0,0.25)}
-.modal-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.88);
-  backdrop-filter:blur(25px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:1000;
-  padding:20px;
-  animation:fadeIn 0.35s;
-}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal-overlay.show{display:flex}
-.modal-content{
-  background:linear-gradient(135deg, #0a0a0a, #151515);
-  border-radius:28px;
-  max-width:540px;
-  width:100%;
-  border:1px solid var(--border);
-  animation:modalPop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-}
-@keyframes modalPop{
-  from{opacity:0;transform:scale(0.88) translateY(25px)}
-  to{opacity:1;transform:scale(1) translateY(0)}
-}
-.modal-header{
-  padding:32px 32px 20px;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.modal-header h3{margin:0;font-size:24px;font-weight:800;letter-spacing:-0.5px}
-.close-btn{
-  background:none;
-  border:none;
-  font-size:36px;
-  cursor:pointer;
-  color:#555;
-  line-height:1;
-  transition:0.25s;
-}
-.close-btn:hover{color:var(--green);transform:rotate(90deg)}
-.modal-body{padding:32px}
-.modal-body p{margin-bottom:16px;line-height:1.8;color:#d0d0d0;font-size:15px}
-.highlight-box{
-  padding:20px;
-  background:linear-gradient(135deg, rgba(0,208,132,0.12), rgba(0,208,132,0.06));
-  border-left:5px solid var(--green);
-  border-radius:12px;
-  margin:20px 0;
-  font-weight:600;
-  font-size:15px;
-}
-.lang-grid{
-  display:grid;
-  grid-template-columns:repeat(5, 1fr);
-  gap:10px;
-  margin:18px 0;
-}
-.lang-item{
-  text-align:center;
-  padding:12px 6px;
-  background:rgba(0,208,132,0.1);
-  border-radius:10px;
-  font-size:13px;
-  font-weight:800;
-  color:var(--green);
-  letter-spacing:0.5px;
+@keyframes shimmer{
+ 0%{background-position:-200% 0}
+ 100%{background-position:200% 0}
 }
 </style>
 </head>
@@ -481,6 +397,7 @@ input:focus{
     <span class="badge">VoicePay Platform</span>
     <h2 id="title">VoicePay</h2>
     <p class="sub" id="subtitle">Banking that understands your voice</p>
+    <div class="security-badge">🔒 Bank-Grade Security • 256-bit Encryption</div>
     <div class="lang-tags">
       <span class="lang-tag">English</span>
       <span class="lang-tag">Yoruba</span>
@@ -498,11 +415,10 @@ input:focus{
     <div class="step-dot" id="sdot2"></div>
     <div class="step-dot" id="sdot3"></div>
     <div class="step-dot" id="sdot4"></div>
-    <div class="step-dot" id="sdot5"></div>
   </div>
 
   <div id="stepAuth">
-    <input type="email" id="email" placeholder="Email address" autocomplete="email" spellcheck="false">
+    <input type="email" id="email" placeholder="Email address" autocomplete="email" spellcheck="false" autofocus>
     <div class="input-group" id="passGroup">
       <input type="password" id="password" placeholder="Password" autocomplete="current-password">
       <button type="button" class="eye-btn" onclick="togglePass()" id="eyeBtn">👁️</button>
@@ -513,7 +429,7 @@ input:focus{
 
   <div id="stepAge" style="display:none">
     <div class="student-badge" id="studentBadge" style="display:none">🎓 Student Account - ₦10K daily limit</div>
-    <input type="text" id="fullName" placeholder="Full name" maxlength="50" autocomplete="name">
+    <input type="text" id="fullName" placeholder="Full name" maxlength="50" autocomplete="name" autofocus>
     <div class="checkbox-wrap">
       <label class="checkbox-label">
         <input type="checkbox" id="ageCheck" checked onchange="toggleAge()">
@@ -535,11 +451,10 @@ input:focus{
         <div class="voice-dot" id="vdot4"></div>
       </div>
     </div>
-    <div style="text-align:center;font-style:italic;color:var(--green);font-size:15px;margin-bottom:18px;font-weight:700;letter-spacing:0.3px" id="voicePhrase">Say: "My voice is my password"</div>
+    <div style="text-align:center;font-style:italic;color:var(--green);font-size:15px;margin-bottom:18px;font-weight:700" id="voicePhrase">Say: "My voice is my password"</div>
     <button class="btn" onclick="completeSignup()" id="finishBtn" disabled>Complete Setup</button>
   </div>
 
-  <!-- BALMY BANK SELECTION STEP -->
   <div id="stepBank" style="display:none">
     <h2 style="font-size:28px;margin-bottom:8px">Choose Your Bank</h2>
     <p class="sub" style="margin-bottom:24px">Select the bank you use most</p>
@@ -564,58 +479,26 @@ input:focus{
   <div class="footer">© 2026 HARPS TECH. ALL RIGHTS RESERVED.</div>
 </div>
 
-<button class="about-btn" onclick="showAbout()">
-  <svg fill="currentColor" viewBox="0 0 20 20" width="20"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"/></svg>
-  About
-</button>
-
-<div class="modal-overlay" id="aboutModal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3>VoicePay Platform</h3>
-      <button class="close-btn" onclick="closeAbout()">&times;</button>
-    </div>
-    <div class="modal-body">
-      <p><strong>Banking for everyone, in every Nigerian language.</strong></p>
-
-      <div class="highlight-box">
-        40M Nigerians are excluded from mobile banking. VoicePay fixes that. Speak to send money, buy airtime, pay bills. No reading required. No typing needed. Works on any phone.
-      </div>
-
-      <p><strong>Supported Languages:</strong></p>
-      <div class="lang-grid">
-        <div class="lang-item">ENGLISH</div>
-        <div class="lang-item">YORUBA</div>
-        <div class="lang-item">HAUSA</div>
-        <div class="lang-item">IGBO</div>
-        <div class="lang-item">PIDGIN</div>
-      </div>
-
-      <p style="font-size:14px;color:#666;margin-top:24px;letter-spacing:0.5px">VOICEPAY PLATFORM BY HARPS TECH. SECURE. FAST. ACCESSIBLE.</p>
-    </div>
-  </div>
-</div>
+<!-- REMOVED ABOUT BUTTON + MODAL -->
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// HARPS TECH FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyCe6Gx4tJZ2AIhUWviYFgWhOxnbPoFSd3A",
   authDomain: "voicepay-harps-tech.firebaseapp.com",
   projectId: "voicepay-harps-tech",
   storageBucket: "voicepay-harps-tech.firebasestorage.app",
   messagingSenderId: "955301626221",
-  appId: "1:955301626221:web:745d7a643b7c0bbbeb9a64",
-  measurementId: "G-TXDEJZV3ZK"
+  appId: "1:955301626221:web:745d7a643b7c0bbbeb9a64"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const BACKEND_URL = '//////';
+const BACKEND_URL = 'https://harps-tech-api.onrender.com';
 
 let isLogin = true;
 let showPassword = false;
@@ -645,6 +528,11 @@ const langMap = {
   'pcm': { lang: 'en-NG', name: 'Pidgin' }
 };
 
+// AUTO-FOCUS EMAIL ON LOAD
+window.addEventListener('load', () => {
+  document.getElementById('email').focus();
+});
+
 onAuthStateChanged(auth, (user) => {
   if (user) window.location.href = './index.html';
 });
@@ -662,22 +550,18 @@ function speakHarps(text, langCode = 'en') {
       const config = langMap[langCode] || langMap['en'];
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = config.lang;
-
       let voice = availableVoices.find(v => v.lang === config.lang) ||
                   availableVoices.find(v => v.name.toLowerCase().includes('zira')) ||
                   availableVoices.find(v => v.name.toLowerCase().includes('female') && v.lang.startsWith('en')) ||
                   availableVoices.find(v => v.lang.startsWith('en'));
-
       if (voice) utterance.voice = voice;
-
       utterance.pitch = 1.05;
       utterance.rate = 0.88;
       utterance.volume = 1;
-
       utterance.onend = resolve;
       utterance.onerror = resolve;
       speechSynthesis.speak(utterance);
-    }, 80);
+    }, 50);
   });
 }
 
@@ -690,12 +574,13 @@ window.toggleMode = () => {
   document.getElementById('toggleText').innerText = isLogin? "New to VoicePay? " : "Already have account? ";
   document.getElementById('stepIndicator').style.display = isLogin? 'none' : 'flex';
   showStep('stepAuth');
+  document.getElementById('email').focus();
 
   if (!isLogin &&!hasSpokenWelcome) {
     setTimeout(() => {
-      speakHarps('Welcome to VoicePay. Create your secure voice account in 5 steps.');
+      speakHarps('Welcome to VoicePay. Create your secure voice account in 4 steps.');
       hasSpokenWelcome = true;
-    }, 250);
+    }, 200);
   }
 };
 
@@ -720,9 +605,8 @@ function showStep(stepId) {
     document.getElementById(id).style.display = 'none';
   });
   document.getElementById(stepId).style.display = 'block';
-
   if (!isLogin) {
-    ['sdot1','sdot2','sdot3','sdot4','sdot5'].forEach((id,i) => {
+    ['sdot1','sdot2','sdot3','sdot4'].forEach((id,i) => {
       const dot = document.getElementById(id);
       if (dot) dot.classList.toggle('active', i < signupStep);
     });
@@ -733,6 +617,7 @@ window.backToAuth = () => {
   signupStep = 1;
   showStep('stepAuth');
   document.getElementById('stepIndicator').style.display = 'none';
+  document.getElementById('email').focus();
 };
 
 window.handleAuth = async () => {
@@ -742,6 +627,7 @@ window.handleAuth = async () => {
   if(!email ||!pass){ showError('Please fill all fields'); speakHarps('Please fill all fields'); return }
 
   btn.disabled = true;
+  btn.classList.add('loading-shimmer');
   btn.innerText = 'Authenticating...';
   clearMsg();
 
@@ -750,18 +636,20 @@ window.handleAuth = async () => {
       const user = await signInWithEmailAndPassword(auth, email, pass);
       localStorage.setItem('uid', user.user.uid);
       await speakHarps('Login successful. Welcome back.');
-      setTimeout(() => window.location.href='./index.html', 700);
+      setTimeout(() => window.location.href='./index.html', 500);
     }else{
       tempUserData = {email, pass};
       signupStep = 2;
       showStep('stepAge');
       document.getElementById('stepIndicator').style.display = 'flex';
+      document.getElementById('fullName').focus();
       await speakHarps('Please enter your full name and confirm your age.');
     }
   }catch(e){
     showError(getErrorMsg(e.code));
     speakHarps('Login failed. ' + getErrorMsg(e.code));
     btn.disabled = false;
+    btn.classList.remove('loading-shimmer');
     btn.innerText = isLogin? 'Login' : 'Continue';
   }
 };
@@ -769,18 +657,15 @@ window.handleAuth = async () => {
 window.confirmAge = async () => {
   const fullName = document.getElementById('fullName').value.trim();
   const isOver18 = document.getElementById('ageCheck').checked;
-
   if (!fullName) {
     showError('Enter your full name');
     speakHarps('Please enter your full name');
     return;
   }
-
   tempUserData.fullName = fullName;
   tempUserData.isStudent =!isOver18;
   userAge = isOver18? 25 : 16;
   isStudent =!isOver18;
-
   if (isStudent) {
     document.getElementById('studentBadge').style.display = 'inline-flex';
     showSuccess('Student account - ₦10,000 daily limit activated');
@@ -789,11 +674,10 @@ window.confirmAge = async () => {
     showSuccess('Age verified. Voice enrollment next.');
     await speakHarps('Age verified. Now record your voice in 4 phrases.');
   }
-
   setTimeout(() => {
     signupStep = 3;
     showStep('stepVoice');
-  }, 900);
+  }, 600);
 };
 
 window.toggleAge = () => {
@@ -804,22 +688,17 @@ window.toggleAge = () => {
 window.recordVoice = async () => {
   const btn = document.getElementById('voiceBtn');
   const status = document.getElementById('voiceStatus');
-
   if (btn.classList.contains('recording')) return;
-
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
     const mediaRecorder = new MediaRecorder(stream);
     const chunks = [];
-
     mediaRecorder.ondataavailable = e => chunks.push(e.data);
     mediaRecorder.onstop = async () => {
       const blob = new Blob(chunks, { type: 'audio/webm' });
       voiceRecordings.push(blob);
-
       document.getElementById(`vdot${currentPhrase + 1}`).classList.add('active');
       currentPhrase++;
-
       if (currentPhrase < 4) {
         status.textContent = `Tap microphone for phrase ${currentPhrase + 1} of 4`;
         const phraseText = currentPhrase === 3? `Duress phrase: "${phrases[currentPhrase]}"` : `"${phrases[currentPhrase]}"`;
@@ -831,35 +710,30 @@ window.recordVoice = async () => {
         btn.style.display = 'none';
         await speakHarps('Voice captured successfully including duress phrase. Tap complete setup to finish.');
       }
-
       stream.getTracks().forEach(track => track.stop());
     };
-
     mediaRecorder.start();
     btn.classList.add('recording');
-    status.textContent = 'Recording... Speak clearly and naturally';
-    await speakHarps(`Recording. Say clearly: ${phrases[currentPhrase]}`);
-
+    status.textContent = 'Recording... Speak clearly';
+    await speakHarps(`Recording. Say: ${phrases[currentPhrase]}`);
     setTimeout(() => {
       mediaRecorder.stop();
       btn.classList.remove('recording');
-    }, 3200);
-
+    }, 3000);
   } catch (err) {
-    showError('Microphone access denied. Enable permission in browser settings.');
-    speakHarps('Microphone access denied. Please enable microphone permission in your browser settings.');
+    showError('Microphone access denied. Enable permission.');
+    speakHarps('Microphone access denied. Enable microphone permission.');
   }
 };
 
 window.completeSignup = async () => {
   const btn = document.getElementById('finishBtn');
   btn.disabled = true;
+  btn.classList.add('loading-shimmer');
   btn.innerText = 'Creating account...';
-
   try {
     const userCred = await createUserWithEmailAndPassword(auth, tempUserData.email, tempUserData.pass);
     const uid = userCred.user.uid;
-
     await setDoc(doc(db, 'users', uid), {
       email: tempUserData.email,
       fullName: tempUserData.fullName,
@@ -870,59 +744,41 @@ window.completeSignup = async () => {
       duressPhrase: phrases[3],
       createdAt: serverTimestamp(),
       platform: 'VoicePay Harps Tech',
-      version: '4.0',
+      version: '5.0',
       selectedBank: null
     });
-
     const formData = new FormData();
-    voiceRecordings.forEach((blob, i) => {
-      formData.append(`voice`, blob);
-    });
+    voiceRecordings.forEach((blob, i) => formData.append(`voice`, blob));
     formData.append('userId', uid);
     formData.append('email', tempUserData.email);
     formData.append('fullName', tempUserData.fullName);
     formData.append('isStudent', isStudent);
     formData.append('duressPhrase', phrases[3]);
-
-    await fetch(BACKEND_URL + '/complete-signup', {
-      method: 'POST',
-      body: formData
-    });
-
+    await fetch(BACKEND_URL + '/complete-signup', {method: 'POST', body: formData});
     localStorage.setItem('uid', uid);
     localStorage.setItem('isStudent', isStudent);
     showSuccess('Voice enrolled! Now choose your bank');
     await speakHarps('Voice enrolled successfully. Now select your bank.');
-
     setTimeout(() => {
       signupStep = 4;
       showStep('stepBank');
-    }, 1200);
-
+    }, 800);
   } catch (err) {
-    showError('Failed to create account. Please try again.');
+    showError('Failed to create account. Try again.');
     speakHarps('Account creation failed. Please try again.');
     btn.disabled = false;
+    btn.classList.remove('loading-shimmer');
     btn.innerText = 'Complete Setup';
     console.error(err);
   }
 };
 
-// BALMY BANK SELECTION
 window.selectBank = (bank, color) => {
   selectedBank = bank;
   selectedBankColor = color;
-
-  // Remove selected from all
-  document.querySelectorAll('.bank-card').forEach(card => {
-    card.classList.remove('selected');
-  });
-
-  // Add selected to clicked
+  document.querySelectorAll('.bank-card').forEach(card => card.classList.remove('selected'));
   event.target.classList.add('selected');
-
   document.getElementById('bankBtn').disabled = false;
-
   const bankName = bank.charAt(0).toUpperCase() + bank.slice(1);
   speakHarps(`${bankName} selected. Tap continue to finish.`);
 };
@@ -932,31 +788,25 @@ window.finishSetup = async () => {
     showError('Please select your bank');
     return;
   }
-
   const btn = document.getElementById('bankBtn');
   btn.disabled = true;
+  btn.classList.add('loading-shimmer');
   btn.innerText = 'Saving...';
-
   try {
     const user = auth.currentUser;
     await updateDoc(doc(db, 'users', user.uid), {
       selectedBank: selectedBank,
       bankColor: selectedBankColor
     });
-
     localStorage.setItem('selectedBank', selectedBank);
     localStorage.setItem('bankColor', selectedBankColor);
-
     showSuccess(`${selectedBank.toUpperCase()} selected! Redirecting...`);
     await speakHarps(`Perfect. ${selectedBank.toUpperCase()} account linked. Welcome to VoicePay.`);
-
-    setTimeout(() => {
-      window.location.href = './index.html';
-    }, 1500);
-
+    setTimeout(() => window.location.href = './index.html', 1000);
   } catch (err) {
     showError('Failed to save bank. Try again.');
     btn.disabled = false;
+    btn.classList.remove('loading-shimmer');
     btn.innerText = 'Continue to Dashboard';
   }
 };
@@ -965,19 +815,19 @@ window.resetPass = async () => {
   const btn = document.getElementById('mainBtn');
   const email = document.getElementById('email').value.trim();
   if(!email){ showError('Enter your email first'); speakHarps('Enter your email first'); return }
-
   btn.disabled = true;
+  btn.classList.add('loading-shimmer');
   btn.innerText = 'Sending reset link...';
-
   try{
     await sendPasswordResetEmail(auth, email);
-    showSuccess('Reset link sent! Check your email inbox and spam folder');
+    showSuccess('Reset link sent! Check your email');
     await speakHarps('Password reset link sent to your email address.');
-    setTimeout(()=>location.reload(), 3000);
+    setTimeout(()=>location.reload(), 2000);
   }catch(e){
     showError(getErrorMsg(e.code));
     speakHarps('Failed to send reset link');
     btn.disabled = false;
+    btn.classList.remove('loading-shimmer');
     btn.innerText = 'Send Reset Link';
   }
 };
@@ -1000,6 +850,8 @@ function showError(msg){
   el.textContent = msg;
   el.style.display = 'block';
   document.getElementById('success').style.display = 'none';
+  // Auto-hide after 4s for speed
+  setTimeout(() => el.style.display = 'none', 4000);
 }
 
 function showSuccess(msg){
@@ -1007,6 +859,7 @@ function showSuccess(msg){
   el.textContent = msg;
   el.style.display = 'block';
   document.getElementById('error').style.display = 'none';
+  setTimeout(() => el.style.display = 'none', 3000);
 }
 
 function clearMsg(){
@@ -1014,32 +867,51 @@ function clearMsg(){
   document.getElementById('success').style.display = 'none';
 }
 
-// ABOUT MODAL - CLEAN HARPS TECH
-window.showAbout = () => {
-  document.getElementById('aboutModal').classList.add('show');
-  speakHarps('VoicePay platform by Harps Tech. Banking for everyone in every Nigerian language.');
-};
+// PRO FEATURE: ENTER KEY SUBMIT
+document.getElementById('email').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') document.getElementById('password').focus();
+});
+document.getElementById('password').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') handleAuth();
+});
 
-window.closeAbout = () => {
-  document.getElementById('aboutModal').classList.remove('show');
-  speechSynthesis.cancel();
-};
+// PWA Service Worker - FAST LOAD
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW failed:', err));
+  });
+}
 
-// Close modal on ESC key
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    document.getElementById('aboutModal').classList.remove('show');
-    speechSynthesis.cancel();
+// Prevent zoom on double tap iOS - NO LAG
+let lastTouchEnd = 0;
+document.addEventListener('touchend', (e) => {
+  const now = Date.now();
+  if (now - lastTouchEnd <= 300) {
+    e.preventDefault();
+  }
+  lastTouchEnd = now;
+}, false);
+
+// PRO FEATURE: AUTO DETECT BANK FROM EMAIL
+document.getElementById('email').addEventListener('blur', () => {
+  const email = document.getElementById('email').value.toLowerCase();
+  if (email.includes('gtbank') || email.includes('gtb')) {
+    localStorage.setItem('suggestedBank', 'gtbank');
+  } else if (email.includes('access')) {
+    localStorage.setItem('suggestedBank', 'access');
+  } else if (email.includes('uba')) {
+    localStorage.setItem('suggestedBank', 'uba');
+  } else if (email.includes('firstbank')) {
+    localStorage.setItem('suggestedBank', 'firstbank');
+  } else if (email.includes('zenith')) {
+    localStorage.setItem('suggestedBank', 'zenith');
   }
 });
 
-// Close modal on background click
-document.getElementById('aboutModal').addEventListener('click', (e) => {
-  if (e.target.id === 'aboutModal') {
-    document.getElementById('aboutModal').classList.remove('show');
-    speechSynthesis.cancel();
-  }
-});
+// PRO FEATURE: BIOMETRIC HINT FOR MOBILE
+if ('credentials' in navigator && window.PublicKeyCredential) {
+  document.getElementById('mainBtn').innerHTML = 'Login 🔐';
+}
 </script>
 
 <script>
