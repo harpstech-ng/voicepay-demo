@@ -961,13 +961,12 @@ const responses = {
 // REAL-TIME DASHBOARD SYNC - LISTEN FOR CHANGES
 function setupDashboardSync() {
   if (!currentUser) return;
-  
-  // Listen to user document changes
+
   const userRef = doc(db, 'users', currentUser.uid);
   const unsubscribeUser = onSnapshot(userRef, (doc) => {
     if (doc.exists()) {
       const data = doc.data();
-      if (data.selectedBank !== selectedBank) {
+      if (data.selectedBank!== selectedBank) {
         selectedBank = data.selectedBank || 'voicepay';
         const bankData = bankColors[selectedBank];
         document.body.className = selectedBank;
@@ -980,7 +979,6 @@ function setupDashboardSync() {
     }
   });
 
-  // Listen to contacts changes
   const contactsRef = collection(db, 'contacts');
   const q = query(contactsRef, where('userId', '==', currentUser.uid));
   const unsubscribeContacts = onSnapshot(q, (snapshot) => {
@@ -992,38 +990,37 @@ function setupDashboardSync() {
     renderRecentRecipients();
   });
 
-  // Store unsubscribe functions
   window.dashboardUnsubscribers = [unsubscribeUser, unsubscribeContacts];
 }
 
 // VOICE SIGNATURE DRAWER - NEW FEATURE
 function drawVoiceSignature() {
-  if (!analyser || !isRecordingSignature) return;
-  
+  if (!analyser ||!isRecordingSignature) return;
+
   requestAnimationFrame(drawVoiceSignature);
-  
+
   analyser.getByteTimeDomainData(dataArray);
-  
+
   canvasCtx.fillStyle = 'rgba(5, 5, 10, 0.1)';
   canvasCtx.fillRect(0, 0, voiceCanvas.width, voiceCanvas.height);
-  
+
   canvasCtx.lineWidth = 2;
   canvasCtx.strokeStyle = `rgb(${bankColors[selectedBank].rgb})`;
   canvasCtx.beginPath();
-  
+
   const sliceWidth = voiceCanvas.width * 1.0 / analyser.frequencyBinCount;
   let x = 0;
-  
+
   for (let i = 0; i < analyser.frequencyBinCount; i++) {
     const v = dataArray[i] / 128.0;
     const y = v * voiceCanvas.height / 2;
-    
+
     if (i === 0) canvasCtx.moveTo(x, y);
     else canvasCtx.lineTo(x, y);
-    
+
     x += sliceWidth;
   }
-  
+
   canvasCtx.lineTo(voiceCanvas.width, voiceCanvas.height / 2);
   canvasCtx.stroke();
 }
@@ -1067,7 +1064,7 @@ onAuthStateChanged(auth, async (user) => {
     } catch (e) {console.error(e)}
     loadVoicesFast();
     renderRecentRecipients();
-    setupDashboardSync(); // REAL-TIME SYNC
+    setupDashboardSync();
     setTimeout(() => {
       const name = currentUserData?.displayName || 'there';
       speakFemale(responses[detectedUserLang].hello(name), detectedUserLang);
@@ -1092,7 +1089,7 @@ function speakFemale(text, lang = 'en-NG') {
     let voice = availableVoices.find(v => v.lang === lang && v.name.toLowerCase().includes('female'));
     if (!voice) voice = availableVoices.find(v => v.lang.startsWith(lang.split('-')[0]) && v.name.toLowerCase().includes('female'));
     if (!voice) voice = availableVoices.find(v => v.name.toLowerCase().includes('zira') || v.name.includes('Karen') || v.name.includes('Samantha'));
-    if (!voice) voice = availableVoices.find(v => !v.name.toLowerCase().includes('male'));
+    if (!voice) voice = availableVoices.find(v =>!v.name.toLowerCase().includes('male'));
     if (voice) utterance.voice = voice;
   }
   utterance.pitch = 1.4;
@@ -1123,8 +1120,7 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
     confidenceBar.classList.remove('show');
     voiceCanvas.classList.add('show');
     isRecordingSignature = true;
-    
-    // START VOICE SIGNATURE ANALYZER
+
     if (!audioContext) {
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
       analyser = audioContext.createAnalyser();
@@ -1132,19 +1128,19 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
       const bufferLength = analyser.frequencyBinCount;
       dataArray = new Uint8Array(bufferLength);
     }
-    
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const source = audioContext.createMediaStreamSource(stream);
       source.connect(analyser);
       drawVoiceSignature();
-      
+
       mediaRecorder = new MediaRecorder(stream);
       audioChunks = [];
       mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
       mediaRecorder.start();
     } catch(e) {console.log('Audio failed:', e)}
-    
+
     clearTimeout(recognitionTimeout);
     recognitionTimeout = setTimeout(() => {
       if (isListening) {
@@ -1162,16 +1158,16 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
     mic.classList.remove('recording');
     voiceCanvas.classList.remove('show');
     isRecordingSignature = false;
-    
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+
+    if (mediaRecorder && mediaRecorder.state!== 'inactive') {
       mediaRecorder.stop();
       mediaRecorder.onstop = () => {
         liveVoiceBlob = new Blob(audioChunks, { type: 'audio/webm' });
       };
     }
-    
-    await saveVoiceSignature(); // SAVE SIGNATURE
-    
+
+    await saveVoiceSignature();
+
     if (finalTranscriptBuffer.trim()) {
       processTranscript(finalTranscriptBuffer.trim());
     } else {
@@ -1192,7 +1188,7 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
     }
     const currentText = finalTranscript || interimTranscript;
     transcriptLive.innerText = currentText;
-    
+
     clearTimeout(silenceTimer);
     silenceTimer = setTimeout(() => {
       if (isListening) recognition.stop();
@@ -1282,12 +1278,12 @@ async function processConversationStep() {
       status.innerText = ask;
       speakFemale(ask, detectedUserLang);
     }
-  } else if (conversationState.amount && conversationState.recipient && conversationState.account_number && !conversationState.bank) {
+  } else if (conversationState.amount && conversationState.recipient && conversationState.account_number &&!conversationState.bank) {
     conversationState.step = 'bank';
     const ask = responses[detectedUserLang].firstTimeBank(conversationState.recipient);
     status.innerText = ask;
     speakFemale(ask, detectedUserLang);
-  } else if (conversationState.amount && conversationState.recipient && conversationState.account_number && conversationState.bank && !conversationState.accountName) {
+  } else if (conversationState.amount && conversationState.recipient && conversationState.account_number && conversationState.bank &&!conversationState.accountName) {
     conversationState.step = 'accountName';
     const ask = responses[detectedUserLang].firstTimeName(conversationState.recipient);
     status.innerText = ask;
@@ -1323,13 +1319,11 @@ async function processTranscript(final) {
   transcriptLive.classList.remove('show');
   detectedUserLang = detectLanguage(normalizedText);
 
-  // DURESS MODE CHECK - NEW FEATURE
   if (detectDuress(normalizedText)) {
     conversationState.duress = true;
     status.classList.add('duress');
     status.innerText = 'Processing silently...';
-    
-    // FAKE SUCCESS FOR ATTACKER
+
     setTimeout(async () => {
       const location = await getLocation();
       await addDoc(collection(db, 'duressAlerts'), {
@@ -1339,17 +1333,15 @@ async function processTranscript(final) {
         timestamp: serverTimestamp(),
         status: 'active'
       });
-      
-      // Lock account
+
       await updateDoc(doc(db, 'users', currentUser.uid), {locked: true});
-      
+
       successAnim.classList.add('show');
-      speakFemale(responses[detectedUserLang].duressSuccess, detectedUserLang);
-      
+      speakReceipt(responses[detectedUserLang].duressSuccess, detectedUserLang);
+
       setTimeout(() => {
         successAnim.classList.remove('show');
         resetMic();
-        // Redirect to fake success page
         window.location.href = './success.html';
       }, 2000);
     }, 1000);
@@ -1359,19 +1351,19 @@ async function processTranscript(final) {
   try {
     const amountMatch = normalizedText.match(/\b(\d+)\b/);
     if (amountMatch) conversationState.amount = parseInt(amountMatch[1]);
-    
+
     const nameMatch = normalizedText.match(/(?:to|for|give)\s+([a-z]+)/i);
     if (nameMatch) conversationState.recipient = nameMatch[1].charAt(0).toUpperCase() + nameMatch[1].slice(1);
-    
+
     const accountMatch = normalizedText.match(/\b(\d{10})\b/);
     if (accountMatch) conversationState.account_number = accountMatch[1];
-    
+
     if (/gtbank|gtb/i.test(normalizedText)) conversationState.bank = 'gtbank';
     else if (/access/i.test(normalizedText)) conversationState.bank = 'access';
     else if (/uba/i.test(normalizedText)) conversationState.bank = 'uba';
     else if (/first/i.test(normalizedText)) conversationState.bank = 'firstbank';
     else if (/zenith/i.test(normalizedText)) conversationState.bank = 'zenith';
-    
+
     confidenceBar.classList.add('show');
     confidenceFill.style.width = '95%';
     await processConversationStep();
@@ -1401,8 +1393,7 @@ window.requestPIN = () => {
   enteredPIN = '';
   updatePINDisplay();
   speakFemale('Say your PIN or tap manually', detectedUserLang);
-  
-  // AUTO RECORD PIN VOICE
+
   setTimeout(() => recordPINVoice(), 800);
 };
 
@@ -1411,17 +1402,16 @@ window.recordPINVoice = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(stream);
     const chunks = [];
-    
+
     recorder.ondataavailable = e => chunks.push(e.data);
     recorder.onstop = async () => {
       const blob = new Blob(chunks, { type: 'audio/webm' });
-      // Use speech recognition to convert PIN speech to numbers
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       const pinRec = new SpeechRecognition();
       pinRec.lang = 'en-US';
       pinRec.continuous = false;
       pinRec.interimResults = false;
-      
+
       pinRec.onresult = (e) => {
         const pinText = e.results[0][0].transcript.replace(/\D/g, '').slice(0, 4);
         if (pinText.length === 4) {
@@ -1430,17 +1420,16 @@ window.recordPINVoice = async () => {
           setTimeout(() => submitPIN(), 500);
         }
       };
-      
-      // Play audio to pinRec
+
       pinRec.start();
       setTimeout(() => pinRec.stop(), 3000);
-      
+
       stream.getTracks().forEach(track => track.stop());
     };
-    
+
     recorder.start();
     setTimeout(() => recorder.stop(), 3000);
-    
+
   } catch(e) {
     console.log('PIN voice failed:', e);
   }
@@ -1463,16 +1452,15 @@ window.clearPIN = () => {
 };
 
 window.submitPIN = async () => {
-  if (enteredPIN.length !== 4) {
+  if (enteredPIN.length!== 4) {
     speakFemale('PIN must be 4 digits', detectedUserLang);
     return;
   }
-  
+
   pinModal.classList.remove('show');
   loadingOpay.classList.add('show');
   status.innerText = responses[detectedUserLang].verifying;
-  
-  // VERIFY PIN WITH BACKEND
+
   try {
     const response = await fetch(BACKEND_URL + '/verify-pin', {
       method: 'POST',
@@ -1482,7 +1470,7 @@ window.submitPIN = async () => {
         pin: enteredPIN
       })
     });
-    
+
     const result = await response.json();
     if (result.success) {
       await createPayment();
@@ -1501,7 +1489,7 @@ window.submitPIN = async () => {
 };
 
 window.createPayment = async () => {
-  if (!currentUser || !conversationState.amount || !conversationState.recipient) return;
+  if (!currentUser ||!conversationState.amount ||!conversationState.recipient) return;
   confirmBox.classList.remove('show');
   loadingOpay.classList.add('show');
   status.innerText = responses[detectedUserLang].verifying;
@@ -1521,8 +1509,8 @@ window.createPayment = async () => {
       pinUsed: true,
       createdAt: serverTimestamp()
     });
-    
-    if (conversationState.account_number && !conversationState.duress) {
+
+    if (conversationState.account_number &&!conversationState.duress) {
       await addDoc(collection(db, 'contacts'), {
         userId: currentUser.uid,
         name: conversationState.recipient,
@@ -1537,12 +1525,11 @@ window.createPayment = async () => {
     loadingOpay.classList.remove('show');
     successAnim.classList.add('show');
     speakFemale(responses[detectedUserLang].paymentSuccess, detectedUserLang);
-    
-    // NAIRA RAIN CONFETTI
+
     if (!conversationState.duress) {
       confetti({particleCount: 100, spread: 70, origin: {y: 0.6}});
     }
-    
+
     setTimeout(() => {successAnim.classList.remove('show'); resetMic()}, 2500);
   } catch (err) {
     loadingOpay.classList.remove('show');
@@ -1625,7 +1612,6 @@ window.ussdPress = (key) => {
     ussdInput += key;
     if(ussdStep === 0 && key === '1') {ussdStep = 1; showUSSDMenu(1)}
     else if(ussdStep === 0 && key === '4') {
-      // DURESS MODE FROM USSD
       ussdStep = 4;
       showUSSDMenu(4);
       getLocation().then(loc => {
@@ -1697,6 +1683,29 @@ window.addEventListener('beforeunload', () => {
     window.dashboardUnsubscribers.forEach(unsub => unsub());
   }
 });
+async function speakReceipt(text, lang) {
+  try {
+    const langMap = { 'yo-NG': 'yo', 'ig-NG': 'ig', 'ha-NG': 'ha', 'pcm-NG': 'pcm', 'en-NG': 'en' };
+    const shortLang = langMap[lang] || 'en';
+
+    const res = await fetch(BACKEND_URL + '/speak', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text, language: shortLang, slow: true })
+    });
+
+    const audioBlob = await res.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+    const audio = new Audio(audioUrl);
+    audio.playbackRate = 0.9;
+    setTimeout(() => audio.play().catch(() => {
+      console.log('Tap screen to play voice');
+    }), 300);
+  } catch (e) {
+    console.log('Voice failed:', e);
+    speakFemale(text, lang);
+  }
+}
 </script>
 </body>
 </html>
