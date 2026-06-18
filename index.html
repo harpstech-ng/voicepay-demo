@@ -272,7 +272,6 @@ h1{
   transition:width 0.4s ease;
 }
 
-/* VOICE SIGNATURE CANVAS - NEW */
 .voice-signature{
   width:100%;
   max-width:340px;
@@ -524,12 +523,11 @@ h1{
 .recent-name{font-size:10px;color:var(--text-muted)}
 
 @media(max-width:400px){
-  .mic-btn{width:160px;height:160px;font-size:60px}
+ .mic-btn{width:160px;height:160px;font-size:60px}
   h1{font-size:32px}
-  .voice-signature{max-width:280px;height:60px}
+ .voice-signature{max-width:280px;height:60px}
 }
 
-/* PIN MODAL - FIXED FOR IPHONE SAFARI */
 .pin-modal{
   position:fixed;
   bottom:0;
@@ -543,8 +541,8 @@ h1{
   transition:transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   backdrop-filter:blur(40px);
   box-shadow:0 -30px 80px rgba(0,0,0,0.9);
-  transform:translateY(100%); /* HIDDEN BY DEFAULT */
-  visibility:hidden; /* SAFARI FIX */
+  transform:translateY(100%);
+  visibility:hidden;
 }
 .pin-modal.show{
   transform:translateY(0);
@@ -637,7 +635,6 @@ h1{
     <div class="confidence-bar" id="confidenceBar">
       <div class="confidence-fill" id="confidenceFill"></div>
     </div>
-    <!-- VOICE SIGNATURE CANVAS -->
     <canvas class="voice-signature" id="voiceCanvas" width="340" height="80"></canvas>
   </div>
 
@@ -702,7 +699,6 @@ h1{
   </div>
 </div>
 
-<!-- PIN MODAL - SLIDE UP -->
 <div class="pin-modal" id="pinModal">
   <div class="pin-handle"></div>
   <div class="pin-display" id="pinDisplay">••••</div>
@@ -797,9 +793,49 @@ let conversationState = {
 
 let recentRecipients = JSON.parse(localStorage.getItem('recentRecipients') || '[]');
 
+// === BULLETPROOF MEMORY SYSTEM - SAVES EVEN ON REFRESH ===
+const STORAGE_KEY = 'voicepay_v2_user';
+
+function loadAllData() {
+  const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  return {
+    recipients: data.recipients || {},
+    conversation: data.conversation || {step: 'start'},
+    voiceFailCount: data.voiceFailCount || 0
+  };
+}
+
+function saveAllData() {
+  const data = {
+    recipients: savedContacts,
+    conversation: conversationState,
+    voiceFailCount: voiceFailCount,
+    lastUpdate: Date.now()
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+// Load data on start
+const loadedData = loadAllData();
+savedContacts = loadedData.recipients;
+conversationState = {...conversationState,...loadedData.conversation};
+voiceFailCount = loadedData.voiceFailCount;
+
+// Auto-save every 2 seconds
+setInterval(saveAllData, 2000);
+window.addEventListener('beforeunload', saveAllData);
+
 function saveRecipient(account, name) {
+  const contactKey = name.toLowerCase();
+  savedContacts[contactKey] = {
+    name: name,
+    account_number: account,
+    bank: conversationState.bank,
+    accountName: conversationState.accountName
+  };
   recentRecipients = [{account, name, date: Date.now()},...recentRecipients.filter(r => r.account!== account).slice(0,3)];
   localStorage.setItem('recentRecipients', JSON.stringify(recentRecipients));
+  saveAllData();
   renderRecentRecipients();
 }
 
@@ -820,8 +856,24 @@ function renderRecentRecipients() {
 window.selectRecent = (account, name) => {
   conversationState.account_number = account;
   conversationState.recipient = name;
+
+  const contactKey = name.toLowerCase();
+  if (savedContacts[contactKey]?.bank) {
+    conversationState.bank = savedContacts[contactKey].bank;
+  }
+
   status.innerText = `Selected ${name}. Say amount.`;
   speakFemale(`Selected ${name}. How much?`, detectedUserLang);
+
+  if (conversationState.amount) {
+    conversationState.step = 'confirm';
+    setTimeout(() => {
+      const confirmText = responses[detectedUserLang].confirmSend(conversationState.amount, conversationState.recipient);
+      status.innerText = confirmText;
+      speakFemale(confirmText, detectedUserLang);
+      confirmBox.classList.add('show');
+    }, 800);
+  }
 };
 
 const bankColors = {
@@ -857,7 +909,6 @@ function detectLanguage(text) {
   return 'en-NG';
 }
 
-// DURESS KEYWORDS - NEW FEATURE
 function detectDuress(text) {
   const lower = text.toLowerCase();
   return /help me|police|duress|send 1 naira|emergency|i am in danger|kidnap|robbery/.test(lower);
@@ -958,7 +1009,6 @@ const responses = {
   }
 };
 
-// REAL-TIME DASHBOARD SYNC - LISTEN FOR CHANGES
 function setupDashboardSync() {
   if (!currentUser) return;
 
@@ -966,14 +1016,14 @@ function setupDashboardSync() {
   const unsubscribeUser = onSnapshot(userRef, (doc) => {
     if (doc.exists()) {
       const data = doc.data();
-      if (data.selectedBank!== selectedBank) {
+      if (data.selectedBank !== selectedBank) {
         selectedBank = data.selectedBank || 'voicepay';
         const bankData = bankColors[selectedBank];
         document.body.className = selectedBank;
         document.documentElement.style.setProperty('--bank-color', bankData.color);
         document.documentElement.style.setProperty('--bank-glow', `rgba(${bankData.rgb}, 0.4)`);
         document.documentElement.style.setProperty('--bank-color-rgb', bankData.rgb);
-        bankBadge.innerText = selectedBank === 'voicepay'? 'VoicePay' : `${selectedBank.toUpperCase()}`;
+        bankBadge.innerText = selectedBank === 'voicepay' ? 'VoicePay' : `${selectedBank.toUpperCase()}`;
         speakFemale(`${selectedBank.toUpperCase()} bank selected`, detectedUserLang);
       }
     }
@@ -988,14 +1038,14 @@ function setupDashboardSync() {
       savedContacts[data.name.toLowerCase()] = data;
     });
     renderRecentRecipients();
+    saveAllData();
   });
 
   window.dashboardUnsubscribers = [unsubscribeUser, unsubscribeContacts];
 }
 
-// VOICE SIGNATURE DRAWER - NEW FEATURE
 function drawVoiceSignature() {
-  if (!analyser ||!isRecordingSignature) return;
+  if (!analyser || !isRecordingSignature) return;
 
   requestAnimationFrame(drawVoiceSignature);
 
@@ -1025,7 +1075,6 @@ function drawVoiceSignature() {
   canvasCtx.stroke();
 }
 
-// SAVE VOICE SIGNATURE AS IMAGE
 async function saveVoiceSignature() {
   const signatureData = voiceCanvas.toDataURL('image/png');
   if (currentUser) {
@@ -1060,7 +1109,7 @@ onAuthStateChanged(auth, async (user) => {
       document.documentElement.style.setProperty('--bank-color', bankData.color);
       document.documentElement.style.setProperty('--bank-glow', `rgba(${bankData.rgb}, 0.4)`);
       document.documentElement.style.setProperty('--bank-color-rgb', bankData.rgb);
-      bankBadge.innerText = selectedBank === 'voicepay'? 'VoicePay' : `${selectedBank.toUpperCase()}`;
+      bankBadge.innerText = selectedBank === 'voicepay' ? 'VoicePay' : `${selectedBank.toUpperCase()}`;
     } catch (e) {console.error(e)}
     loadVoicesFast();
     renderRecentRecipients();
@@ -1081,20 +1130,32 @@ function loadVoicesFast() {
   setTimeout(() => {availableVoices = speechSynthesis.getVoices(); voicesLoaded = true}, 100);
 }
 
-function speakFemale(text, lang = 'en-NG') {
+async function speakFemale(text, lang = 'en-NG') {
   speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = lang;
-  if (voicesLoaded && availableVoices.length > 0) {
-    let voice = availableVoices.find(v => v.lang === lang && v.name.toLowerCase().includes('female'));
-    if (!voice) voice = availableVoices.find(v => v.lang.startsWith(lang.split('-')[0]) && v.name.toLowerCase().includes('female'));
-    if (!voice) voice = availableVoices.find(v => v.name.toLowerCase().includes('zira') || v.name.includes('Karen') || v.name.includes('Samantha'));
-    if (!voice) voice = availableVoices.find(v =>!v.name.toLowerCase().includes('male'));
-    if (voice) utterance.voice = voice;
+
+  try {
+    const langMap = { 'yo-NG': 'yo', 'ig-NG': 'ig', 'ha-NG': 'ha', 'pcm-NG': 'pcm', 'en-NG': 'en' };
+    const shortLang = langMap[lang] || 'en';
+
+    const res = await fetch(BACKEND_URL + '/speak', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text, language: shortLang, slow: true })
+    });
+
+    const audioBlob = await res.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+    const audio = new Audio(audioUrl);
+    audio.playbackRate = 0.9;
+    await audio.play();
+  } catch (e) {
+    console.log('Backend voice failed, using browser fallback');
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang;
+    utterance.pitch = 1.4;
+    utterance.rate = 0.9;
+    speechSynthesis.speak(utterance);
   }
-  utterance.pitch = 1.4;
-  utterance.rate = 0.9;
-  speechSynthesis.speak(utterance);
 }
 
 let recognition;
@@ -1146,6 +1207,7 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
       if (isListening) {
         recognition.stop();
         voiceFailCount++;
+        saveAllData();
         if (voiceFailCount >= 2) showManualInput();
       }
     }, 8000);
@@ -1159,7 +1221,7 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
     voiceCanvas.classList.remove('show');
     isRecordingSignature = false;
 
-    if (mediaRecorder && mediaRecorder.state!== 'inactive') {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
       mediaRecorder.stop();
       mediaRecorder.onstop = () => {
         liveVoiceBlob = new Blob(audioChunks, { type: 'audio/webm' });
@@ -1174,6 +1236,7 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
       transcriptLive.classList.remove('show');
       status.innerText = responses[detectedUserLang].tapToStart;
       voiceFailCount++;
+      saveAllData();
       if (voiceFailCount >= 2) showManualInput();
     }
   };
@@ -1211,6 +1274,7 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
     isRecordingSignature = false;
     transcriptLive.classList.remove('show');
     voiceFailCount++;
+    saveAllData();
     if (voiceFailCount >= 2) showManualInput();
     else status.innerText = responses[detectedUserLang].noSpeech;
   };
@@ -1257,49 +1321,10 @@ window.submitManualInput = () => {
   else if (conversationState.manualField === 'account_number') conversationState.account_number = value.replace(/\D/g,'');
   else if (conversationState.manualField === 'bank') conversationState.bank = value;
   else if (conversationState.manualField === 'accountName') conversationState.accountName = value.toUpperCase();
+  
+  saveAllData();
   processConversationStep();
 };
-
-async function processConversationStep() {
-  if (conversationState.amount && conversationState.recipient) {
-    const contactKey = conversationState.recipient.toLowerCase();
-    if (savedContacts[contactKey] && savedContacts[contactKey].account_number) {
-      conversationState.account_number = savedContacts[contactKey].account_number;
-      conversationState.bank = savedContacts[contactKey].bank;
-      conversationState.accountName = savedContacts[contactKey].accountName;
-      conversationState.step = 'confirm';
-      const confirmText = responses[detectedUserLang].confirmSend(conversationState.amount, conversationState.recipient);
-      status.innerText = confirmText;
-      speakFemale(confirmText, detectedUserLang);
-      confirmBox.classList.add('show');
-    } else {
-      conversationState.step = 'account_number';
-      const ask = responses[detectedUserLang].firstTimeAcc(conversationState.recipient);
-      status.innerText = ask;
-      speakFemale(ask, detectedUserLang);
-    }
-  } else if (conversationState.amount && conversationState.recipient && conversationState.account_number &&!conversationState.bank) {
-    conversationState.step = 'bank';
-    const ask = responses[detectedUserLang].firstTimeBank(conversationState.recipient);
-    status.innerText = ask;
-    speakFemale(ask, detectedUserLang);
-  } else if (conversationState.amount && conversationState.recipient && conversationState.account_number && conversationState.bank &&!conversationState.accountName) {
-    conversationState.step = 'accountName';
-    const ask = responses[detectedUserLang].firstTimeName(conversationState.recipient);
-    status.innerText = ask;
-    speakFemale(ask, detectedUserLang);
-  } else if (!conversationState.amount && conversationState.recipient) {
-    conversationState.step = 'amount';
-    const ask = responses[detectedUserLang].howMuch(conversationState.recipient);
-    status.innerText = ask;
-    speakFemale(ask, detectedUserLang);
-  } else if (!conversationState.recipient && conversationState.amount) {
-    conversationState.step = 'recipient';
-    const ask = responses[detectedUserLang].whoToSend(conversationState.amount);
-    status.innerText = ask;
-    speakFemale(ask, detectedUserLang);
-  }
-}
 
 async function getLocation() {
   return new Promise((resolve) => {
@@ -1323,6 +1348,7 @@ async function processTranscript(final) {
     conversationState.duress = true;
     status.classList.add('duress');
     status.innerText = 'Processing silently...';
+    saveAllData();
 
     setTimeout(async () => {
       const location = await getLocation();
@@ -1337,7 +1363,7 @@ async function processTranscript(final) {
       await updateDoc(doc(db, 'users', currentUser.uid), {locked: true});
 
       successAnim.classList.add('show');
-      speakReceipt(responses[detectedUserLang].duressSuccess, detectedUserLang);
+      speakFemale(responses[detectedUserLang].duressSuccess, detectedUserLang);
 
       setTimeout(() => {
         successAnim.classList.remove('show');
@@ -1349,10 +1375,12 @@ async function processTranscript(final) {
   }
 
   try {
+    voiceFailCount = 0;
+
     const amountMatch = normalizedText.match(/\b(\d+)\b/);
     if (amountMatch) conversationState.amount = parseInt(amountMatch[1]);
 
-    const nameMatch = normalizedText.match(/(?:to|for|give)\s+([a-z]+)/i);
+    const nameMatch = normalizedText.match(/(?:to|for|send|give|dash)\s+([a-z]+)/i);
     if (nameMatch) conversationState.recipient = nameMatch[1].charAt(0).toUpperCase() + nameMatch[1].slice(1);
 
     const accountMatch = normalizedText.match(/\b(\d{10})\b/);
@@ -1364,17 +1392,71 @@ async function processTranscript(final) {
     else if (/first/i.test(normalizedText)) conversationState.bank = 'firstbank';
     else if (/zenith/i.test(normalizedText)) conversationState.bank = 'zenith';
 
+    if (conversationState.recipient && !conversationState.account_number) {
+      const contactKey = conversationState.recipient.toLowerCase();
+      if (savedContacts[contactKey]) {
+        conversationState.account_number = savedContacts[contactKey].account_number;
+        conversationState.bank = savedContacts[contactKey].bank;
+        conversationState.accountName = savedContacts[contactKey].accountName;
+      }
+    }
+
     confidenceBar.classList.add('show');
     confidenceFill.style.width = '95%';
     await processConversationStep();
+    saveAllData();
+
   } catch(err) {
     voiceFailCount++;
+    saveAllData();
     if (voiceFailCount >= 2) showManualInput();
     else {
       status.innerText = responses[detectedUserLang].didNotCatch;
       speakFemale(responses[detectedUserLang].didNotCatch, detectedUserLang);
     }
   }
+}
+
+async function processConversationStep() {
+  if (conversationState.amount && conversationState.recipient) {
+    const contactKey = conversationState.recipient.toLowerCase();
+    if (savedContacts[contactKey] && savedContacts[contactKey].account_number) {
+      conversationState.account_number = savedContacts[contactKey].account_number;
+      conversationState.bank = savedContacts[contactKey].bank;
+      conversationState.accountName = savedContacts[contactKey].accountName;
+      conversationState.step = 'confirm';
+      const confirmText = responses[detectedUserLang].confirmSend(conversationState.amount, conversationState.recipient);
+      status.innerText = confirmText;
+      speakFemale(confirmText, detectedUserLang);
+      confirmBox.classList.add('show');
+    } else {
+      conversationState.step = 'account_number';
+      const ask = responses[detectedUserLang].firstTimeAcc(conversationState.recipient);
+      status.innerText = ask;
+      speakFemale(ask, detectedUserLang);
+    }
+  } else if (conversationState.amount && conversationState.recipient && conversationState.account_number && !conversationState.bank) {
+    conversationState.step = 'bank';
+    const ask = responses[detectedUserLang].firstTimeBank(conversationState.recipient);
+    status.innerText = ask;
+    speakFemale(ask, detectedUserLang);
+  } else if (conversationState.amount && conversationState.recipient && conversationState.account_number && conversationState.bank && !conversationState.accountName) {
+    conversationState.step = 'accountName';
+    const ask = responses[detectedUserLang].firstTimeName(conversationState.recipient);
+    status.innerText = ask;
+    speakFemale(ask, detectedUserLang);
+  } else if (!conversationState.amount && conversationState.recipient) {
+    conversationState.step = 'amount';
+    const ask = responses[detectedUserLang].howMuch(conversationState.recipient);
+    status.innerText = ask;
+    speakFemale(ask, detectedUserLang);
+  } else if (!conversationState.recipient && conversationState.amount) {
+    conversationState.step = 'recipient';
+    const ask = responses[detectedUserLang].whoToSend(conversationState.amount);
+    status.innerText = ask;
+    speakFemale(ask, detectedUserLang);
+  }
+  saveAllData();
 }
 
 mic.onclick = async () => {
@@ -1384,7 +1466,7 @@ mic.onclick = async () => {
     return;
   }
   if (isListening) {recognition.stop(); return}
-  try {recognition.start()} catch (e) {voiceFailCount++; if (voiceFailCount >= 2) showManualInput()}
+  try {recognition.start()} catch (e) {voiceFailCount++; saveAllData(); if (voiceFailCount >= 2) showManualInput()}
 };
 
 window.requestPIN = () => {
@@ -1452,7 +1534,7 @@ window.clearPIN = () => {
 };
 
 window.submitPIN = async () => {
-  if (enteredPIN.length!== 4) {
+  if (enteredPIN.length !== 4) {
     speakFemale('PIN must be 4 digits', detectedUserLang);
     return;
   }
@@ -1489,7 +1571,7 @@ window.submitPIN = async () => {
 };
 
 window.createPayment = async () => {
-  if (!currentUser ||!conversationState.amount ||!conversationState.recipient) return;
+  if (!currentUser || !conversationState.amount || !conversationState.recipient) return;
   confirmBox.classList.remove('show');
   loadingOpay.classList.add('show');
   status.innerText = responses[detectedUserLang].verifying;
@@ -1510,7 +1592,7 @@ window.createPayment = async () => {
       createdAt: serverTimestamp()
     });
 
-    if (conversationState.account_number &&!conversationState.duress) {
+    if (conversationState.account_number && !conversationState.duress) {
       await addDoc(collection(db, 'contacts'), {
         userId: currentUser.uid,
         name: conversationState.recipient,
@@ -1550,6 +1632,7 @@ window.resetMic = () => {
   enteredPIN = '';
   conversationState = {amount: null, recipient: null, account_number: null, bank: null, phone: null, intent: 'transfer', step: 'start', manualField: null, accountName: null, duress: false};
   canvasCtx.clearRect(0, 0, voiceCanvas.width, voiceCanvas.height);
+  saveAllData();
 };
 
 window.goDashboard = () => {window.location.href = './dashboard.html'};
@@ -1679,14 +1762,16 @@ document.addEventListener('touchend', (e) => {
 
 // CLEANUP ON UNLOAD
 window.addEventListener('beforeunload', () => {
+  saveAllData();
   if (window.dashboardUnsubscribers) {
     window.dashboardUnsubscribers.forEach(unsub => unsub());
   }
 });
+
 async function speakReceipt(text, lang) {
   try {
     const langMap = { 'yo-NG': 'yo', 'ig-NG': 'ig', 'ha-NG': 'ha', 'pcm-NG': 'pcm', 'en-NG': 'en' };
-    const shortLang = langMap[lang] || 'en';
+    const shortLang = langMap || 'en';
 
     const res = await fetch(BACKEND_URL + '/speak', {
       method: 'POST',
