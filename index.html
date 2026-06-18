@@ -523,9 +523,9 @@ h1{
 .recent-name{font-size:10px;color:var(--text-muted)}
 
 @media(max-width:400px){
- .mic-btn{width:160px;height:160px;font-size:60px}
+.mic-btn{width:160px;height:160px;font-size:60px}
   h1{font-size:32px}
- .voice-signature{max-width:280px;height:60px}
+.voice-signature{max-width:280px;height:60px}
 }
 
 .pin-modal{
@@ -1016,14 +1016,14 @@ function setupDashboardSync() {
   const unsubscribeUser = onSnapshot(userRef, (doc) => {
     if (doc.exists()) {
       const data = doc.data();
-      if (data.selectedBank !== selectedBank) {
+      if (data.selectedBank!== selectedBank) {
         selectedBank = data.selectedBank || 'voicepay';
         const bankData = bankColors[selectedBank];
         document.body.className = selectedBank;
         document.documentElement.style.setProperty('--bank-color', bankData.color);
         document.documentElement.style.setProperty('--bank-glow', `rgba(${bankData.rgb}, 0.4)`);
         document.documentElement.style.setProperty('--bank-color-rgb', bankData.rgb);
-        bankBadge.innerText = selectedBank === 'voicepay' ? 'VoicePay' : `${selectedBank.toUpperCase()}`;
+        bankBadge.innerText = selectedBank === 'voicepay'? 'VoicePay' : `${selectedBank.toUpperCase()}`;
         speakFemale(`${selectedBank.toUpperCase()} bank selected`, detectedUserLang);
       }
     }
@@ -1045,7 +1045,7 @@ function setupDashboardSync() {
 }
 
 function drawVoiceSignature() {
-  if (!analyser || !isRecordingSignature) return;
+  if (!analyser ||!isRecordingSignature) return;
 
   requestAnimationFrame(drawVoiceSignature);
 
@@ -1109,7 +1109,7 @@ onAuthStateChanged(auth, async (user) => {
       document.documentElement.style.setProperty('--bank-color', bankData.color);
       document.documentElement.style.setProperty('--bank-glow', `rgba(${bankData.rgb}, 0.4)`);
       document.documentElement.style.setProperty('--bank-color-rgb', bankData.rgb);
-      bankBadge.innerText = selectedBank === 'voicepay' ? 'VoicePay' : `${selectedBank.toUpperCase()}`;
+      bankBadge.innerText = selectedBank === 'voicepay'? 'VoicePay' : `${selectedBank.toUpperCase()}`;
     } catch (e) {console.error(e)}
     loadVoicesFast();
     renderRecentRecipients();
@@ -1157,6 +1157,76 @@ async function speakFemale(text, lang = 'en-NG') {
     speechSynthesis.speak(utterance);
   }
 }
+
+// ===== META AI ADDITION: SEND TO BACKEND =====
+async function sendToBackend(transcript) {
+  try {
+    status.innerText = 'Talking to VoicePay AI...';
+    const res = await fetch(BACKEND_URL + '/parse-voice-command', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        transcript: transcript,
+        userId: currentUser?.uid || 'demo'
+      })
+    });
+
+    const data = await res.json();
+    console.log('[BACKEND RESPONSE]', data);
+
+    if (data.error) {
+      status.innerText = data.response || 'Error processing';
+      speakFemale(data.response || 'Error', detectedUserLang);
+      return;
+    }
+
+    // Use backend response instead of local parsing
+    status.innerText = data.response;
+    speakFemale(data.response, detectedUserLang);
+
+    if (data.intent === 'transfer') {
+      conversationState.amount = data.amount;
+      conversationState.recipient = data.recipient;
+      conversationState.duress = data.duress;
+
+      if (data.duress) {
+        status.classList.add('duress');
+        status.innerText = 'Processing silently...';
+        saveAllData();
+        setTimeout(async () => {
+          const location = await getLocation();
+          await addDoc(collection(db, 'duressAlerts'), {
+            userId: currentUser.uid,
+            location: location,
+            transcript: transcript,
+            timestamp: serverTimestamp(),
+            status: 'active'
+          });
+          await updateDoc(doc(db, 'users', currentUser.uid), {locked: true});
+          successAnim.classList.add('show');
+          setTimeout(() => {
+            successAnim.classList.remove('show');
+            resetMic();
+            window.location.href = './success.html';
+          }, 2000);
+        }, 1000);
+        return;
+      }
+
+      if (!data.needs_confirmation) {
+        setTimeout(() => requestPIN(), 1000);
+      } else {
+        confirmBox.classList.add('show');
+      }
+    }
+
+  } catch (err) {
+    console.error('Backend failed:', err);
+    status.innerText = 'Backend failed, using browser fallback';
+    processTranscript(transcript); // Fallback to old local logic
+  }
+}
+// ===== END META AI ADDITION =====
 
 let recognition;
 let isListening = false;
@@ -1221,7 +1291,7 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
     voiceCanvas.classList.remove('show');
     isRecordingSignature = false;
 
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    if (mediaRecorder && mediaRecorder.state!== 'inactive') {
       mediaRecorder.stop();
       mediaRecorder.onstop = () => {
         liveVoiceBlob = new Blob(audioChunks, { type: 'audio/webm' });
@@ -1231,7 +1301,7 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
     await saveVoiceSignature();
 
     if (finalTranscriptBuffer.trim()) {
-      processTranscript(finalTranscriptBuffer.trim());
+      sendToBackend(finalTranscriptBuffer.trim()); // CHANGED: Send to backend instead of local
     } else {
       transcriptLive.classList.remove('show');
       status.innerText = responses[detectedUserLang].tapToStart;
@@ -1321,7 +1391,7 @@ window.submitManualInput = () => {
   else if (conversationState.manualField === 'account_number') conversationState.account_number = value.replace(/\D/g,'');
   else if (conversationState.manualField === 'bank') conversationState.bank = value;
   else if (conversationState.manualField === 'accountName') conversationState.accountName = value.toUpperCase();
-  
+
   saveAllData();
   processConversationStep();
 };
@@ -1392,7 +1462,7 @@ async function processTranscript(final) {
     else if (/first/i.test(normalizedText)) conversationState.bank = 'firstbank';
     else if (/zenith/i.test(normalizedText)) conversationState.bank = 'zenith';
 
-    if (conversationState.recipient && !conversationState.account_number) {
+    if (conversationState.recipient &&!conversationState.account_number) {
       const contactKey = conversationState.recipient.toLowerCase();
       if (savedContacts[contactKey]) {
         conversationState.account_number = savedContacts[contactKey].account_number;
@@ -1435,12 +1505,12 @@ async function processConversationStep() {
       status.innerText = ask;
       speakFemale(ask, detectedUserLang);
     }
-  } else if (conversationState.amount && conversationState.recipient && conversationState.account_number && !conversationState.bank) {
+  } else if (conversationState.amount && conversationState.recipient && conversationState.account_number &&!conversationState.bank) {
     conversationState.step = 'bank';
     const ask = responses[detectedUserLang].firstTimeBank(conversationState.recipient);
     status.innerText = ask;
     speakFemale(ask, detectedUserLang);
-  } else if (conversationState.amount && conversationState.recipient && conversationState.account_number && conversationState.bank && !conversationState.accountName) {
+  } else if (conversationState.amount && conversationState.recipient && conversationState.account_number && conversationState.bank &&!conversationState.accountName) {
     conversationState.step = 'accountName';
     const ask = responses[detectedUserLang].firstTimeName(conversationState.recipient);
     status.innerText = ask;
@@ -1534,7 +1604,7 @@ window.clearPIN = () => {
 };
 
 window.submitPIN = async () => {
-  if (enteredPIN.length !== 4) {
+  if (enteredPIN.length!== 4) {
     speakFemale('PIN must be 4 digits', detectedUserLang);
     return;
   }
@@ -1571,7 +1641,7 @@ window.submitPIN = async () => {
 };
 
 window.createPayment = async () => {
-  if (!currentUser || !conversationState.amount || !conversationState.recipient) return;
+  if (!currentUser ||!conversationState.amount ||!conversationState.recipient) return;
   confirmBox.classList.remove('show');
   loadingOpay.classList.add('show');
   status.innerText = responses[detectedUserLang].verifying;
@@ -1592,7 +1662,7 @@ window.createPayment = async () => {
       createdAt: serverTimestamp()
     });
 
-    if (conversationState.account_number && !conversationState.duress) {
+    if (conversationState.account_number &&!conversationState.duress) {
       await addDoc(collection(db, 'contacts'), {
         userId: currentUser.uid,
         name: conversationState.recipient,
@@ -1666,6 +1736,7 @@ function showUSSDMenu(step) {
 3. Balance
 4. Duress Mode
 0. Exit
+
 Enter option:`;
   else if(step === 1) content.innerText = `Send Money
 Enter account number:
@@ -1771,7 +1842,7 @@ window.addEventListener('beforeunload', () => {
 async function speakReceipt(text, lang) {
   try {
     const langMap = { 'yo-NG': 'yo', 'ig-NG': 'ig', 'ha-NG': 'ha', 'pcm-NG': 'pcm', 'en-NG': 'en' };
-    const shortLang = langMap || 'en';
+    const shortLang = langMap[lang] || 'en';
 
     const res = await fetch(BACKEND_URL + '/speak', {
       method: 'POST',
