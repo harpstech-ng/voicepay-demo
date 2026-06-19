@@ -818,7 +818,7 @@ function applyTheme(bank, theme) {
   document.documentElement.style.setProperty('--bank-color', bankData.color);
   document.documentElement.style.setProperty('--bank-glow', `rgba(${bankData.rgb}, 0.4)`);
   document.documentElement.style.setProperty('--bank-color-rgb', bankData.rgb);
-  document.getElementById('bankBadge').innerText = bank === 'voicepay'? 'VoicePay Platform' : `${bank.toUpperCase()} Connected`;
+  document.getElementById('bankBadge').innerText = bank === 'voicepay'? 'VoicePay' : `${bank.toUpperCase()} Connected`;
   document.getElementById('bankLabel').innerText = bank.toUpperCase();
 }
 
