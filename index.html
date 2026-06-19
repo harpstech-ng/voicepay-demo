@@ -621,7 +621,7 @@ h1{
     <img src="IMG_6416.jpeg" class="logo" alt="VoicePay Logo">
   </div>
 
-  <span class="badge" id="bankBadge">VoicePay Platform</span>
+  <span class="badge" id="bankBadge">VoicePay</span>
 
   <h1>Speak Your Payment</h1>
   <p class="sub">Voice banking in your language</p>
@@ -1132,30 +1132,24 @@ function loadVoicesFast() {
 
 async function speakFemale(text, lang = 'en-NG') {
   speechSynthesis.cancel();
-
+  
   try {
-    const langMap = { 'yo-NG': 'yo', 'ig-NG': 'ig', 'ha-NG': 'ha', 'pcm-NG': 'pcm', 'en-NG': 'en' };
-    const shortLang = langMap[lang] || 'en';
-
-    const res = await fetch(BACKEND_URL + '/speak', {
+    // Ping backend to log, but don't wait for audio
+    fetch(BACKEND_URL + '/speak', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: text, language: shortLang, slow: true })
-    });
-
-    const audioBlob = await res.blob();
-    const audioUrl = URL.createObjectURL(audioBlob);
-    const audio = new Audio(audioUrl);
-    audio.playbackRate = 0.9;
-    await audio.play();
+      body: JSON.stringify({ text: text, language: lang })
+    }).catch(() => {});
   } catch (e) {
-    console.log('Backend voice failed, using browser fallback');
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = lang;
-    utterance.pitch = 1.4;
-    utterance.rate = 0.9;
-    speechSynthesis.speak(utterance);
+    console.log('Backend log only');
   }
+  
+  // Always use browser voice - no error message
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = lang;
+  utterance.pitch = 1.4;
+  utterance.rate = 0.9;
+  speechSynthesis.speak(utterance);
 }
 
 // ===== META AI ADDITION: SEND TO BACKEND =====
@@ -1163,11 +1157,11 @@ async function sendToBackend(transcript) {
     try {
       status.innerText = 'Talking to VoicePay AI...';
       const res = await fetch(BACKEND_URL + '/parse-voice-command', {
-        method: 'POST',
-        mode: 'cors', // ADD THIS LINE 1
-        credentials: 'omit', // ADD THIS LINE 2
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      method: 'POST',
+      mode: 'cors',
+      credentials: 'omit',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
           transcript: transcript,
           userId: currentUser?.uid || 'demo'
         })
