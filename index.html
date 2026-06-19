@@ -1160,16 +1160,18 @@ async function speakFemale(text, lang = 'en-NG') {
 
 // ===== META AI ADDITION: SEND TO BACKEND =====
 async function sendToBackend(transcript) {
-  try {
-    status.innerText = 'Talking to VoicePay AI...';
-    const res = await fetch(BACKEND_URL + '/parse-voice-command', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        transcript: transcript,
-        userId: currentUser?.uid || 'demo'
-      })
-    });
+    try {
+      status.innerText = 'Talking to VoicePay AI...';
+      const res = await fetch(BACKEND_URL + '/parse-voice-command', {
+        method: 'POST',
+        mode: 'cors', // ADD THIS LINE 1
+        credentials: 'omit', // ADD THIS LINE 2
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          transcript: transcript,
+          userId: currentUser?.uid || 'demo'
+        })
+      });
 
     const data = await res.json();
     console.log('[BACKEND RESPONSE]', data);
