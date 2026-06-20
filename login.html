@@ -73,11 +73,13 @@ body{
   box-shadow:var(--glow), 0 40px 100px rgba(0,0,0,0.7);
   position:relative;
   z-index:2;
-  animation:cardIn 0.3s ease-out;
+  transform:translateY(100vh);
+  opacity:0;
+  transition:all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-@keyframes cardIn{
-  from{opacity:0;transform:translateY(20px)}
-  to{opacity:1;transform:translateY(0)}
+.card.show{
+  transform:translateY(0);
+  opacity:1;
 }
 .brand{text-align:center;margin-bottom:32px}
 .logo{width:110px;height:110px;margin:0 auto 18px;display:block;border-radius:28px;box-shadow:0 15px 50px rgba(0,208,132,0.35)}
@@ -129,15 +131,47 @@ h2{
   flex-wrap:wrap;
   margin-bottom:28px;
 }
-.lang-tag{
-  padding:6px 12px;
-  background:rgba(0,208,132,0.12);
-  border:1px solid rgba(0,208,132,0.25);
-  border-radius:8px;
-  font-size:12px;
+.lang-tags::before{
+  content:"🔊 Tap language to hear guide in your language:";
+  display:block;
+  width:100%;
+  font-size:13px;
   color:var(--green);
+  margin-bottom:10px;
+  text-align:center;
   font-weight:700;
+  animation:blink 2s infinite;
+}
+@keyframes blink{
+ 0%,100%{opacity:1}
+ 50%{opacity:0.5}
+} /* FIXED: was missing */
+.lang-tag{
+  padding:8px 14px;
+  background:rgba(0,208,132,0.15);
+  border:1px solid rgba(0,208,132,0.4);
+  border-radius:10px;
+  font-size:13px;
+  color:var(--green);
+  font-weight:800;
   letter-spacing:0.3px;
+  cursor:pointer;
+  transition:all 0.2s;
+  animation:pulse 1.5s infinite;
+  position:relative;
+}
+.lang-tag::after{
+  content:" 🔊";
+  margin-left:3px;
+  font-size:11px;
+}
+.lang-tag:active{
+  transform:scale(0.95);
+  background:rgba(0,208,132,0.35);
+}
+@keyframes pulse{
+ 0%,100%{transform:scale(1); box-shadow:0 0 0 0 rgba(0,208,132,0.4)}
+ 50%{transform:scale(1.05); box-shadow:0 0 0 8px rgba(0,208,132,0)}
 }
 input{
   width:100%;
@@ -383,24 +417,25 @@ input:focus{
 @keyframes shimmer{
  0%{background-position:-200% 0}
  100%{background-position:200% 0}
+} /* FIXED: was missing */
 </style>
 </head>
 <body>
 <div class="glow-orb"></div>
 
-<div class="card">
+<div class="card" id="mainCard">
   <div class="brand">
     <img src="IMG_6416.jpeg" class="logo" alt="VoicePay">
-    <span class="badge">VoicePay Platform</span>
+    <span class="badge">VoicePay</span>
     <h2 id="title">VoicePay</h2>
     <p class="sub" id="subtitle">Banking that understands your voice</p>
     <div class="security-badge">🔒 Bank-Grade Security • 256-bit Encryption</div>
     <div class="lang-tags">
-      <span class="lang-tag">English</span>
-      <span class="lang-tag">Yoruba</span>
-      <span class="lang-tag">Hausa</span>
-      <span class="lang-tag">Igbo</span>
-      <span class="lang-tag">Pidgin</span>
+      <span class="lang-tag" onclick="speakGuide('en')">English</span>
+      <span class="lang-tag" onclick="speakGuide('yo')">Yoruba</span>
+      <span class="lang-tag" onclick="speakGuide('ha')">Hausa</span>
+      <span class="lang-tag" onclick="speakGuide('ig')">Igbo</span>
+      <span class="lang-tag" onclick="speakGuide('pcm')">Pidgin</span>
     </div>
   </div>
 
@@ -468,7 +503,6 @@ input:focus{
     <button class="btn" onclick="finishSetup()" id="bankBtn" disabled style="margin-top:24px">Continue to Dashboard</button>
   </div>
 
-  <!-- META AI ADDITION: STEP 5 CONNECT ACCOUNT - YOUR CODE UNTOUCHED -->
   <div id="stepConnect" style="display:none">
     <h2 style="font-size:28px;margin-bottom:8px">Secure Your Account</h2>
     <p class="sub" style="margin-bottom:24px">Login once on your bank page. After that, just talk.</p>
@@ -522,6 +556,7 @@ let availableVoices = [];
 let hasSpokenWelcome = false;
 let selectedBank = null;
 let selectedBankColor = '#00D084';
+let isRecording = false;
 
 const phrases = [
   "My voice is my password",
@@ -538,8 +573,29 @@ const langMap = {
   'pcm': { lang: 'en-NG', name: 'Pidgin' }
 };
 
-// AUTO-FOCUS EMAIL ON LOAD
+const signupGuides = {
+  'en': 'Welcome to VoicePay. Create your account in four steps. Enter email and password first.',
+  'yo': 'Ehrr Kahbor si VoicePay..Ehr shi accounti, ninu 4 steps.',
+  'ha': 'Bar-kah dah zoo-ah VoicePay. Keer-kee ah-soo-soon kah chee-keen ma-ta-kai hudu. Shee-gah ee-meh-li dah kal-mah seer-ree dah far-koh.',
+  'ig': 'Noh-noh si VoicePay. Meh-poo-tah ah-kow-noo-tah gee nah oo-soh-roh keh. Tee-mee ee-meh-li noo pah-swoh-doo gee nah m-boo.',
+  'pcm': 'Haffa my guy.. i welcome you to voicepay,o...... shaparly create account in 4 steps.... e,clear.....??'
+};
+
+window.speakGuide = async (lang) => {
+  await speakHarps(signupGuides[lang] || signupGuides['en'], lang);
+}
+
 window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('mainCard').classList.add('show');
+    // Auto speak guide once for first time users
+    if(!localStorage.getItem('heardGuide')) {
+      setTimeout(() => {
+        speakHarps('Tap any language above to hear instructions', 'en');
+        localStorage.setItem('heardGuide', 'yes');
+      }, 1000);
+    }
+  }, 100);
   document.getElementById('email').focus();
 });
 
@@ -565,7 +621,7 @@ function speakHarps(text, langCode = 'en') {
                   availableVoices.find(v => v.name.toLowerCase().includes('female') && v.lang.startsWith('en')) ||
                   availableVoices.find(v => v.lang.startsWith('en'));
       if (voice) utterance.voice = voice;
-      utterance.pitch = 1.05;
+      utterance.pitch = 1.2; // CHANGED: Higher pitch = woman voice
       utterance.rate = 0.88;
       utterance.volume = 1;
       utterance.onend = resolve;
@@ -698,8 +754,10 @@ window.toggleAge = () => {
 window.recordVoice = async () => {
   const btn = document.getElementById('voiceBtn');
   const status = document.getElementById('voiceStatus');
-  if (btn.classList.contains('recording')) return;
+  if (isRecording) return;
+
   try {
+    isRecording = true;
     const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
     const mediaRecorder = new MediaRecorder(stream);
     const chunks = [];
@@ -709,6 +767,8 @@ window.recordVoice = async () => {
       voiceRecordings.push(blob);
       document.getElementById(`vdot${currentPhrase + 1}`).classList.add('active');
       currentPhrase++;
+      isRecording = false;
+
       if (currentPhrase < 4) {
         status.textContent = `Tap microphone for phrase ${currentPhrase + 1} of 4`;
         const phraseText = currentPhrase === 3? `Duress phrase: "${phrases[currentPhrase]}"` : `"${phrases[currentPhrase]}"`;
@@ -731,6 +791,7 @@ window.recordVoice = async () => {
       btn.classList.remove('recording');
     }, 3000);
   } catch (err) {
+    isRecording = false;
     showError('Microphone access denied. Enable permission.');
     speakHarps('Microphone access denied. Enable microphone permission.');
   }
@@ -793,7 +854,6 @@ window.selectBank = (bank, color) => {
   speakHarps(`${bankName} selected. Tap continue to finish.`);
 };
 
-// META AI ADDITION: Updated finishSetup to go to stepConnect
 window.finishSetup = async () => {
   if (!selectedBank) {
     showError('Please select your bank');
@@ -812,7 +872,6 @@ window.finishSetup = async () => {
     localStorage.setItem('selectedBank', selectedBank);
     localStorage.setItem('bankColor', selectedBankColor);
 
-    // Show bank name in connect step
     const bankName = selectedBank.charAt(0).toUpperCase() + selectedBank.slice(1);
     document.getElementById('connectBankName').innerText = bankName;
     document.getElementById('connectBankText').innerText = bankName;
@@ -831,7 +890,6 @@ window.finishSetup = async () => {
   }
 };
 
-// ===== META AI ADDITION: Token Login Flow - Demo Only =====
 let bankToken = localStorage.getItem('bank_token');
 
 window.backToBank = () => {
@@ -844,21 +902,19 @@ window.backToBank = () => {
 window.connectBank = async () => {
   const bank = selectedBank || 'opay';
   const bankName = bank.charAt(0).toUpperCase() + bank.slice(1);
-  
+
   document.getElementById('connectStatus').innerText = `Opening ${bankName} login page...`;
   await speakHarps(`Opening ${bankName} login page. Enter your details there only.`);
-  
-  // DEMO SIMULATION: In real app, this opens Interswitch/Opay OAuth popup
-  // For demo: we fake it with 3 second delay + fake token
+
   setTimeout(() => {
     bankToken = `demo_token_${bank}_${Date.now()}`;
     localStorage.setItem('bank_token', bankToken);
     localStorage.setItem('selectedBank', bank);
-    
+
     document.getElementById('connectStatus').innerHTML = `✅ Connected! Token saved.<br><small style="font-size:12px;color:#666">${bankToken.slice(0,25)}...</small>`;
     document.getElementById('dashboardBtn').disabled = false;
     document.getElementById('connectBtn').style.display = 'none';
-    
+
     speakHarps(`${bankName} connected successfully. Now just talk to send money.`);
     showSuccess(`${bankName} account linked! No password stored.`);
   }, 3000);
@@ -869,7 +925,6 @@ window.goToDashboard = () => {
     showError('Please connect your bank account first');
     return;
   }
-  // Save token to Firebase user doc
   const user = auth.currentUser;
   if (user) {
     updateDoc(doc(db, 'users', user.uid), {
@@ -880,7 +935,6 @@ window.goToDashboard = () => {
   }
   window.location.href = './index.html';
 };
-// ===== END META AI ADDITION =====
 
 window.resetPass = async () => {
   const btn = document.getElementById('mainBtn');
@@ -937,7 +991,6 @@ function clearMsg(){
   document.getElementById('success').style.display = 'none';
 }
 
-// PRO FEATURE: ENTER KEY SUBMIT
 document.getElementById('email').addEventListener('keypress', (e) => {
   if (e.key === 'Enter') document.getElementById('password').focus();
 });
@@ -945,14 +998,12 @@ document.getElementById('password').addEventListener('keypress', (e) => {
   if (e.key === 'Enter') handleAuth();
 });
 
-// PWA Service Worker - FAST LOAD
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW failed:', err));
   });
 }
 
-// Prevent zoom on double tap iOS - NO LAG
 let lastTouchEnd = 0;
 document.addEventListener('touchend', (e) => {
   const now = Date.now();
@@ -962,7 +1013,6 @@ document.addEventListener('touchend', (e) => {
   lastTouchEnd = now;
 }, false);
 
-// PRO FEATURE: AUTO DETECT BANK FROM EMAIL
 document.getElementById('email').addEventListener('blur', () => {
   const email = document.getElementById('email').value.toLowerCase();
   if (email.includes('gtbank') || email.includes('gtb')) {
@@ -978,21 +1028,18 @@ document.getElementById('email').addEventListener('blur', () => {
   }
 });
 
-// PRO FEATURE: BIOMETRIC HINT FOR MOBILE
 if ('credentials' in navigator && window.PublicKeyCredential) {
   document.getElementById('mainBtn').innerHTML = 'Login 🔐';
 }
 </script>
 
 <script>
-// PWA Service Worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW failed:', err));
   });
 }
 
-// Prevent zoom on double tap iOS
 let lastTouchEnd = 0;
 document.addEventListener('touchend', (e) => {
   const now = Date.now();
