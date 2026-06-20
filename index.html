@@ -14,7 +14,8 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>eruda.init();</script>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#00D084">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -713,7 +714,7 @@ h1{
   </div>
 
   <div class="footer">
-    <div class="security">🔒 Bank-Grade Security | 256-bit Encryption | Harps Tech</div>
+    <div class="security">🔒Secured with 256-bit Encryption | Voice Layer by Harps Tech © 2026</div>
     <div>© 2026 HARPS TECH - All Rights Reserved</div>
   </div>
 </div>
@@ -943,8 +944,25 @@ function saveRecipient(account, name) {
     accountName: conversationState.accountName,
     savedAt: Date.now()
   };
-  recentRecipients = [{account, name, date: Date.now()},...recentRecipients.filter(r => r.account!== account).slice(0,7)];
+  
+  // ALWAYS save to localStorage first - works offline
+  recentRecipients = [{ account, name, date: Date.now() }, ...recentRecipients.filter(r => r.account !== account).slice(0, 7)];
   localStorage.setItem('recentRecipients', JSON.stringify(recentRecipients));
+  
+  // Try Firebase but don't crash if no user
+  if (currentUser?.uid && currentUser.uid !== 'demo') {
+    addDoc(collection(db, 'transactions'), {
+      userId: currentUser.uid,
+      amount: conversationState.amount * 100,
+      recipient: name,
+      account_number: account,
+      bank: conversationState.bank,
+      reference: 'VP' + Date.now(),
+      status: 'success',
+      createdAt: serverTimestamp()
+    }).catch(e => console.log('Firebase save failed:', e));
+  }
+  
   saveAllData();
   renderRecentRecipients();
 }
@@ -1162,51 +1180,37 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   recognition.start();
 };
 
-  recognition.onstart = async () => {
-    isListening = true;
-    finalTranscriptBuffer = '';
-    mic.classList.add('recording');
-    status.innerText = responses[detectedUserLang].listening;
-    status.classList.add('active');
-    confirmBox.classList.remove('show');
-    transcriptLive.classList.add('show');
-    confidenceBar.classList.remove('show');
-    voiceCanvas.classList.add('show');
-    isRecordingSignature = true;
-
-    if (!audioContext) {
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      analyser = audioContext.createAnalyser();
-      analyser.fftSize = 2048;
-      const bufferLen = analyser.frequencyBinCount;
-      dataArray = new Uint8Array(bufferLen);
+  recognition.onstart = () => {
+  isListening = true;
+  finalTranscriptBuffer = '';
+  mic.classList.add('recording');
+  status.innerText = responses[detectedUserLang].listening;
+  status.classList.add('active');
+  confirmBox.classList.remove('show');
+  transcriptLive.classList.add('show');
+  confidenceBar.classList.remove('show');
+  voiceCanvas.classList.add('show');
+  isRecordingSignature = true;
+  
+  // NO second getUserMedia here - permission already got in mic.onclick
+  if (!audioContext) {
+    audioContext = new(window.AudioContext || window.webkitAudioContext)();
+    analyser = audioContext.createAnalyser();
+    analyser.fftSize = 2048;
+    const bufferLen = analyser.frequencyBinCount;
+    dataArray = new Uint8Array(bufferLen);
+  }
+  
+  clearTimeout(recognitionTimeout);
+  recognitionTimeout = setTimeout(() => {
+    if (isListening) {
+      recognition.stop();
+      voiceFailCount++;
+      saveAllData();
+      if (voiceFailCount >= 2) showManualInput();
     }
-
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: {echoCancellation: true, noiseSuppression: true} });
-      const source = audioContext.createMediaStreamSource(stream);
-      source.connect(analyser);
-      drawVoiceSignature();
-
-      mediaRecorder = new MediaRecorder(stream, {mimeType: 'audio/webm'});
-      audioChunks = [];
-      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-      mediaRecorder.start(100);
-    } catch(e) {
-      console.log('Audio failed:', e);
-      status.innerText = responses[detectedUserLang].micBlocked;
-    }
-
-    clearTimeout(recognitionTimeout);
-    recognitionTimeout = setTimeout(() => {
-      if (isListening) {
-        recognition.stop();
-        voiceFailCount++;
-        saveAllData();
-        if (voiceFailCount >= 2) showManualInput();
-      }
-    }, 20000);
-  };
+  }, 20000);
+};
 
   recognition.onend = async () => {
     clearTimeout(recognitionTimeout);
@@ -1453,6 +1457,14 @@ function showManualInput() {
 }
 
 window.submitManualInput = () => {
+  // RESET OLD DATA - THIS FIXES THE BUG
+  conversationState.amount = null;
+  conversationState.recipient = null;
+  conversationState.account_number = null;
+  conversationState.bank = null;
+  conversationState.step = 'start';
+  conversationState.manualField = null;
+
   const text = manualInput.value.trim();
   if (!text) {
     status.innerText = 'Type something like: Send 2k to John';
@@ -1485,13 +1497,32 @@ window.submitManualInput = () => {
   }
   
   // Check if we have amount + recipient
-  if (conversationState.amount && conversationState.amount >= 1 && conversationState.recipient) {
-    status.innerText = `Confirm: Send ₦${conversationState.amount.toLocaleString()} to ${conversationState.recipient}?`;
+if (conversationState.amount && conversationState.amount >= 1 && conversationState.recipient) {
+  const contactKey = conversationState.recipient.toLowerCase();
+  
+  // NEW: Check if first time recipient
+  if (!savedContacts[contactKey] || !savedContacts[contactKey].account_number) {
+    conversationState.step = 'account_number';
+    status.innerText = `First time for ${conversationState.recipient}. Enter 10 digit account number`;
+    speakFemale(responses[detectedUserLang].firstTimeAcc(conversationState.recipient), detectedUserLang);
+    manualInput.placeholder = '0123456789';
+    manualInput.inputMode = 'numeric';
+    manualInputTitle.innerText = 'Enter Account Number';
+    manualInputBox.classList.add('show');
+    return;
+  }
+  
+  // If we have account number already
+  if (savedContacts[contactKey].account_number) {
+    conversationState.account_number = savedContacts[contactKey].account_number;
+    conversationState.bank = savedContacts[contactKey].bank;
+    status.innerText = responses[detectedUserLang].confirmSend(conversationState.amount, conversationState.recipient);
     speakFemale(responses[detectedUserLang].confirmSend(conversationState.amount, conversationState.recipient), detectedUserLang);
     confirmBox.classList.add('show');
-    
-    // Auto voice confirm after 2.5s
-    setTimeout(() => {
+  }
+  
+  // Auto voice confirm after 2.5s
+  setTimeout(() => {
       if (!window.SpeechRecognition) return;
       const yesRec = new SpeechRecognition();
       yesRec.lang = detectedUserLang;
@@ -1564,7 +1595,7 @@ window.makePayment = async () => {
   try {
     const ref = 'VP' + Date.now();
     await addDoc(collection(db, 'transactions'), {
-      userId: currentUser?.uid || 'demo',
+      userId: currentUser?.uid || 'demo_' + Date.now(),
       amount: conversationState.amount * 100,
       recipient: conversationState.recipient,
       account_number: conversationState.account_number,
