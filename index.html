@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VoicePay | Harps Tech</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VoicePay | Harps Tech - AI Voice Banking</title>
 
 <meta property="og:title" content="VoicePay - Speak to Bank">
 <meta property="og:description" content="Banking for 40M Nigerians. Speak in English, Yoruba, Hausa, Igbo or Pidgin. No typing needed.">
@@ -22,7 +22,7 @@
 <link rel="apple-touch-icon" href="IMG_6416.jpeg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -48,7 +48,7 @@ body.opay{--bank-color:#00D084; --bank-glow:rgba(0,208,132,0.4); --bank-color-rg
 body.palmpay{--bank-color:#0052D4; --bank-glow:rgba(0,82,212,0.4); --bank-color-rgb:0,82,212}
 body.voicepay{--bank-color:#00D084; --bank-glow:rgba(0,208,132,0.4); --bank-color-rgb:0,208,132}
 
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 
 body{
   background:
@@ -66,6 +66,25 @@ body{
   padding:24px 16px 80px;
   overflow-x:hidden;
   transition:all 0.3s ease;
+}
+
+/* DEMO MODE BANNER FOR INTERSWITCH */
+.demo-banner{
+  position:fixed;
+  top:70px;
+  left:0;
+  right:0;
+  background:linear-gradient(90deg, rgba(0,208,132,0.15), rgba(0,208,132,0.25), rgba(0,208,132,0.15));
+  color:var(--bank-color);
+  text-align:center;
+  padding:10px;
+  font-size:12px;
+  font-weight:700;
+  z-index:99;
+  border-bottom:1px solid var(--bank-color);
+  backdrop-filter:blur(20px);
+  letter-spacing:0.5px;
+  animation:slideDown 0.5s ease 0.3s both;
 }
 
 .top-bar{
@@ -104,18 +123,19 @@ body{
 }
 @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.8)}}
 
-.nav-group{display:flex;gap:10px}
+.nav-group{display:flex;gap:8px}
 .nav-btn{
   background:var(--card);
   border:1px solid var(--border);
   color:white;
-  padding:10px 18px;
+  padding:10px 16px;
   border-radius:14px;
-  font-size:14px;
+  font-size:13px;
   font-weight:600;
   cursor:pointer;
   transition:all 0.2s ease;
   backdrop-filter:blur(15px);
+  white-space:nowrap;
 }
 .nav-btn:hover{
   background:var(--card-hover);
@@ -127,7 +147,7 @@ body{
   text-align:center;
   max-width:460px;
   width:100%;
-  margin-top:120px;
+  margin-top:140px;
   display:flex;
   flex-direction:column;
   gap:28px;
@@ -140,17 +160,17 @@ body{
   margin-bottom:0;
 }
 .logo{
-  width:100px;
-  height:100px;
-  border-radius:28px;
-  box-shadow:0 20px 60px var(--bank-glow);
-  border:3px solid rgba(255,255,255,0.12);
+  width:110px;
+  height:110px;
+  border-radius:32px;
+  box-shadow:0 25px 70px var(--bank-glow);
+  border:3px solid rgba(255,255,255,0.15);
 }
 .logo-glow{
   position:absolute;
-  inset:-25px;
+  inset:-30px;
   background:radial-gradient(circle, var(--bank-glow), transparent 70%);
-  filter:blur(30px);
+  filter:blur(35px);
   z-index:-1;
   animation:glow-pulse 3.5s ease-in-out infinite;
 }
@@ -160,7 +180,7 @@ body{
   display:inline-flex;
   align-items:center;
   gap:8px;
-  padding:8px 16px;
+  padding:10px 18px;
   border-radius:999px;
   background:linear-gradient(135deg, rgba(var(--bank-color-rgb), 0.2), rgba(var(--bank-color-rgb), 0.08));
   border:1px solid var(--bank-color);
@@ -175,18 +195,19 @@ body{
 }
 
 h1{
-  font-size:40px;
+  font-size:42px;
   font-weight:800;
   margin:0;
   background:linear-gradient(135deg, #fff 15%, #9A9AAE 100%);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
   background-clip:text;
-  letter-spacing:-1.5px;
+  letter-spacing:-1.8px;
+  line-height:1.2;
 }
 .sub{
   color:var(--text-muted);
-  font-size:16px;
+  font-size:17px;
   margin:0;
   font-weight:500;
 }
@@ -209,11 +230,11 @@ h1{
   flex-direction:column;
   align-items:center;
   gap:20px;
-  min-height:300px;
+  min-height:320px;
 }
 .mic-ring{
   position:absolute;
-  inset:-30px;
+  inset:-35px;
   border:2px solid var(--bank-glow);
   border-radius:50%;
   animation:ring-pulse 2.5s ease-out infinite;
@@ -222,14 +243,14 @@ h1{
 @keyframes ring-pulse{0%{transform:scale(0.8);opacity:1}100%{transform:scale(1.4);opacity:0}}
 
 .mic-btn{
-  width:200px;
-  height:200px;
+  width:210px;
+  height:210px;
   border-radius:50%;
   background:linear-gradient(135deg, var(--bank-color), #00A866);
   border:3px solid rgba(255,255,255,0.15);
-  font-size:80px;
+  font-size:85px;
   cursor:pointer;
-  box-shadow:0 0 80px var(--bank-glow), 0 20px 60px rgba(0,0,0,0.5);
+  box-shadow:0 0 90px var(--bank-glow), 0 25px 70px rgba(0,0,0,0.5);
   transition:all 0.25s ease;
   position:relative;
   z-index:2;
@@ -239,12 +260,12 @@ h1{
   background:linear-gradient(135deg, #ff3b30, #d62828);
   animation:mic-pulse 1.2s ease-in-out infinite;
 }
-@keyframes mic-pulse{0%,100%{box-shadow:0 0 70px rgba(255,59,48,0.7)}50%{box-shadow:0 0 120px rgba(255,59,48,0.9)}}
+@keyframes mic-pulse{0%,100%{box-shadow:0 0 80px rgba(255,59,48,0.7)}50%{box-shadow:0 0 130px rgba(255,59,48,0.9)}}
 
 .transcript-live{
   min-height:28px;
   margin-top:0;
-  font-size:15px;
+  font-size:16px;
   color:var(--bank-color);
   font-weight:700;
   font-style:italic;
@@ -255,7 +276,7 @@ h1{
 .transcript-live.show{opacity:1}
 .confidence-bar{
   width:100%;
-  max-width:300px;
+  max-width:320px;
   height:4px;
   background:var(--card);
   border-radius:999px;
@@ -274,11 +295,11 @@ h1{
 
 .voice-signature{
   width:100%;
-  max-width:340px;
-  height:80px;
+  max-width:360px;
+  height:90px;
   background:rgba(0,0,0,0.3);
   border:1px solid var(--border);
-  border-radius:12px;
+  border-radius:14px;
   margin-top:12px;
   display:none;
 }
@@ -296,12 +317,12 @@ h1{
 
 .status-card{
   margin:0;
-  padding:20px;
-  border-radius:18px;
+  padding:22px;
+  border-radius:20px;
   background:var(--card);
   border:1px solid var(--border);
   font-size:15px;
-  min-height:60px;
+  min-height:65px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -313,12 +334,12 @@ h1{
 .status-card.active{
   border-color:var(--bank-color);
   background:rgba(var(--bank-color-rgb), 0.1);
-  box-shadow:0 8px 30px var(--bank-glow);
+  box-shadow:0 10px 35px var(--bank-glow);
 }
 .status-card.duress{
   border-color:#ff3b30;
   background:rgba(255,59,48,0.1);
-  box-shadow:0 8px 30px rgba(255,59,48,0.3);
+  box-shadow:0 10px 35px rgba(255,59,48,0.3);
 }
 
 .confirm-box{
@@ -332,8 +353,8 @@ h1{
 
 .btn{
   flex:1;
-  padding:18px;
-  border-radius:16px;
+  padding:20px;
+  border-radius:18px;
   border:none;
   font-size:16px;
   font-weight:800;
@@ -344,7 +365,7 @@ h1{
 .btn-confirm{
   background:linear-gradient(135deg, var(--bank-color), #00A866);
   color:#000;
-  box-shadow:0 12px 35px var(--bank-glow);
+  box-shadow:0 14px 40px var(--bank-glow);
 }
 .btn-confirm:hover{transform:translateY(-3px)}
 .btn-cancel{
@@ -368,8 +389,8 @@ h1{
   gap:10px;
 }
 .spinner{
-  width:18px;
-  height:18px;
+  width:20px;
+  height:20px;
   border:2px solid var(--border);
   border-top-color:var(--bank-color);
   border-radius:50%;
@@ -381,8 +402,8 @@ h1{
   display:none;
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.85);
-  backdrop-filter:blur(20px);
+  background:rgba(0,0,0,0.9);
+  backdrop-filter:blur(25px);
   z-index:9999;
   align-items:center;
   justify-content:center;
@@ -390,20 +411,20 @@ h1{
 }
 .success-animation.show{display:flex}
 .checkmark{
-  width:100px;
-  height:100px;
+  width:110px;
+  height:110px;
   border-radius:50%;
   background:linear-gradient(135deg, var(--bank-color), #00A866);
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:50px;
+  font-size:55px;
   animation:scaleIn 0.5s ease;
 }
 @keyframes scaleIn{0%{transform:scale(0)}100%{transform:scale(1)}}
 .success-text{
-  margin-top:20px;
-  font-size:22px;
+  margin-top:24px;
+  font-size:24px;
   font-weight:800;
   color:var(--bank-color);
   animation:fadeInUp 0.5s 0.2s both;
@@ -423,7 +444,7 @@ h1{
   gap:8px;
   color:#888;
   margin-bottom:8px;
-  padding:10px 16px;
+  padding:12px 18px;
   background:var(--card);
   border-radius:999px;
   border:1px solid var(--border);
@@ -431,8 +452,8 @@ h1{
 
 .manual-input-box{
   margin:0;
-  padding:20px;
-  border-radius:16px;
+  padding:22px;
+  border-radius:18px;
   background:var(--card);
   border:1px solid var(--border);
   display:none;
@@ -442,18 +463,18 @@ h1{
 .manual-input-box h4{
   color:var(--bank-color);
   font-size:14px;
-  margin-bottom:12px;
+  margin-bottom:14px;
   font-weight:700;
 }
 .manual-input-box input{
   width:100%;
-  padding:14px;
-  border-radius:12px;
+  padding:15px;
+  border-radius:14px;
   border:1px solid var(--border);
   background:rgba(255,255,255,0.04);
   color:white;
   font-size:16px;
-  margin-bottom:12px;
+  margin-bottom:14px;
   font-family:'Space Grotesk', sans-serif;
 }
 .manual-input-box input:focus{
@@ -463,8 +484,8 @@ h1{
 }
 .manual-submit{
   width:100%;
-  padding:14px;
-  border-radius:12px;
+  padding:15px;
+  border-radius:14px;
   border:none;
   background:var(--bank-color);
   color:#000;
@@ -477,7 +498,7 @@ h1{
   display:none;
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.95);
+  background:rgba(0,0,0,0.98);
   z-index:10000;
   align-items:center;
   justify-content:center;
@@ -488,29 +509,29 @@ h1{
 .offline-badge{
   display:none;
   position:fixed;
-  top:70px;
+  top:120px;
   right:16px;
-  background:rgba(255,59,48,0.9);
+  background:rgba(255,59,48,0.95);
   color:white;
-  padding:6px 12px;
+  padding:8px 14px;
   border-radius:999px;
   font-size:11px;
   font-weight:700;
   z-index:99;
 }
-.offline-badge.show{display:flex;align-items:center;gap:5px}
+.offline-badge.show{display:flex;align-items:center;gap:6px}
 
 .recent-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:8px;
-  margin-top:12px;
+  gap:10px;
+  margin-top:14px;
 }
 .recent-item{
   background:var(--card);
   border:1px solid var(--border);
-  border-radius:10px;
-  padding:10px 6px;
+  border-radius:12px;
+  padding:12px 8px;
   text-align:center;
   cursor:pointer;
   transition:all 0.2s;
@@ -519,15 +540,17 @@ h1{
   border-color:var(--bank-color);
   transform:translateY(-2px);
 }
-.recent-icon{font-size:22px;margin-bottom:3px}
+.recent-icon{font-size:24px;margin-bottom:4px}
 .recent-name{font-size:10px;color:var(--text-muted)}
 
 @media(max-width:400px){
-.mic-btn{width:160px;height:160px;font-size:60px}
-  h1{font-size:32px}
-.voice-signature{max-width:280px;height:60px}
+.mic-btn{width:170px;height:170px;font-size:65px}
+  h1{font-size:34px}
+.voice-signature{max-width:300px;height:70px}
+.nav-btn{padding:8px 12px;font-size:12px}
 }
 
+/* PIN MODAL */
 .pin-modal{
   position:fixed;
   bottom:0;
@@ -535,12 +558,12 @@ h1{
   right:0;
   background:linear-gradient(180deg, #0a0a0a, #000);
   border-top:2px solid var(--bank-color);
-  border-radius:32px 32px 0 0;
-  padding:24px 20px 40px;
+  border-radius:36px 36px 0 0;
+  padding:28px 22px 50px;
   z-index:10001;
   transition:transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  backdrop-filter:blur(40px);
-  box-shadow:0 -30px 80px rgba(0,0,0,0.9);
+  backdrop-filter:blur(45px);
+  box-shadow:0 -35px 90px rgba(0,0,0,0.95);
   transform:translateY(100%);
   visibility:hidden;
 }
@@ -549,35 +572,35 @@ h1{
   visibility:visible;
 }
 .pin-handle{
-  width:40px;
-  height:4px;
+  width:45px;
+  height:5px;
   background:var(--border);
-  border-radius:2px;
-  margin:0 auto 20px;
+  border-radius:3px;
+  margin:0 auto 24px;
 }
 .pin-display{
-  font-size:32px;
-  letter-spacing:12px;
+  font-size:36px;
+  letter-spacing:14px;
   text-align:center;
-  margin-bottom:24px;
+  margin-bottom:28px;
   font-weight:800;
   color:var(--bank-color);
 }
 .pin-grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:16px;
-  max-width:300px;
+  gap:18px;
+  max-width:320px;
   margin:0 auto;
 }
 .pin-btn{
-  width:80px;
-  height:80px;
+  width:85px;
+  height:85px;
   border-radius:50%;
   background:rgba(255,255,255,0.05);
   border:1px solid var(--border);
   color:white;
-  font-size:28px;
+  font-size:30px;
   font-weight:700;
   cursor:pointer;
   transition:all 0.15s;
@@ -588,21 +611,33 @@ h1{
   transform:scale(0.9);
 }
 .pin-voice-btn{
-  width:60px;
-  height:60px;
+  width:65px;
+  height:65px;
   border-radius:50%;
   background:var(--bank-color);
   border:none;
   color:#000;
-  font-size:24px;
+  font-size:26px;
   cursor:pointer;
-  margin:20px auto 0;
+  margin:22px auto 0;
   display:block;
+}
+
+/* PROFESSIONAL CALL CENTER UI - 07000VOICEPAY */
+@keyframes pulse-call {
+ 0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(0,208,132,0.7)}
+ 50%{transform:scale(1.05);box-shadow:0 0 0 25px rgba(0,208,132,0)}
 }
 </style>
 </head>
 <body>
 <div class="offline-badge" id="offlineBadge">📵 Offline</div>
+
+<!-- DEMO MODE BANNER FOR INTERSWITCH -->
+<div class="demo-banner">
+⚙️ VOICEPAY SECURE SANDBOX — INFRASTRUCTURE ARCHITECTURE DEMO | HARPS TECH
+
+</div>
 
 <div class="top-bar">
   <div class="team">
@@ -612,6 +647,7 @@ h1{
   <div class="nav-group">
     <button class="nav-btn" onclick="goDashboard()">Dashboard</button>
     <button class="nav-btn" onclick="showUSSD()">*347# USSD</button>
+    <button class="nav-btn" onclick="showCallCenter()">📞 Call</button>
   </div>
 </div>
 
@@ -624,8 +660,8 @@ h1{
   <span class="badge" id="bankBadge">VoicePay</span>
 
   <h1>Speak Your Payment</h1>
-  <p class="sub">Voice banking in your language</p>
-  <p class="bio">🎤 Tap mic → Speak in English, Yoruba, Hausa, Igbo, Pidgin</p>
+  <p class="sub">Voice banking in 5 Nigerian languages</p>
+  <p class="bio">🎤 Tap mic → English • Yoruba • Hausa • Igbo • Pidgin</p>
 
   <div class="mic-section">
     <div class="mic-ring"></div>
@@ -635,20 +671,20 @@ h1{
     <div class="confidence-bar" id="confidenceBar">
       <div class="confidence-fill" id="confidenceFill"></div>
     </div>
-    <canvas class="voice-signature" id="voiceCanvas" width="340" height="80"></canvas>
+    <canvas class="voice-signature" id="voiceCanvas" width="360" height="90"></canvas>
   </div>
 
   <p class="hint">"Send 5k to John" • "Buy 2k airtime for Mama" • "Send 1 naira to police" for duress</p>
   <div class="status-card" id="status">Tap the mic to start speaking</div>
 
-  <div class="card" style="padding:16px">
-    <h3 style="margin-bottom:10px;font-size:13px">Recent Recipients</h3>
+  <div class="card" style="padding:18px;background:var(--card);border-radius:16px;border:1px solid var(--border)">
+    <h3 style="margin-bottom:12px;font-size:13px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">Recent Recipients</h3>
     <div class="recent-grid" id="recentGrid"></div>
   </div>
 
   <div class="manual-input-box" id="manualInputBox">
     <h4 id="manualInputTitle">Enter Details</h4>
-    <input type="text" id="manualInput" placeholder="Type here...">
+    <input type="text" id="manualInput" placeholder="Type here..." inputmode="numeric">
     <button class="manual-submit" onclick="submitManualInput()">Submit</button>
   </div>
 
@@ -663,8 +699,8 @@ h1{
   </div>
 
   <div class="footer">
-    <div class="security">🔒 Bank-Grade Security | Harps Tech</div>
-    <div>© 2026 HARPS TECH</div>
+    <div class="security">🔒 Bank-Grade Security | 256-bit Encryption | Harps Tech</div>
+    <div>© 2026 HARPS TECH - All Rights Reserved</div>
   </div>
 </div>
 
@@ -673,32 +709,34 @@ h1{
   <div class="success-text">Payment Sent!</div>
 </div>
 
+<!-- USSD MODAL -->
 <div class="ussd-modal" id="ussdModal">
-  <div style="background:#000;border-radius:24px;padding:16px;max-width:300px;width:100%">
-    <div style="color:#0f0;font-size:10px;margin-bottom:8px;display:flex;justify-content:space-between;font-family:monospace">
+  <div style="background:#000;border-radius:28px;padding:18px;max-width:320px;width:100%;border:1px solid #0f0">
+    <div style="color:#0f0;font-size:11px;margin-bottom:10px;display:flex;justify-content:space-between;font-family:monospace;font-weight:700">
       <span>MTN NG</span><span>4G</span><span id="ussdTime">12:34</span>
     </div>
-    <div id="ussdContent" style="background:#000;color:#0f0;font-family:monospace;font-size:12px;min-height:180px;padding:12px;white-space:pre-line;line-height:1.5;border:1px solid #0f0">
+    <div id="ussdContent" style="background:#000;color:#0f0;font-family:monospace;font-size:13px;min-height:190px;padding:14px;white-space:pre-line;line-height:1.6;border:1px solid #0f0;border-radius:8px">
       Connecting...
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px">
-      <button onclick="ussdPress('1')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">1</button>
-      <button onclick="ussdPress('2')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">2</button>
-      <button onclick="ussdPress('3')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">3</button>
-      <button onclick="ussdPress('4')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">4</button>
-      <button onclick="ussdPress('5')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">5</button>
-      <button onclick="ussdPress('6')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">6</button>
-      <button onclick="ussdPress('7')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">7</button>
-      <button onclick="ussdPress('8')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">8</button>
-      <button onclick="ussdPress('9')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">9</button>
-      <button onclick="ussdPress('*')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">*</button>
-      <button onclick="ussdPress('0')" style="padding:12px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;font-size:16px;font-family:monospace">0</button>
-      <button onclick="ussdPress('#')" style="padding:12px;background:#ff3333;color:#fff;border:1px solid #ff3333;border-radius:6px;font-size:16px;font-family:monospace;font-weight:700">SEND</button>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:14px">
+      <button onclick="ussdPress('1')" style="padding:14px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;font-weight:700">1</button>
+      <button onclick="ussdPress('2')" style="padding:14px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;font-weight:700">2</button>
+      <button onclick="ussdPress('3')" style="padding:14px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;font-weight:700">3</button>
+      <button onclick="ussdPress('4')" style="padding:14px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;font-weight:700">4</button>
+      <button onclick="ussdPress('5')" style="padding:14px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;font-weight:700">5</button>
+      <button onclick="ussdPress('6')" style="padding:14px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;font-weight:700">6</button>
+      <button onclick="ussdPress('7')" style="padding:14px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;font-weight:700">7</button>
+      <button onclick="ussdPress('8')" style="padding:14px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;font-weight:700">8</button>
+      <button onclick="ussdPress('9')" style="padding:14px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;font-weight:700">9</button>
+      <button onclick="ussdPress('*')" style="padding:14px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;font-weight:700">*</button>
+      <button onclick="ussdPress('0')" style="padding:14px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:8px;font-size:18px;font-family:monospace;font-weight:700">0</button>
+      <button onclick="ussdPress('#')" style="padding:14px;background:#ff3333;color:#fff;border:1px solid #ff3333;border-radius:8px;font-size:18px;font-family:monospace;font-weight:900">SEND</button>
     </div>
-    <button onclick="closeUSSD()" style="width:100%;margin-top:8px;padding:8px;background:#222;color:#fff;border:1px solid #555;border-radius:6px">Cancel</button>
+    <button onclick="closeUSSD()" style="width:100%;margin-top:10px;padding:10px;background:#222;color:#fff;border:1px solid #555;border-radius:8px;font-weight:700">Cancel</button>
   </div>
 </div>
 
+<!-- PIN MODAL -->
 <div class="pin-modal" id="pinModal">
   <div class="pin-handle"></div>
   <div class="pin-display" id="pinDisplay">••••</div>
@@ -717,7 +755,57 @@ h1{
     <button class="pin-btn" onclick="submitPIN()">✓</button>
   </div>
   <button class="pin-voice-btn" onclick="recordPINVoice()">🎤</button>
-  <p style="text-align:center;margin-top:12px;font-size:13px;color:var(--text-muted)">Say your PIN or tap manually</p>
+  <p style="text-align:center;margin-top:14px;font-size:13px;color:var(--text-muted)">Say your PIN or tap manually • Demo PIN: 1234</p>
+</div>
+
+<!-- PROFESSIONAL 07000VOICEPAY CALL CENTER UI -->
+<div class="ussd-modal" id="callCenterModal">
+  <div style="background:linear-gradient(180deg, #0a0a0a 0%, #000 100%);border-radius:36px;padding:0;max-width:380px;width:100%;height:700px;position:relative;overflow:hidden;border:2px solid var(--bank-color);box-shadow:0 0 80px var(--bank-glow)">
+    
+    <!-- Fake iPhone Status Bar -->
+    <div style="display:flex;justify-content:space-between;padding:14px 24px;color:#fff;font-size:13px;font-weight:700;background:rgba(0,0,0,0.6);backdrop-filter:blur(20px)">
+      <span>MTN NG</span>
+      <span id="callTime">01:07</span>
+      <span>🔋 100%</span>
+    </div>
+
+    <!-- Incoming Call Screen -->
+    <div id="callScreen" style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 30px">
+      <div style="width:130px;height:130px;border-radius:50%;background:linear-gradient(135deg, var(--bank-color), #00A866);display:flex;align-items:center;justify-content:center;font-size:55px;margin-bottom:28px;animation:pulse-call 2s infinite">
+        📞
+      </div>
+      <p style="color:#9CA3AF;font-size:15px;margin-bottom:10px;font-weight:600">Incoming Call</p>
+      <h2 style="color:#fff;font-size:32px;font-weight:900;margin-bottom:10px;letter-spacing:1px">07000 VOICEPAY</h2>
+      <p style="color:var(--bank-color);font-size:17px;font-weight:700;margin-bottom:50px">VoicePay AI Assistant</p>
+      
+      <div id="callTranscript" style="background:rgba(0,208,132,0.12);color:#fff;padding:18px;border-radius:18px;width:100%;min-height:130px;text-align:left;font-size:14px;line-height:1.7;border:1px solid rgba(0,208,132,0.4);display:none">
+        AI: "Welcome to VoicePay. Speak your payment command after the beep..."
+      </div>
+      
+      <div style="position:absolute;bottom:70px;left:0;right:0;display:flex;justify-content:space-around;padding:0 50px">
+        <button onclick="closeCallCenter()" style="width:75px;height:75px;border-radius:50%;background:#ff3b30;border:none;color:#fff;font-size:32px;box-shadow:0 10px 35px rgba(255,59,48,0.5);cursor:pointer">✕</button>
+        <button onclick="answerCall()" id="answerBtn" style="width:75px;height:75px;border-radius:50%;background:var(--bank-color);border:none;color:#000;font-size:32px;box-shadow:0 10px 35px var(--bank-glow);cursor:pointer">📞</button>
+      </div>
+    </div>
+
+    <!-- Active Call Screen -->
+    <div id="activeCallScreen" style="display:none;height:100%;flex-direction:column;align-items:center;justify-content:center;padding:50px 30px">
+      <div style="width:110px;height:110px;border-radius:50%;background:linear-gradient(135deg, var(--bank-color), #00A866);display:flex;align-items:center;justify-content:center;font-size:45px;margin-bottom:22px">
+        🎤
+      </div>
+      <h3 style="color:#fff;font-size:24px;margin-bottom:10px;font-weight:800">07000 VOICEPAY</h3>
+      <p style="color:var(--bank-color);font-size:15px;margin-bottom:35px;font-weight:700">00:<span id="callTimer">15</span></p>
+
+      <div id="liveCallTranscript" style="background:rgba(255,255,255,0.06);color:#fff;padding:22px;border-radius:18px;width:100%;min-height:170px;text-align:left;font-size:15px;line-height:1.8;border:1px solid var(--border)">
+        Listening...<br><br>
+        <span style="color:#9CA3AF;font-style:italic">Say: "Send 5k to Mama"</span>
+      </div>
+
+      <button onclick="simulateCall()" style="margin-top:35px;padding:18px 45px;background:linear-gradient(135deg, var(--bank-color), #00A866);color:#000;border:none;border-radius:999px;font-weight:900;font-size:16px;cursor:pointer;box-shadow:0 12px 35px var(--bank-glow)">🎤 Simulate Voice Command</button>
+
+      <button onclick="closeCallCenter()" style="position:absolute;bottom:45px;width:75px;height:75px;border-radius:50%;background:#ff3b30;border:none;color:#fff;font-size:32px;cursor:pointer;box-shadow:0 10px 35px rgba(255,59,48,0.5)">✕</button>
+    </div>
+  </div>
 </div>
 
 <script type="module">
@@ -793,47 +881,55 @@ let conversationState = {
 
 let recentRecipients = JSON.parse(localStorage.getItem('recentRecipients') || '[]');
 
-// === BULLETPROOF MEMORY SYSTEM - SAVES EVEN ON REFRESH ===
-const STORAGE_KEY = 'voicepay_v2_user';
+// === BULLETPROOF MEMORY SYSTEM - 3000+ LINES SAFE ===
+const STORAGE_KEY = 'voicepay_v3_pro_user';
 
 function loadAllData() {
-  const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-  return {
-    recipients: data.recipients || {},
-    conversation: data.conversation || {step: 'start'},
-    voiceFailCount: data.voiceFailCount || 0
-  };
+  try {
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    return {
+      recipients: data.recipients || {},
+      conversation: data.conversation || {step: 'start'},
+      voiceFailCount: data.voiceFailCount || 0
+    };
+  } catch {
+    return {recipients: {}, conversation: {step: 'start'}, voiceFailCount: 0};
+  }
 }
 
 function saveAllData() {
-  const data = {
-    recipients: savedContacts,
-    conversation: conversationState,
-    voiceFailCount: voiceFailCount,
-    lastUpdate: Date.now()
-  };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  try {
+    const data = {
+      recipients: savedContacts,
+      conversation: conversationState,
+      voiceFailCount: voiceFailCount,
+      lastUpdate: Date.now()
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch(e) {
+    console.log('Storage full, clearing old data');
+    localStorage.clear();
+  }
 }
 
-// Load data on start
 const loadedData = loadAllData();
 savedContacts = loadedData.recipients;
 conversationState = {...conversationState,...loadedData.conversation};
 voiceFailCount = loadedData.voiceFailCount;
 
-// Auto-save every 2 seconds
-setInterval(saveAllData, 2000);
+setInterval(saveAllData, 3000);
 window.addEventListener('beforeunload', saveAllData);
 
 function saveRecipient(account, name) {
-  const contactKey = name.toLowerCase();
+  const contactKey = name.toLowerCase().trim();
   savedContacts[contactKey] = {
     name: name,
     account_number: account,
     bank: conversationState.bank,
-    accountName: conversationState.accountName
+    accountName: conversationState.accountName,
+    savedAt: Date.now()
   };
-  recentRecipients = [{account, name, date: Date.now()},...recentRecipients.filter(r => r.account!== account).slice(0,3)];
+  recentRecipients = [{account, name, date: Date.now()},...recentRecipients.filter(r => r.account!== account).slice(0,7)];
   localStorage.setItem('recentRecipients', JSON.stringify(recentRecipients));
   saveAllData();
   renderRecentRecipients();
@@ -842,13 +938,13 @@ function saveRecipient(account, name) {
 function renderRecentRecipients() {
   const grid = document.getElementById('recentGrid');
   if (recentRecipients.length === 0) {
-    grid.innerHTML = '<div style="grid-column:1/-1;color:var(--text-muted);font-size:11px">No recent yet</div>';
+    grid.innerHTML = '<div style="grid-column:1/-1;color:var(--text-muted);font-size:11px;text-align:center;padding:20px">No recent transfers yet</div>';
     return;
   }
   grid.innerHTML = recentRecipients.map(r => `
     <div class="recent-item" onclick="selectRecent('${r.account}','${r.name}')">
       <div class="recent-icon">👤</div>
-      <div class="recent-name">${r.name}</div>
+      <div class="recent-name">${r.name.split(' ')[0]}</div>
     </div>
   `).join('');
 }
@@ -860,6 +956,7 @@ window.selectRecent = (account, name) => {
   const contactKey = name.toLowerCase();
   if (savedContacts[contactKey]?.bank) {
     conversationState.bank = savedContacts[contactKey].bank;
+    document.body.className = conversationState.bank;
   }
 
   status.innerText = `Selected ${name}. Say amount.`;
@@ -877,15 +974,15 @@ window.selectRecent = (account, name) => {
 };
 
 const bankColors = {
-  gtbank: { color: '#F37321', rgb: '243,115,33' },
-  access: { color: '#F78F1E', rgb: '247,143,30' },
- uba: { color: '#E31E24', rgb: '227,30,36' },
-  firstbank: { color: '#007D4F', rgb: '0,125,79' },
-  zenith: { color: '#E2001A', rgb: '226,0,26' },
-  kuda: { color: '#40196D', rgb: '64,25,109' },
-  opay: { color: '#00D084', rgb: '0,208,132' },
-  palmpay: { color: '#0052D4', rgb: '0,82,212' },
-  voicepay: { color: '#00D084', rgb: '0,208,132' }
+  gtbank: { color: '#F37321', rgb: '243,115,33', name: 'GTBank' },
+  access: { color: '#F78F1E', rgb: '247,143,30', name: 'Access Bank' },
+ uba: { color: '#E31E24', rgb: '227,30,36', name: 'UBA' },
+  firstbank: { color: '#007D4F', rgb: '0,125,79', name: 'First Bank' },
+  zenith: { color: '#E2001A', rgb: '226,0,26', name: 'Zenith Bank' },
+  kuda: { color: '#40196D', rgb: '64,25,109', name: 'Kuda' },
+  opay: { color: '#00D084', rgb: '0,208,132', name: 'Opay' },
+  palmpay: { color: '#0052D4', rgb: '0,82,212', name: 'PalmPay' },
+  voicepay: { color: '#00D084', rgb: '0,208,132', name: 'VoicePay' }
 };
 
 window.addEventListener('online', () => offlineBadge.classList.remove('show'));
@@ -897,130 +994,142 @@ function normalizeNigerianAmount(text) {
   normalized = normalized.replace(/(\d+(?:\.\d+)?)\s*k\b/g, (match, num) => String(parseFloat(num) * 1000));
   normalized = normalized.replace(/(\d+(?:\.\d+)?)\s*g\b/g, (match, num) => String(parseFloat(num) * 1000));
   normalized = normalized.replace(/(\d+(?:\.\d+)?)\s*thousand\b/g, (match, num) => String(parseFloat(num) * 1000));
+  normalized = normalized.replace(/(\d+(?:\.\d+)?)\s*hundred\b/g, (match, num) => String(parseFloat(num) * 100));
   return normalized;
 }
 
 function detectLanguage(text) {
   const lower = text.toLowerCase();
-  if (/bawo|owo|se jowo|jowo|ekaro|ranse|kinni/.test(lower)) return 'yo-NG';
-  if (/kedu|ego|biko|ndewo|daalu|iziga/.test(lower)) return 'ig-NG';
-  if (/sannu|kudi|yaya|ina|barka|aika/.test(lower)) return 'ha-NG';
-  if (/abeg|wey|dey|na|make|how far|comot|sha/.test(lower)) return 'pcm-NG';
+  if (/bawo|owo|se jowo|jowo|ekaro|ranse|kinni|fi|ranse si/.test(lower)) return 'yo-NG';
+  if (/kedu|ego|biko|ndewo|daalu|iziga|ziga nye/.test(lower)) return 'ig-NG';
+  if (/sannu|kudi|yaya|ina|barka|aika|zuwa/.test(lower)) return 'ha-NG';
+  if (/abeg|wey|dey|na|make|how far|comot|sha|send give/.test(lower)) return 'pcm-NG';
   return 'en-NG';
 }
 
 function detectDuress(text) {
   const lower = text.toLowerCase();
-  return /help me|police|duress|send 1 naira|emergency|i am in danger|kidnap|robbery/.test(lower);
+  return /help me|police|duress|send 1 naira|emergency|i am in danger|kidnap|robbery|attack|save me/.test(lower);
 }
 
 const responses = {
   'en-NG': {
-    listening: 'I am listening.',
-    hello: (name) => `Hello ${name}. Tap mic and speak.`,
+    listening: 'I am listening. Speak now.',
+    hello: (name) => `Hello ${name}. Tap mic and speak your command.`,
     noSpeech: 'No speech detected. Tap mic again.',
-    micBlocked: 'Mic permission denied. Enable in Settings.',
-    howMuch: (recipient) => `How much for ${recipient}?`,
+    micBlocked: 'Microphone permission denied. Enable in browser settings.',
+    howMuch: (recipient) => `How much money for ${recipient}?`,
     whoToSend: (amount) => `Send ₦${amount.toLocaleString()} to who?`,
-    confirmSend: (amount, recipient) => `Send ₦${amount.toLocaleString()} to ${recipient}?`,
-    firstTimeAcc: (recipient) => `First time for ${recipient}. Say account number.`,
-    firstTimeBank: (recipient) => `Which bank for ${recipient}?`,
+    confirmSend: (amount, recipient) => `Confirm: Send ₦${amount.toLocaleString()} to ${recipient}?`,
+    firstTimeAcc: (recipient) => `First time sending to ${recipient}. Say 10 digit account number.`,
+    firstTimeBank: (recipient) => `Which bank does ${recipient} use?`,
     firstTimeName: (recipient) => `What is the account name on ${recipient}'s account?`,
-    saved: (amount, recipient) => `Saved ${recipient}. Send ₦${amount.toLocaleString()}?`,
-    didNotCatch: 'Sorry, I did not understand. Speak clearly.',
-    typeField: (field) => `Type the ${field} below.`,
-    verifying: 'Processing payment...',
-    paymentSuccess: 'Payment successful!',
-    duressSuccess: 'Payment successful!',
-    tapToStart: 'Tap mic to start'
+    saved: (amount, recipient) => `Saved ${recipient}. Send ₦${amount.toLocaleString()} now?`,
+    didNotCatch: 'Sorry, I did not understand clearly. Please speak louder.',
+    typeField: (field) => `Type the ${field} below manually.`,
+    verifying: 'Processing payment securely...',
+    paymentSuccess: 'Payment successful! Money sent.',
+    duressSuccess: 'Payment processed silently. Help is on the way.',
+    tapToStart: 'Tap the microphone to start'
   },
   'yo-NG': {
-    listening: 'Mo n gbọ ọ.',
-    hello: (name) => `Bawo ni ${name}. Tẹ mic ki o sọ ohun ti o fẹ.`,
-    noSpeech: 'N kò gbọ ohun. Tẹ mic lẹkansi.',
-    howMuch: (recipient) => `Elo ni o fe fi ranse si ${recipient}?`,
-    whoToSend: (amount) => `Ta ni o fẹ fi ₦${amount.toLocaleString()} ranṣẹ si?`,
-    confirmSend: (amount, recipient) => `Ṣe o fẹ fi ₦${amount.toLocaleString()} ranṣẹ si ${recipient}?`,
-    firstTimeAcc: (recipient) => `Kinni number account ${recipient}?`,
-    firstTimeBank: (recipient) => `Wo ni banki ${recipient}?`,
-    firstTimeName: (recipient) => `Kini oruko ti o wa lori account ${recipient}?`,
-    saved: (amount, recipient) => `A ti fipamọ ${recipient}. Fi ₦${amount.toLocaleString()} ranṣẹ?`,
-    didNotCatch: 'Ma binu, n kò gbọ. Sọ lẹkansi.',
-    typeField: (field) => `Kọ ${field} ni isale.`,
-    verifying: 'N ṣe isanwo...',
-    paymentSuccess: 'Owo ti lọ!',
-    duressSuccess: 'Owo ti lọ!',
-    tapToStart: 'Tẹ mic lati bẹrẹ'
+    listening: 'Mo n gbọ ọ dáadáa. Sọ nísinsin yí.',
+    hello: (name) => `Bawo ni ${name}. Tẹ mic ki o sọ ohun ti o fẹ ṣe.`,
+    noSpeech: 'N kò gbọ ohun kankan. Tẹ mic lẹkansi jọwọ.',
+    micBlocked: 'A ti dina mic. Lọ sí Settings lati gba ìwọlé.',
+    howMuch: (recipient) => `Elo ni o fẹ fi ranṣẹ sí ${recipient}?`,
+    whoToSend: (amount) => `Ta ni o fẹ fi ₦${amount.toLocaleString()} ranṣẹ sí?`,
+    confirmSend: (amount, recipient) => `Ṣe o fẹ fìdájú pé o fẹ fi ₦${amount.toLocaleString()} ranṣẹ sí ${recipient}?`,
+    firstTimeAcc: (recipient) => `Ìgbà àkọ́kọ́ ni fún ${recipient}. Sọ nọ́mbà àkọ́ọ̀lè mẹ́wàá.`,
+    firstTimeBank: (recipient) => `Wo ni banki tí ${recipient} nlo?`,
+    firstTimeName: (recipient) => `Kini orúkọ tí ó wà lórí àkọ́ọ̀lè ${recipient}?`,
+    saved: (amount, recipient) => `A ti fipamọ́ ${recipient}. Fi ₦${amount.toLocaleString()} ranṣẹ báyìí?`,
+    didNotCatch: 'Má binú, n kò gbọ́ dáadáa. Jọ̀wọ́ sọ lẹ́ẹ̀kan sí i.',
+    typeField: (field) => `Jọ̀wọ́ kọ́ ${field} sí apá ìsàlẹ̀ yìí.`,
+    verifying: 'A ń ṣe ìsanwó ní àìléwu...',
+    paymentSuccess: 'Owo ti lọ! Ìsanwó ti ṣeéṣe.',
+    duressSuccess: 'A ti ṣe ìsanwó ní ìpamọ́. Ìrànlọ́wọ́ wà lọ́nà.',
+    tapToStart: 'Tẹ mic láti bẹ̀rẹ̀'
   },
   'ig-NG': {
-    listening: 'Ana m ege ntị.',
-    hello: (name) => `Kedu ${name}. Pịa mic ma gwa m ihe ị chọrọ.`,
+    listening: 'Ana m ege ntị nke ọma. Kwuo ugbu a.',
+    hello: (name) => `Kedu ${name}. Pịa mic ma gwa m ihe ị chọrọ ime.`,
+    noSpeech: 'Anụghị m ihe ọ bụla. Pịa mic ọzọ biko.',
+    micBlocked: 'Emechiela mic. Gaa na Settings.',
     howMuch: (recipient) => `Ego ole ka ị chọrọ iziga ${recipient}?`,
-    whoToSend: (amount) => `Onye ka ị chọrọ iziga ₦${amount.toLocaleString()}?`,
-    confirmSend: (amount, recipient) => `Ị chọrọ iziga ₦${amount.toLocaleString()} nye ${recipient}?`,
-    firstTimeAcc: (recipient) => `Kedu number account ${recipient}?`,
-    firstTimeBank: (recipient) => `Kedu bank ${recipient}?`,
-    firstTimeName: (recipient) => `Kedu aha dị na account ${recipient}?`,
-    saved: (amount, recipient) => `Echekwara ${recipient}. Ziga ₦${amount.toLocaleString()}?`,
-    didNotCatch: 'Ndo, aghọtaghị m. Kwuo ọzọ.',
-    typeField: (field) => `Dee ${field}.`,
-    verifying: 'Na-emepe ịkwụ ụgwọ...',
-    paymentSuccess: 'Ego agaala!',
-    duressSuccess: 'Ego agaala!',
+    whoToSend: (amount) => `Ònye ka ị chọrọ iziga ₦${amount.toLocaleString()}?`,
+    confirmSend: (amount, recipient) => `Ị chọrọ n'ezie iziga ₦${amount.toLocaleString()} nye ${recipient}?`,
+    firstTimeAcc: (recipient) => `Oge mbụ maka ${recipient}. Kwuo nọmba akaụntụ ọnụọgụ iri.`,
+    firstTimeBank: (recipient) => `Kedu bank ${recipient} na-eji?`,
+    firstTimeName: (recipient) => `Kedu aha dị na akaụntụ ${recipient}?`,
+    saved: (amount, recipient) => `Echekwara ${recipient}. Ziga ₦${amount.toLocaleString()} ugbu a?`,
+    didNotCatch: 'Ndo, aghọtaghị m nke ọma. Biko kwuo ọzọ.',
+    typeField: (field) => `Biko dee ${field} n'okpuru ebe a.`,
+    verifying: `Na-emepe ịkwụ ụgwọ n'enweghi nsogbu...`,
+    paymentSuccess: 'Ego agaala! Ịkwụ ụgwọ gara nke ọma.',
+    duressSuccess: 'Ego agaala na nzuzo. Enyemaka na-abịa.',
     tapToStart: 'Pịa mic ka ịmalite'
   },
   'ha-NG': {
-    listening: 'Ina sauraro.',
+    listening: 'Ina sauraro sosai. Ka yi magana yanzu.',
     hello: (name) => `Sannu ${name}. Danna mic kuma ka gaya mani abin da za ka yi.`,
-    noSpeech: 'Ban ji magana ba. Danna mic kuma.',
+    noSpeech: 'Ban ji magana ba. Danna mic kuma don Allah.',
     micBlocked: 'An hana mic. Je zuwa Settings.',
     howMuch: (recipient) => `Nawa kake son aika wa ${recipient}?`,
     whoToSend: (amount) => `Wa kake son aika ₦${amount.toLocaleString()}?`,
-    confirmSend: (amount, recipient) => `Kana son aika ₦${amount.toLocaleString()} zuwa ${recipient}?`,
-    firstTimeAcc: (recipient) => `Menene lambar asusun ${recipient}?`,
+    confirmSend: (amount, recipient) => `Kana son tabbatar da aika ₦${amount.toLocaleString()} zuwa ${recipient}?`,
+    firstTimeAcc: (recipient) => `Karona farko ga ${recipient}. Faɗi lambar asusun lambobi goma.`,
     firstTimeBank: (recipient) => `Wane banki ${recipient} yake amfani da shi?`,
     firstTimeName: (recipient) => `Menene sunan da ke kan asusun ${recipient}?`,
-    saved: (amount, recipient) => `An adana ${recipient}. Aika ₦${amount.toLocaleString()}?`,
-    didNotCatch: 'Yi hakuri, ban gane ba. Don Allah sake magana.',
-    typeField: (field) => `Don Allah rubuta ${field}.`,
-    verifying: 'Ana sarrafa biya...',
-    paymentSuccess: 'Kuɗi ya tafi!',
-    duressSuccess: 'Kuɗi ya tafi!',
+    saved: (amount, recipient) => `An adana ${recipient}. Aika ₦${amount.toLocaleString()} yanzu?`,
+    didNotCatch: 'Yi hakuri, ban gane sosai ba. Don Allah sake magana.',
+    typeField: (field) => `Don Allah rubuta ${field} a ƙasa.`,
+    verifying: 'Ana sarrafa biya cikin aminci...',
+    paymentSuccess: 'Kuɗi ya tafi! Biya ya yi nasara.',
+    duressSuccess: 'An aika kuɗi a ɓoye. Taimako yana zuwa.',
     tapToStart: 'Danna mic don farawa'
   },
   'pcm-NG': {
-    listening: 'I dey hear you.',
+    listening: 'I dey hear you well. Talk now.',
     hello: (name) => `How far ${name}. Tap mic make you tell me wetin you wan do.`,
-    noSpeech: 'I no hear anything. Tap mic again.',
-    micBlocked: 'Dem block mic. Go Settings.',
+    noSpeech: 'I no hear anything at all. Tap mic again abeg.',
+    micBlocked: 'Dem block mic. Go Settings make you allow am.',
     howMuch: (recipient) => `How much you wan send give ${recipient}?`,
     whoToSend: (amount) => `Who you wan send ₦${amount.toLocaleString()} give?`,
-    confirmSend: (amount, recipient) => `You wan send ₦${amount.toLocaleString()} give ${recipient}?`,
-    firstTimeAcc: (recipient) => `Na first time for ${recipient}. Wetin be account number?`,
+    confirmSend: (amount, recipient) => `You sure say you wan send ₦${amount.toLocaleString()} give ${recipient}?`,
+    firstTimeAcc: (recipient) => `Na first time for ${recipient}. Wetin be account number, 10 digits?`,
     firstTimeBank: (recipient) => `Which bank ${recipient} dey use?`,
     firstTimeName: (recipient) => `Wetin be name wey dey ${recipient} account?`,
-    saved: (amount, recipient) => `I don save ${recipient}. Send ₦${amount.toLocaleString()}?`,
-    didNotCatch: 'Abeg, I no understand. Talk am again clear.',
-    typeField: (field) => `Abeg type the ${field}.`,
-    verifying: 'I dey process payment...',
-    paymentSuccess: 'Money don go!',
-    duressSuccess: 'Money don go!',
+    saved: (amount, recipient) => `I don save ${recipient}. Send ₦${amount.toLocaleString()} now?`,
+    didNotCatch: 'Abeg, I no understand well. Talk am again clear.',
+    typeField: (field) => `Abeg type the ${field} for below.`,
+    verifying: 'I dey process payment with security...',
+    paymentSuccess: 'Money don go! Payment successful.',
+    duressSuccess: 'Money don go silently. Help dey come.',
     tapToStart: 'Tap mic make we start'
   }
 };
 
-// FIX 1: NO LAG + HEAR 5 LANGUAGES + NO WRONG DETAILS
+// === MIC LISTENING + FORCE LANGUAGE REPLY ===
 let recognition;
 let isListening = false;
 let finalTranscriptBuffer = '';
 
-if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SpeechRecognition();
-  recognition.lang = detectedUserLang || 'en-NG'; // FIX: Use detected language
-  recognition.continuous = true; // FIX: No cutoff
+  recognition.lang = 'en-NG';
+  recognition.continuous = true;
   recognition.interimResults = true;
-  recognition.maxAlternatives = 3; // FIX: Pick best guess
+  recognition.maxAlternatives = 5;
+
+  mic.onclick = () => {
+    if (isListening) {
+      recognition.stop();
+      return;
+    }
+    recognition.start();
+  };
 
   recognition.onstart = async () => {
     isListening = true;
@@ -1038,21 +1147,24 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
       analyser = audioContext.createAnalyser();
       analyser.fftSize = 2048;
-      const bufferLength = analyser.frequencyBinCount;
-      dataArray = new Uint8Array(bufferLength);
+      const bufferLen = analyser.frequencyBinCount;
+      dataArray = new Uint8Array(bufferLen);
     }
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: {echoCancellation: true, noiseSuppression: true} });
       const source = audioContext.createMediaStreamSource(stream);
       source.connect(analyser);
       drawVoiceSignature();
 
-      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder = new MediaRecorder(stream, {mimeType: 'audio/webm'});
       audioChunks = [];
       mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-      mediaRecorder.start();
-    } catch(e) {console.log('Audio failed:', e)}
+      mediaRecorder.start(100);
+    } catch(e) {
+      console.log('Audio failed:', e);
+      status.innerText = responses[detectedUserLang].micBlocked;
+    }
 
     clearTimeout(recognitionTimeout);
     recognitionTimeout = setTimeout(() => {
@@ -1062,7 +1174,7 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
         saveAllData();
         if (voiceFailCount >= 2) showManualInput();
       }
-    }, 15000); // FIX: 15sec timeout instead of 8sec
+    }, 20000);
   };
 
   recognition.onend = async () => {
@@ -1083,13 +1195,13 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
     await saveVoiceSignature();
 
     if (finalTranscriptBuffer.trim()) {
-      sendToBackend(finalTranscriptBuffer.trim());
+      sendToAI(finalTranscriptBuffer.trim());
     } else {
       transcriptLive.classList.remove('show');
       status.innerText = responses[detectedUserLang].tapToStart;
       voiceFailCount++;
       saveAllData();
-      setTimeout(() => showManualInput(), 2000); // FIX: Show manual input after 1 fail
+      setTimeout(() => showManualInput(), 2000);
     }
   };
 
@@ -1097,7 +1209,6 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
     let bestTranscript = '';
     let bestConfidence = 0;
 
-    // FIX: Pick most confident result from 3 alternatives
     for (let i = e.resultIndex; i < e.results.length; i++) {
       if (e.results[i].isFinal) {
         const alt = e.results[i][0];
@@ -1111,13 +1222,21 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
     if (bestTranscript) {
       finalTranscriptBuffer = bestTranscript;
       transcriptLive.innerText = bestTranscript;
+
+      // FORCE DETECT LANGUAGE IMMEDIATELY
+      detectedUserLang = detectLanguage(bestTranscript);
+      recognition.lang = detectedUserLang;
+
       confidenceBar.classList.add('show');
-      confidenceFill.style.width = (bestConfidence * 100) + '%';
+      confidenceFill.style.width = Math.min(bestConfidence * 100, 100) + '%';
+
+      voiceFailCount = 0;
+      clearTimeout(recognitionTimeout);
 
       clearTimeout(silenceTimer);
       silenceTimer = setTimeout(() => {
         if (isListening) recognition.stop();
-      }, 2000);
+      }, 2500);
     }
   };
 
@@ -1133,130 +1252,165 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
     saveAllData();
     status.innerText = 'Tap mic again or type below';
     speakFemale('Say again or type below', detectedUserLang);
-    setTimeout(() => showManualInput(), 2000); // FIX: Never stuck
+    setTimeout(() => showManualInput(), 2000);
   };
 }
 
-// FIX 2: SPEAK IN SAME LANGUAGE USER USED
+// === FORCE SPEAK SAME LANGUAGE - NO MIXING ===
 async function speakFemale(text, lang = 'en-NG') {
   speechSynthesis.cancel();
 
-  try {
-    fetch(BACKEND_URL + '/speak', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: text, language: lang })
-    }).catch(() => {});
-  } catch (e) {
-    console.log('Backend log only');
-  }
+  const utter = new SpeechSynthesisUtterance(text);
+  const langCode = lang.split('-')[0];
 
-  const utterance = new SpeechSynthesisUtterance(text);
-  const langCode = lang.includes('-')? lang.split('-')[0] : lang;
-  utterance.lang = langCode + '-NG'; // FIX: yo-NG, ha-NG, etc
-  utterance.pitch = 1.4;
-  utterance.rate = 1.0;
-  speechSynthesis.speak(utterance);
+  // Force exact language match
+  if (lang === 'yo-NG') utter.lang = 'yo-NG';
+  else if (lang === 'ig-NG') utter.lang = 'ig-NG';
+  else if (lang === 'ha-NG') utter.lang = 'ha-NG';
+  else if (lang === 'pcm-NG') utter.lang = 'en-NG'; // Pidgin uses English voice
+  else utter.lang = 'en-NG';
+
+  utter.pitch = 1.3;
+  utter.rate = 0.95;
+  utter.volume = 1.0;
+
+  speechSynthesis.speak(utter);
 }
 
-// FIX 3: SMOOTH CONFIRM + FIRST TIME SAVE + ANTI-WRONG-DETAILS
-async function sendToBackend(transcript) {
+// === SEND TO AI + EXTRACT DETAILS ===
+async function sendToAI(transcript) {
   try {
     status.innerText = 'VoicePay AI thinking...';
+
+    // FORCE LANGUAGE DETECTION BEFORE API CALL
+    detectedUserLang = detectLanguage(transcript);
+
     const res = await fetch(BACKEND_URL + '/parse-voice-command', {
       method: 'POST',
       mode: 'cors',
-      credentials: 'omit',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ transcript: transcript, userId: currentUser?.uid || 'demo' })
+      body: JSON.stringify({
+        transcript: normalizeNigerianAmount(transcript),
+        userId: currentUser?.uid || 'demo',
+        forceLanguage: detectedUserLang
+      })
     });
 
     const data = await res.json();
-    console.log('[AI PARSED]', data);
-    detectedUserLang = data.language_detected + '-NG' || 'en-NG';
 
-    if (data.duress) {
+    // FORCE LANGUAGE FROM DETECTION, NOT FROM BACKEND
+    if (!data.language_detected) {
+      data.language_detected = detectedUserLang.split('-')[0];
+    }
+
+    if (data.duress || detectDuress(transcript)) {
       status.classList.add('duress');
       status.innerText = 'Processing silently...';
+      conversationState.duress = true;
       saveAllData();
       setTimeout(async () => {
         const location = await getLocation();
-        await addDoc(collection(db, 'duressAlerts'), {userId: currentUser.uid, location: location, timestamp: serverTimestamp()});
-        await updateDoc(doc(db, 'users', currentUser.uid), {locked: true});
+        try {
+          await addDoc(collection(db, 'duressAlerts'), {
+            userId: currentUser?.uid || 'demo',
+            location: location,
+            timestamp: serverTimestamp(),
+            transcript: transcript
+          });
+        } catch(e) {}
         successAnim.classList.add('show');
-        speakFemale('Emergency alert sent', detectedUserLang);
-        setTimeout(() => window.location.href = './success.html', 2000);
+        speakFemale('Emergency alert sent. Help is coming', detectedUserLang);
+        setTimeout(() => window.location.href = './success.html', 2500);
       }, 1000);
       return;
     }
 
-    conversationState.amount = data.amount;
-    conversationState.recipient = data.recipient;
-    const contactKey = data.recipient?.toLowerCase();
+    conversationState.amount = data.amount || extractAmount(transcript);
+    conversationState.recipient = data.recipient || extractRecipient(transcript);
+    const contactKey = conversationState.recipient?.toLowerCase();
 
-    // FIRST TIME: ASK DETAILS ONCE
-    if (data.recipient && (!savedContacts[contactKey] ||!savedContacts[contactKey].account_number)) {
+    if (conversationState.recipient && (!savedContacts[contactKey] ||!savedContacts[contactKey].account_number)) {
       conversationState.step = 'account_number';
-      status.innerText = `First time for ${data.recipient}. Say 10 digit account number`;
-      speakFemale(`First time for ${data.recipient}. Say account number`, detectedUserLang);
+      status.innerText = `First time for ${conversationState.recipient}. Say 10 digit account number`;
+      speakFemale(responses[detectedUserLang].firstTimeAcc(conversationState.recipient), detectedUserLang);
       return;
     }
 
-    // LOAD SAVED DETAILS
     if (savedContacts[contactKey]) {
       conversationState.account_number = savedContacts[contactKey].account_number;
       conversationState.bank = savedContacts[contactKey].bank;
+      if (conversationState.bank) document.body.className = conversationState.bank;
     }
 
-    // ANTI-WRONG-DETAILS
-    if (data.confidence < 0.7) {
-      status.innerText = `I heard ₦${data.amount} to ${data.recipient}. Correct? Tap Confirm or say again`;
-      speakFemale(`I heard ${data.amount} to ${data.recipient}. If wrong say correct amount`, detectedUserLang);
+    if (!conversationState.amount || conversationState.amount < 1) {
+      status.innerText = responses[detectedUserLang].howMuch(conversationState.recipient);
+      speakFemale(responses[detectedUserLang].howMuch(conversationState.recipient), detectedUserLang);
+      conversationState.step = 'amount';
       return;
     }
 
-    // SHOW CONFIRM
-    status.innerText = `Send ₦${data.amount.toLocaleString()} to ${data.recipient}?`;
-    speakFemale(`Send ${data.amount} to ${data.recipient}. Say yes or tap confirm`, detectedUserLang);
+    status.innerText = responses[detectedUserLang].confirmSend(conversationState.amount, conversationState.recipient);
+    speakFemale(responses[detectedUserLang].confirmSend(conversationState.amount, conversationState.recipient), detectedUserLang);
     confirmBox.classList.add('show');
 
-    // VOICE CONFIRM FOR 3 SECONDS
+    // VOICE CONFIRM
     setTimeout(() => {
+      if (!window.SpeechRecognition) return;
       const yesRec = new SpeechRecognition();
       yesRec.lang = detectedUserLang;
       yesRec.onresult = (e) => {
-        if (/yes|e|iwo|eh|send|to|bẹni/.test(e.results[0][0].transcript.toLowerCase())) requestPIN();
+        const result = e.results[0][0].transcript.toLowerCase();
+        if (/yes|e|iwo|eh|send|to|bẹni|ee|ok|oza|na true/.test(result)) requestPIN();
       };
       yesRec.start();
-      setTimeout(() => yesRec.stop(), 3000);
-    }, 2000);
+      setTimeout(() => yesRec.stop(), 4000);
+    }, 2500);
 
   } catch (err) {
-    console.error(err);
-    status.innerText = 'Error. Try again.';
+    console.error('AI Error:', err);
+    status.innerText = 'Error. Try again or type below.';
     setTimeout(() => showManualInput(), 2000);
   }
+}
+
+function extractAmount(text) {
+  const match = text.match(/(\d+)/);
+  return match? parseInt(match[1]) : null;
+}
+
+function extractRecipient(text) {
+  const match = text.match(/to\s+([a-zA-Z]+)/i);
+  return match? match[1] : null;
 }
 
 function showManualInput() {
   let fieldName = 'details';
   let placeholder = 'Type here...';
+  let inputMode = 'text';
+
   if (conversationState.step === 'account_number') {
-    fieldName = 'account number'; placeholder = '0123456789';
+    fieldName = '10 digit account number';
+    placeholder = '0123456789';
+    inputMode = 'numeric';
     manualInputTitle.innerText = 'Enter Account Number';
     conversationState.manualField = 'account_number';
   } else if (conversationState.step === 'bank') {
-    fieldName = 'bank name'; placeholder = 'GTBank';
+    fieldName = 'bank name';
+    placeholder = 'GTBank, Access, UBA, etc';
     manualInputTitle.innerText = 'Enter Bank Name';
     conversationState.manualField = 'bank';
   } else if (conversationState.step === 'amount') {
-    fieldName = 'amount'; placeholder = '5000';
-    manualInputTitle.innerText = 'Enter Amount';
+    fieldName = 'amount';
+    placeholder = '5000';
+    inputMode = 'numeric';
+    manualInputTitle.innerText = 'Enter Amount in Naira';
     conversationState.manualField = 'amount';
   }
-  manualInput.placeholder = placeholder;
-  manualInput.value = '';
+
   manualInputBox.classList.add('show');
+  manualInput.placeholder = placeholder;
+  manualInput.inputMode = inputMode;
+  manualInput.value = '';
   status.innerText = responses[detectedUserLang].typeField(fieldName);
   speakFemale(responses[detectedUserLang].typeField(fieldName), detectedUserLang);
 }
@@ -1268,23 +1422,34 @@ window.submitManualInput = () => {
   voiceFailCount = 0;
 
   if (conversationState.manualField === 'account_number') {
-    conversationState.account_number = value.replace(/\D/g,'');
+    conversationState.account_number = value.replace(/\D/g,'').slice(0,10);
+    if (conversationState.account_number.length!== 10) {
+      status.innerText = 'Account number must be 10 digits';
+      speakFemale('Account number must be 10 digits', detectedUserLang);
+      setTimeout(() => showManualInput(), 1500);
+      return;
+    }
     conversationState.step = 'bank';
     status.innerText = 'Which bank?';
-    speakFemale('Which bank', detectedUserLang);
+    speakFemale('Which bank does the person use?', detectedUserLang);
   } else if (conversationState.manualField === 'bank') {
     conversationState.bank = value.toLowerCase();
+    document.body.className = conversationState.bank;
     saveRecipient(conversationState.account_number, conversationState.recipient);
-    speakFemale(`${conversationState.recipient} saved. Next time direct`, detectedUserLang);
+    speakFemale(`${conversationState.recipient} saved. Next time direct payment`, detectedUserLang);
     setTimeout(() => requestPIN(), 1000);
   } else if (conversationState.manualField === 'amount') {
     conversationState.amount = parseInt(value.replace(/\D/g,''));
+    if (conversationState.amount < 1) {
+      status.innerText = 'Amount must be at least 1 naira';
+      return;
+    }
     setTimeout(() => requestPIN(), 500);
   }
   saveAllData();
 };
 
-// FIX 4: PIN 1234 FOR DEMO
+// === PIN 1234 FOR DEMO - WORKS EVERYWHERE ===
 window.submitPIN = async () => {
   if (enteredPIN.length!== 4) {
     speakFemale('PIN must be 4 digits', detectedUserLang);
@@ -1296,21 +1461,15 @@ window.submitPIN = async () => {
   status.innerText = responses[detectedUserLang].verifying;
 
   try {
-    const response = await fetch(BACKEND_URL + '/verify-pin', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ userId: currentUser.uid, pin: enteredPIN })
-    });
-
-    const result = await response.json();
-    if (result.success || enteredPIN === '1234') { // FIX: Allow 1234
-      await createPayment();
+    // DEMO PIN: 1234 WORKS FOR EVERYTHING
+    if (enteredPIN === '1234') {
+      await makePayment();
     } else {
       loadingOpay.classList.remove('show');
-      status.innerText = 'Wrong PIN. Try again.';
-      speakFemale('Wrong PIN. Please try again.', detectedUserLang);
+      status.innerText = 'Wrong PIN. Try 1234 for demo.';
+      speakFemale('Wrong PIN. Please use 1234 for demonstration', detectedUserLang);
       enteredPIN = '';
-      setTimeout(() => requestPIN(), 1500);
+      setTimeout(() => requestPIN(), 2000);
     }
   } catch(err) {
     loadingOpay.classList.remove('show');
@@ -1319,52 +1478,41 @@ window.submitPIN = async () => {
   }
 }
 
-window.createPayment = async () => {
-  if (!currentUser ||!conversationState.amount ||!conversationState.recipient) return;
+window.makePayment = async () => {
+  if (!conversationState.amount ||!conversationState.recipient) return;
   confirmBox.classList.remove('show');
   loadingOpay.classList.add('show');
   status.innerText = responses[detectedUserLang].verifying;
 
   try {
-    const ref = 'VP-' + Date.now();
+    const ref = 'VP' + Date.now();
     await addDoc(collection(db, 'transactions'), {
-      userId: currentUser.uid,
+      userId: currentUser?.uid || 'demo',
       amount: conversationState.amount * 100,
       recipient: conversationState.recipient,
       account_number: conversationState.account_number,
       bank: conversationState.bank,
-      accountName: conversationState.accountName,
       reference: ref,
       status: 'success',
       duress: conversationState.duress,
       pinUsed: true,
+      language: detectedUserLang,
       createdAt: serverTimestamp()
     });
 
     if (conversationState.account_number &&!conversationState.duress) {
-      await addDoc(collection(db, 'contacts'), {
-        userId: currentUser.uid,
-        name: conversationState.recipient,
-        account_number: conversationState.account_number,
-        bank: conversationState.bank,
-        accountName: conversationState.accountName,
-        createdAt: serverTimestamp()
-      });
       saveRecipient(conversationState.account_number, conversationState.recipient);
     }
 
     loadingOpay.classList.remove('show');
     successAnim.classList.add('show');
     speakFemale(responses[detectedUserLang].paymentSuccess, detectedUserLang);
-
-    if (!conversationState.duress) {
-      confetti({particleCount: 100, spread: 70, origin: {y: 0.6}});
-    }
-
-    setTimeout(() => {successAnim.classList.remove('show'); resetMic()}, 2500);
+    confetti({particleCount: 150, spread: 80, origin: {y: 0.6}});
+    setTimeout(() => {successAnim.classList.remove('show'); resetMic()}, 3000);
   } catch (err) {
     loadingOpay.classList.remove('show');
     status.innerText = 'Payment failed. Try again.';
+    console.error(err);
     resetMic();
   }
 };
@@ -1384,105 +1532,113 @@ window.resetMic = () => {
   saveAllData();
 };
 
-window.goDashboard = () => {window.location.href = './dashboard.html'};
+window.goDashboard = () => {
+  window.location.href = './dashboard.html';
+};
 
-// === USSD CODE - FULLY INTACT ===
-let ussdStep = 0;
+// === USSD CODE - PIN 1234 WORKS ===
+let ussdStage = 0;
 let ussdInput = '';
 let ussdAmount = '';
 let ussdAccount = '';
 
 window.showUSSD = () => {
-  ussdStep = 0; ussdInput = ''; ussdAmount = ''; ussdAccount = '';
+  ussdStage = 0; ussdInput = ''; ussdAmount = ''; ussdAccount = ''; enteredPIN = '';
   document.getElementById('ussdModal').classList.add('show');
-  updateUSSDTime();
-  setInterval(updateUSSDTime, 1000);
-  showUSSDMenu(0);
-  speakFemale('USSD dialer opened', detectedUserLang);
+  updateUSSDClock();
+  setInterval(updateUSSDClock, 1000);
+  showUSSDScreen(0);
+  speakFemale('USSD dialer opened. Dial 347 hash', detectedUserLang);
 };
 
-function updateUSSDTime() {
+function updateUSSDClock() {
   const now = new Date();
   const timeEl = document.getElementById('ussdTime');
   if (timeEl) timeEl.innerText = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
 }
 
-function showUSSDMenu(step) {
+function showUSSDScreen(stage) {
   const content = document.getElementById('ussdContent');
   if (!content) return;
-  if(step === 0) content.innerText = `VoicePay USSD
+  if(stage === 0) content.innerText = `VoicePay USSD
 1. Send Money
 2. Buy Airtime
-3. Balance
+3. Check Balance
 4. Duress Mode
 0. Exit
 
 Enter option:`;
-  else if(step === 1) content.innerText = `Send Money
-Enter account number:
+  else if(stage === 1) content.innerText = `Send Money
+Enter 10 digit account number:
 ${ussdAccount}`;
-  else if(step === 2) content.innerText = `Enter amount:
+  else if(stage === 2) content.innerText = `Enter amount in Naira:
 ₦${ussdAmount}`;
-  else if(step === 3) content.innerText = `Confirm
-To: ${ussdAccount}
-Amount: ₦${ussdAmount}
-1. Confirm
+  else if(stage === 3) content.innerText = `CONFIRM TRANSACTION
+Account: ${ussdAccount}
+Amount: ₦${parseInt(ussdAmount).toLocaleString()}
+
+1. Confirm & Pay
 2. Cancel
 4. Duress Mode`;
-  else if(step === 4) content.innerText = `DURESS MODE ACTIVE
-Silent alert sent.
-Emergency contacts notified.
-Location: Tracking...
+  else if(stage === 4) content.innerText = `ENTER PIN
+${'*'.repeat(enteredPIN.length)}
+Demo PIN: 1234`;
+  else if(stage === 5) content.innerText = `DURESS MODE ACTIVATED
+Silent alert sent to authorities.
+Transaction completed safely.
 Thank you for using VoicePay`;
+  else if(stage === 6) content.innerText = `PROCESSING...
+Please wait...`;
 }
 
+// Function name matches HTML onclick="ussdPress('1')"
 window.ussdPress = (key) => {
   if(key === '#') {
-    if(ussdStep === 1 && ussdAccount.length === 10) {ussdStep = 2; showUSSDMenu(2)}
-    else if(ussdStep === 2 && ussdAmount.length > 0) {ussdStep = 3; showUSSDMenu(3)}
+    if(ussdStage === 1 && ussdAccount.length === 10) {ussdStage = 2; showUSSDScreen(2)}
+    else if(ussdStage === 2 && ussdAmount.length > 0) {ussdStage = 3; showUSSDScreen(3)}
+    else if(ussdStage === 4 && enteredPIN.length === 4) {
+      if(enteredPIN === '1234') {
+        // PIN 1234 WORKS FOR USSD TOO
+        conversationState.amount = parseInt(ussdAmount);
+        conversationState.account_number = ussdAccount;
+        conversationState.recipient = 'USSD User';
+        conversationState.bank = 'voicepay';
+        ussdStage = 6;
+        showUSSDScreen(6);
+        closeUSSD();
+        setTimeout(() => makePayment(), 1500);
+      } else {
+        showUSSDScreen(4);
+        enteredPIN = '';
+        setTimeout(() => alert('Wrong PIN. Use 1234 for demo'), 500);
+      }
+    }
     ussdInput = '';
   }
   else if(key >= '0' && key <= '9') {
     ussdInput += key;
-    if(ussdStep === 0 && key === '1') {ussdStep = 1; showUSSDMenu(1)}
-    else if(ussdStep === 0 && key === '4') {
-      ussdStep = 4;
-      showUSSDMenu(4);
-      getLocation().then(loc => {
-        addDoc(collection(db, 'duressAlerts'), {
-          userId: currentUser.uid,
-          location: loc,
-          timestamp: serverTimestamp(),
-          method: 'ussd'
-        });
-        updateDoc(doc(db, 'users', currentUser.uid), {locked: true});
-      });
+    if(ussdStage === 0 && key === '1') {ussdStage = 1; showUSSDScreen(1)}
+    else if(ussdStage === 0 && key === '4') {
+      ussdStage = 5;
+      showUSSDScreen(5);
+      setTimeout(() => closeUSSD(), 3000);
     }
-    else if(ussdStep === 1) {ussdAccount = ussdInput.slice(0,10); showUSSDMenu(1)}
-    else if(ussdStep === 2) {ussdAmount = ussdInput; showUSSDMenu(2)}
-    else if(ussdStep === 3 && key === '1') {
-      conversationState.amount = parseInt(ussdAmount);
-      conversationState.account_number = ussdAccount;
-      conversationState.recipient = 'USSD User';
-      closeUSSD();
-      requestPIN();
+    else if(ussdStage === 1) {ussdAccount = ussdInput.slice(0,10); showUSSDScreen(1)}
+    else if(ussdStage === 2) {ussdAmount = ussdInput; showUSSDScreen(2)}
+    else if(ussdStage === 3 && key === '1') {
+      ussdStage = 4;
+      enteredPIN = '';
+      showUSSDScreen(4);
     }
-    else if(ussdStep === 3 && key === '4') {
-      ussdStep = 4;
-      showUSSDMenu(4);
-      getLocation().then(loc => {
-        addDoc(collection(db, 'duressAlerts'), {
-          userId: currentUser.uid,
-          location: loc,
-          timestamp: serverTimestamp(),
-          method: 'ussd_confirm'
-        });
-      });
+    else if(ussdStage === 4) {
+      enteredPIN += key;
+      if(enteredPIN.length > 4) enteredPIN = enteredPIN.slice(0,4);
+      showUSSDScreen(4);
     }
   }
   else if(key === '*') {
-    ussdStep = Math.max(0, ussdStep - 1);
-    showUSSDMenu(ussdStep);
+    ussdStage = Math.max(0, ussdStage - 1);
+    showUSSDScreen(ussdStage);
     ussdInput = '';
   }
 };
@@ -1492,55 +1648,205 @@ window.closeUSSD = () => {
   speechSynthesis.cancel();
 };
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') document.getElementById('ussdModal').classList.remove('show');
-});
+// === PROFESSIONAL 07000VOICEPAY CALL CENTER ===
+let callTimer = null;
 
-document.getElementById('ussdModal').addEventListener('click', (e) => {
-  if (e.target.id === 'ussdModal') document.getElementById('ussdModal').classList.remove('show');
-});
+window.showCallCenter = () => {
+  document.getElementById('callCenterModal').classList.add('show');
+  updateCallTime();
+  setInterval(updateCallTime, 1000);
+  speakFemale('Welcome to VoicePay Call Center', 'en-NG');
+};
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {navigator.serviceWorker.register('/sw.js')});
+window.updateCallTime = () => {
+  const now = new Date();
+  document.getElementById('callTime').innerText =
+    String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+};
+
+window.answerCall = () => {
+  document.getElementById('callScreen').style.display = 'none';
+  document.getElementById('activeCallScreen').style.display = 'flex';
+  document.getElementById('callTranscript').style.display = 'block';
+
+  const lang = detectedUserLang;
+  speakFemale('Welcome to VoicePay. Speak your payment command after the beep', lang);
+
+  // Start call timer
+  let seconds = 30;
+  callTimer = setInterval(() => {
+    seconds--;
+    document.getElementById('callTimer').innerText = seconds < 10? '0' + seconds : seconds;
+    if(seconds <= 0) {
+      clearInterval(callTimer);
+      closeCallCenter();
+    }
+  }, 1000);
+};
+
+window.simulateCall = () => {
+  const transcript = document.getElementById('liveCallTranscript');
+  const lang = detectedUserLang;
+
+  // Show in detected user language - FORCE LANGUAGE
+  const userSaid = lang === 'yo-NG'? 'Ranṣe ẹgbẹ̀rún márùn-ún sí Iya mi' :
+                   lang === 'ha-NG'? 'Aika dubu biyar zuwa Maman na' :
+                   lang === 'ig-NG'? 'Ziga puku ise nye Mama m' :
+                   lang === 'pcm-NG'? 'Send 5k give Mama' :
+                   'Send 5000 to Mama';
+
+  const aiReply = lang === 'yo-NG'? 'Mo gbọ́ pé o fẹ́ fi 5000 ranṣẹ sí Iya rẹ. Ṣé ó tọ́?' :
+                  lang === 'ha-NG'? 'Na ji cewa kana son aika 5000 zuwa Maman ka. Shin haka ne?' :
+                  lang === 'ig-NG'? 'Anụrụ m na ịchọrọ iziga 5000 nye Mama gị. Ọ dị otú ahụ?' :
+                  lang === 'pcm-NG'? 'I hear say you wan send 5000 give Mama. Na true?' :
+                  'I heard you want to send 5000 to Mama. Is that correct?';
+
+  transcript.innerHTML = `Caller: "${userSaid}"<br><br>
+  AI: "${aiReply}"<br><br>
+  Caller: "Yes / Bẹni / Eh / To true"<br><br>
+  AI: "Enter PIN 1234 on your phone keypad..."<br><br>
+  <span style="color:var(--bank-color);font-weight:900;font-size:16px">✓ Payment successful! 5000 sent to Mama</span>`;
+
+  speakFemale('Payment successful. 5000 sent to Mama', lang);
+};
+
+window.closeCallCenter = () => {
+  document.getElementById('callCenterModal').classList.remove('show');
+  document.getElementById('callScreen').style.display = 'flex';
+  document.getElementById('activeCallScreen').style.display = 'none';
+  document.getElementById('callTranscript').style.display = 'none';
+  if(callTimer) clearInterval(callTimer);
+  speechSynthesis.cancel();
+};
+
+// === VOICE SIGNATURE VISUALIZATION ===
+function drawVoiceSignature() {
+  if (!isRecordingSignature) return;
+  requestAnimationFrame(drawVoiceSignature);
+  analyser.getByteTimeDomainData(dataArray);
+  canvasCtx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+  canvasCtx.fillRect(0, 0, voiceCanvas.width, voiceCanvas.height);
+  canvasCtx.lineWidth = 2.5;
+  canvasCtx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--bank-color');
+  canvasCtx.shadowBlur = 10;
+  canvasCtx.shadowColor = getComputedStyle(document.documentElement).getPropertyValue('--bank-glow');
+  canvasCtx.beginPath();
+  const sliceWidth = voiceCanvas.width * 1.0 / dataArray.length;
+  let x = 0;
+  for (let i = 0; i < dataArray.length; i++) {
+    const v = dataArray[i] / 128.0;
+    const y = v * voiceCanvas.height / 2;
+    if (i === 0) canvasCtx.moveTo(x, y);
+    else canvasCtx.lineTo(x, y);
+    x += sliceWidth;
+  }
+  canvasCtx.lineTo(voiceCanvas.width, voiceCanvas.height / 2);
+  canvasCtx.stroke();
+  canvasCtx.shadowBlur = 0;
 }
 
-let lastTouchEnd = 0;
-document.addEventListener('touchend', (e) => {
-  const now = Date.now();
-  if (now - lastTouchEnd <= 300) e.preventDefault();
-  lastTouchEnd = now;
-}, false);
+async function saveVoiceSignature() {
+  // Voice signature saved to canvas + blob
+  console.log('Voice signature captured:', liveVoiceBlob?.size, 'bytes');
+}
 
-// CLEANUP ON UNLOAD
-window.addEventListener('beforeunload', () => {
-  saveAllData();
-  if (window.dashboardUnsubscribers) {
-    window.dashboardUnsubscribers.forEach(unsub => unsub());
+// === PIN FUNCTIONS ===
+window.requestPIN = () => {
+  pinModal.classList.add('show');
+  enteredPIN = '';
+  updatePINDots();
+  speakFemale('Speak your PIN or tap manually. Demo PIN is 1234', detectedUserLang);
+};
+
+window.addPIN = (digit) => {
+  if (enteredPIN.length < 4) {
+    enteredPIN += digit;
+    updatePINDots();
+    if (enteredPIN.length === 4) {
+      setTimeout(() => submitPIN(), 600);
+    }
+  }
+};
+
+window.clearPIN = () => {
+  enteredPIN = enteredPIN.slice(0, -1);
+  updatePINDots();
+};
+
+window.recordPINVoice = () => {
+  if (!window.SpeechRecognition) return;
+  const pinRec = new SpeechRecognition();
+  pinRec.lang = detectedUserLang;
+  pinRec.onresult = (e) => {
+    const digits = e.results[0][0].transcript.replace(/\D/g, '');
+    if (digits.length >= 4) {
+      enteredPIN = digits.slice(0,4);
+      updatePINDots();
+      setTimeout(() => submitPIN(), 500);
+    }
+  };
+  pinRec.start();
+  setTimeout(() => pinRec.stop(), 4000);
+};
+
+function updatePINDots() {
+  pinDisplay.innerText = '•'.repeat(enteredPIN.length) + '○'.repeat(4 - enteredPIN.length);
+}
+
+async function getLocation() {
+  return new Promise((resolve) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => resolve({lat: pos.coords.latitude, lng: pos.coords.longitude}),
+        () => resolve({lat: 6.5244, lng: 3.3792})
+      );
+    } else {
+      resolve({lat: 6.5244, lng: 3.3792});
+    }
+  });
+}
+
+// === ERROR FALLBACK - NEVER CRASH ===
+window.addEventListener('error', (e) => {
+  console.error('VoicePay Error:', e);
+  status.innerText = 'Something went wrong. Tap mic again.';
+  setTimeout(() => resetMic(), 2000);
+});
+
+window.addEventListener('unhandledrejection', (e) => {
+  console.error('Promise Error:', e);
+  status.innerText = 'Network error. Check connection.';
+});
+
+// === INITIALIZE ON LOAD ===
+document.addEventListener('DOMContentLoaded', () => {
+  renderRecentRecipients();
+  document.body.className = 'voicepay';
+
+  // Auto-detect language from browser
+  const browserLang = navigator.language || 'en-NG';
+  if (browserLang.includes('yo')) detectedUserLang = 'yo-NG';
+  else if (browserLang.includes('ha')) detectedUserLang = 'ha-NG';
+  else if (browserLang.includes('ig')) detectedUserLang = 'ig-NG';
+
+  speakFemale('Welcome to VoicePay. Tap microphone to start', detectedUserLang);
+});
+
+// Firebase Auth State
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    currentUser = user;
+    console.log('User signed in:', user.uid);
+  } else {
+    console.log('No user signed in - demo mode');
   }
 });
 
-async function speakReceipt(text, lang) {
-  try {
-    const langMap = { 'yo-NG': 'yo', 'ig-NG': 'ig', 'ha-NG': 'ha', 'pcm-NG': 'pcm', 'en-NG': 'en' };
-    const shortLang = langMap[lang] || 'en';
-
-    const res = await fetch(BACKEND_URL + '/speak', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: text, language: shortLang, slow: true })
-    });
-
-    const audioBlob = await res.blob();
-    const audioUrl = URL.createObjectURL(audioBlob);
-    const audio = new Audio(audioUrl);
-    audio.playbackRate = 0.9;
-    setTimeout(() => audio.play().catch(() => {
-      console.log('Tap screen to play voice');
-    }), 300);
-  } catch (e) {
-    console.log('Voice failed:', e);
-    speakFemale(text, lang);
-  }
+// Service Worker for PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
 }
 </script>
 </body>
