@@ -683,10 +683,24 @@ h1{
   </div>
 
   <div class="manual-input-box" id="manualInputBox">
-    <h4 id="manualInputTitle">Enter Details</h4>
-    <input type="text" id="manualInput" placeholder="Type here..." inputmode="numeric">
-    <button class="manual-submit" onclick="submitManualInput()">Submit</button>
+  <div style="text-align:center;margin-bottom:16px">
+    <div style="font-size:32px;margin-bottom:8px">💬</div>
+    <h4 style="color:var(--bank-color);font-size:16px;margin-bottom:6px;font-weight:800">Type Like You Talk</h4>
+    <p style="font-size:12px;color:var(--text-muted)">No voice? Just type naturally</p>
   </div>
+
+  <div style="background:rgba(var(--bank-color-rgb),0.08);border:1px dashed var(--bank-color);border-radius:12px;padding:10px;margin-bottom:12px">
+    <p style="font-size:11px;color:var(--text-muted);margin-bottom:6px;font-weight:600">Examples:</p>
+    <p style="font-size:13px;color:#fff;margin:4px 0">→ Send 2k to John</p>
+    <p style="font-size:13px;color:#fff;margin:4px 0">→ Buy 1k airtime for Mama</p>
+    <p style="font-size:13px;color:#fff;margin:4px 0">→ Send 1 naira to police</p>
+  </div>
+
+  <input type="text" id="manualInput" placeholder="Send 5k to..."
+    style="width:100%;padding:18px;border-radius:16px;border:2px solid var(--border);background:rgba(255,255,255,0.05);color:white;font-size:17px;margin-bottom:14px;font-family:'Space Grotesk',sans-serif;font-weight:600">
+  <button class="manual-submit" onclick="submitManualInput()"
+    style="width:100%;padding:18px;border-radius:16px;border:none;background:linear-gradient(135deg,var(--bank-color),#00A866);color:#000;font-weight:800;font-size:16px;box-shadow:0 8px 25px var(--bank-glow)">Send Money</button>
+</div>
 
   <div class="confirm-box" id="confirmBox">
     <button class="btn btn-confirm" onclick="requestPIN()">Confirm & Pay</button>
@@ -1123,13 +1137,30 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   recognition.interimResults = true;
   recognition.maxAlternatives = 5;
 
-  mic.onclick = () => {
-    if (isListening) {
-      recognition.stop();
+  mic.onclick = async () => {
+  if (isListening) {
+    recognition.stop();
+    return;
+  }
+  
+  // Check mic permission first - prevents DOMException crash
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach(track => track.stop()); // close test stream
+  } catch (err) {
+    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+      status.innerText = 'Mic blocked. Safari → AA → Website Settings → Microphone → Allow';
+      speakFemale('Microphone blocked. Enable in Safari settings', detectedUserLang);
+      showManualInput(); // fallback immediately
       return;
     }
-    recognition.start();
-  };
+    status.innerText = 'Mic error. Tap again or type below';
+    showManualInput();
+    return;
+  }
+  
+  recognition.start();
+};
 
   recognition.onstart = async () => {
     isListening = true;
@@ -1241,21 +1272,27 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   };
 
   recognition.onerror = (e) => {
-    clearTimeout(recognitionTimeout);
-    clearTimeout(silenceTimer);
-    isListening = false;
-    mic.classList.remove('recording');
-    voiceCanvas.classList.remove('show');
-    isRecordingSignature = false;
-    transcriptLive.classList.remove('show');
-    voiceFailCount++;
-    saveAllData();
+  clearTimeout(recognitionTimeout);
+  clearTimeout(silenceTimer);
+  isListening = false;
+  mic.classList.remove('recording');
+  voiceCanvas.classList.remove('show');
+  isRecordingSignature = false;
+  transcriptLive.classList.remove('show');
+  voiceFailCount++;
+  saveAllData();
+  
+  if (e.error === 'not-allowed' || e.error === 'permission-denied') {
+    status.innerText = 'Mic blocked. Use manual input below';
+    speakFemale('Microphone blocked. Type your command below', detectedUserLang);
+  } else {
     status.innerText = 'Tap mic again or type below';
     speakFemale('Say again or type below', detectedUserLang);
-    setTimeout(() => showManualInput(), 2000);
-  };
-}
-
+  }
+  
+  setTimeout(() => showManualInput(), 1500);
+  }
+};
 // === FORCE SPEAK SAME LANGUAGE - NO MIXING ===
 async function speakFemale(text, lang = 'en-NG') {
   speechSynthesis.cancel();
@@ -1416,36 +1453,76 @@ function showManualInput() {
 }
 
 window.submitManualInput = () => {
-  const value = manualInput.value.trim();
-  if (!value) return;
+  const text = manualInput.value.trim();
+  if (!text) {
+    status.innerText = 'Type something like: Send 2k to John';
+    speakFemale('Please type: Send amount to name', detectedUserLang);
+    return;
+  }
   manualInputBox.classList.remove('show');
   voiceFailCount = 0;
-
-  if (conversationState.manualField === 'account_number') {
-    conversationState.account_number = value.replace(/\D/g,'').slice(0,10);
-    if (conversationState.account_number.length!== 10) {
-      status.innerText = 'Account number must be 10 digits';
-      speakFemale('Account number must be 10 digits', detectedUserLang);
-      setTimeout(() => showManualInput(), 1500);
-      return;
-    }
-    conversationState.step = 'bank';
-    status.innerText = 'Which bank?';
-    speakFemale('Which bank does the person use?', detectedUserLang);
-  } else if (conversationState.manualField === 'bank') {
-    conversationState.bank = value.toLowerCase();
-    document.body.className = conversationState.bank;
-    saveRecipient(conversationState.account_number, conversationState.recipient);
-    speakFemale(`${conversationState.recipient} saved. Next time direct payment`, detectedUserLang);
-    setTimeout(() => requestPIN(), 1000);
-  } else if (conversationState.manualField === 'amount') {
-    conversationState.amount = parseInt(value.replace(/\D/g,''));
-    if (conversationState.amount < 1) {
-      status.innerText = 'Amount must be at least 1 naira';
-      return;
-    }
-    setTimeout(() => requestPIN(), 500);
+  
+  // Parse natural language: "Send 2k to John" or "Buy 1k airtime for Mama"
+  const lowerText = text.toLowerCase();
+  
+  // Extract amount - handles 2k, 2000, 5k, 5000
+  const amountMatch = lowerText.match(/(\d+)\s*k?/i);
+  if (amountMatch) {
+    const num = parseInt(amountMatch[1]);
+    conversationState.amount = lowerText.includes('k') ? num * 1000 : num;
   }
+  
+  // Extract recipient - handles "to John", "for Mama", "give Tolu"
+  const recipientMatch = lowerText.match(/(?:to|for|give|send\s+money\s+to)\s+([a-zA-Z\s]+)/i);
+  if (recipientMatch) {
+    conversationState.recipient = recipientMatch[1].trim().split(' ')[0]; // take first word
+  }
+  
+  // Extract account number if user typed 10 digits
+  const accountMatch = text.match(/\b(\d{10})\b/);
+  if (accountMatch) {
+    conversationState.account_number = accountMatch[1];
+  }
+  
+  // Check if we have amount + recipient
+  if (conversationState.amount && conversationState.amount >= 1 && conversationState.recipient) {
+    status.innerText = `Confirm: Send ₦${conversationState.amount.toLocaleString()} to ${conversationState.recipient}?`;
+    speakFemale(responses[detectedUserLang].confirmSend(conversationState.amount, conversationState.recipient), detectedUserLang);
+    confirmBox.classList.add('show');
+    
+    // Auto voice confirm after 2.5s
+    setTimeout(() => {
+      if (!window.SpeechRecognition) return;
+      const yesRec = new SpeechRecognition();
+      yesRec.lang = detectedUserLang;
+      yesRec.onresult = (e) => {
+        const result = e.results[0][0].transcript.toLowerCase();
+        if (/yes|e|iwo|eh|send|to|bẹni|ee|ok|oza|na true/.test(result)) requestPIN();
+      };
+      yesRec.start();
+      setTimeout(() => yesRec.stop(), 4000);
+    }, 2500);
+  }
+  // If only account number typed
+  else if (conversationState.account_number && conversationState.account_number.length === 10) {
+    conversationState.step = 'bank';
+    status.innerText = 'Which bank? GTBank, Access, UBA, etc';
+    speakFemale('Which bank does the person use?', detectedUserLang);
+    manualInput.placeholder = 'GTBank';
+    manualInputTitle.innerText = 'Enter Bank Name';
+    manualInputBox.classList.add('show');
+  }
+  // If missing details
+  else {
+    status.innerText = 'Use format: Send 2k to John';
+    speakFemale('Please type: Send amount to name', detectedUserLang);
+    setTimeout(() => {
+      manualInputBox.classList.add('show');
+      manualInput.value = '';
+      manualInput.placeholder = 'Send 5k to John';
+    }, 1500);
+  }
+  
   saveAllData();
 };
 
